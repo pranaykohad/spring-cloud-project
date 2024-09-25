@@ -33,8 +33,11 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable()).authorizeRequests().requestMatchers("api/auth/**", "/v3/api-docs/**",
-				"/swagger-ui/**", "/swagger-ui.html", "api/products/welcome").permitAll().anyRequest().authenticated()
+		http.csrf(csrf -> csrf.disable()).authorizeRequests().requestMatchers(
+				"api/customer/auth/**", 
+				"api/products/welcome",
+				"customer/swagger-ui/**", "customer/api-docs/**"
+				).permitAll().anyRequest().authenticated()
 				.and()
 //				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

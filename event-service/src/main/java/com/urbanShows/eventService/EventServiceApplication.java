@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.aop.ObservedAspect;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootApplication
@@ -20,15 +21,18 @@ public class EventServiceApplication {
 	@Value("${server.port}")
 	private String port;
 
+	@Value("${springdoc.swagger-ui.path}")
+	private String swaggerPath;
+
 	public static void main(String[] args) {
 		SpringApplication.run(EventServiceApplication.class, args);
 		log.info("Event server is started...");
-		log.info("Swagger url: http://localhost:8082/swagger-ui/index.html");
+
 	}
-	
-	@Bean
-	ObservedAspect observedAspect(ObservationRegistry observationRegistry) {
-		return new ObservedAspect(observationRegistry);
+
+	@PostConstruct
+	public void postConstruct() {
+		log.info("Swagger url: http://localhost:" + port + swaggerPath);
 	}
 
 }

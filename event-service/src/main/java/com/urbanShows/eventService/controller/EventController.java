@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("customer")
+@RequestMapping("api/event")
 @AllArgsConstructor
 @Slf4j
 public class EventController {

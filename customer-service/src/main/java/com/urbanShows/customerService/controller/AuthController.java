@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("api/auth")
+@RequestMapping("api/customer/auth")
 @AllArgsConstructor
 @Slf4j
 public class AuthController {
@@ -47,9 +47,9 @@ public class AuthController {
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 		if (authentication.isAuthenticated()) {
-			ResponseEntity<String> welcome = eventServiceClient.welcome();
-			return ResponseEntity.ok(welcome.getBody());
-//			return ResponseEntity.ok(jwtService.generateToken(authRequest.getUsername()));
+//			ResponseEntity<String> welcome = eventServiceClient.welcome();
+//			return ResponseEntity.ok(welcome.getBody());
+			return ResponseEntity.ok(jwtService.generateToken(authRequest.getUsername()));
 		} else {
 			throw new UserNotFoundException("invalid user request !");
 		}
