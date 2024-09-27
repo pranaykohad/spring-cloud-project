@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -31,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("api/customer/auth")
 @AllArgsConstructor
 @Slf4j
+@CrossOrigin(origins = "*")
 public class AuthController {
 
 	private JwtService jwtService;
@@ -38,6 +40,14 @@ public class AuthController {
 	private AuthenticationManager authenticationManager;
 	
 	private EventServiceClient eventServiceClient;
+	
+	private UserService userService;
+	
+	
+	@GetMapping("event-name")
+	public ResponseEntity<String> getEventName(){
+		return ResponseEntity.ok(eventServiceClient.welcome().getBody());
+	}
 	
 //	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 //	@PreAuthorize("hasAuthority('ROLE_USER')")
@@ -47,13 +57,12 @@ public class AuthController {
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 		if (authentication.isAuthenticated()) {
-//			ResponseEntity<String> welcome = eventServiceClient.welcome();
-//			return ResponseEntity.ok(welcome.getBody());
 			return ResponseEntity.ok(jwtService.generateToken(authRequest.getUsername()));
 		} else {
 			throw new UserNotFoundException("invalid user request !");
 		}
 	}
+	
 
 	@GetMapping("logout")
 	public ResponseEntity<Boolean> logout(@RequestParam String token) {
@@ -61,7 +70,6 @@ public class AuthController {
 		return ResponseEntity.ok(true);
 	}
 	
-	private UserService userService;
 
 	@PostMapping("signup")
 	public ResponseEntity<Boolean> signup(@Valid @RequestBody UserInfoDto userInfo) {

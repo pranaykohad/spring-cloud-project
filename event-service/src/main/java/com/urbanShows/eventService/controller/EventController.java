@@ -29,7 +29,7 @@ public class EventController {
 	@GetMapping("test")
 	public ResponseEntity<String> test() {
 		log.info("event service api test is called");
-		return ResponseEntity.ok("Pranay Kohad is my name");
+		return ResponseEntity.ok("Pranay Kohad is my name and I am software engineer");
 	}
 
 }

@@ -2,7 +2,6 @@ package com.urbanShows.customerService.exceptionHandler;
 
 import java.io.IOException;
 
-import feign.codec.ErrorDecoder;
 import lombok.extern.slf4j.Slf4j;
 
 //@Slf4j

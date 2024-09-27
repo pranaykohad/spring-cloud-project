@@ -34,6 +34,7 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable()).authorizeRequests().requestMatchers(
+				"/actuator/**",
 				"api/customer/auth/**", 
 				"api/products/welcome",
 				"customer/swagger-ui/**", "customer/api-docs/**"
