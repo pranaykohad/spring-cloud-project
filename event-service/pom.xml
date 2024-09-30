@@ -77,17 +77,8 @@
 		    <version>2.6.0</version>
 		</dependency>
 		
-		 <!-- https://mvnrepository.com/artifact/com.github.loki4j/loki-logback-appender -->
-		<dependency>
-		    <groupId>com.github.loki4j</groupId>
-		    <artifactId>loki-logback-appender</artifactId>
-		    <version>1.5.2</version>
-		</dependency>
-
-
-
-		
 	</dependencies>
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
