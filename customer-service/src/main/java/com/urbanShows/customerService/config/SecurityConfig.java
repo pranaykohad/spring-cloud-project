@@ -36,6 +36,7 @@ public class SecurityConfig {
 		http.csrf(csrf -> csrf.disable()).authorizeRequests().requestMatchers(
 				"/actuator/**",
 				"api/customer/auth/**", 
+				"api/customer/kafka/**",
 				"api/products/welcome",
 				"customer/swagger-ui/**", "customer/api-docs/**"
 				).permitAll().anyRequest().authenticated()
