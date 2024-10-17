@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <property name="LOG_FILE" value="logs/app.log"/>
+    <springProperty scope="context" name="appName" source="spring.application.name"/>
+    <springProperty scope="context" name="lokiUrl" source="loki.url"/>
 
      <!-- Rolling File Appender -->
     <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -35,10 +38,27 @@
         </layout>
     </appender>
     
+    <!-- LOKI Appender -->
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>${lokiUrl}</url>
+        </http>
+        <format>
+            <label>
+                <pattern>application=${appName},host=${HOSTNAME},level=%level</pattern>
+            </label>
+            <message>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </message>
+            <sortByTime>true</sortByTime>
+        </format>
+    </appender>
+    
 
     <root level="info" additivity="false">
         <appender-ref ref="RollingFile"/>
         <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="LOKI"/>
     </root>
 
 </configuration>

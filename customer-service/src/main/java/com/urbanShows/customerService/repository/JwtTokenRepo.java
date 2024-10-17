@@ -5,7 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import com.urbanShows.customerService.entity.JwtToken;
 
+import io.micrometer.observation.annotation.Observed;
+
 @Repository
+@Observed
 public interface JwtTokenRepo extends JpaRepository<JwtToken, String> {
 
 	JwtToken findByToken(String token);
