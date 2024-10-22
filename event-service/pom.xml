@@ -87,6 +87,36 @@
 	      <artifactId>spring-kafka-test</artifactId>
 	      <scope>test</scope>
 	    </dependency>
+	    
+	    <!-- https://mvnrepository.com/artifact/com.github.loki4j/loki-logback-appender -->
+		<dependency>
+		    <groupId>com.github.loki4j</groupId>
+		    <artifactId>loki-logback-appender</artifactId>
+		    <version>1.5.2</version>
+		</dependency>
+		
+		<dependency>
+	      <groupId>io.micrometer</groupId>
+	      <artifactId>micrometer-tracing-bridge-brave</artifactId>
+	    </dependency>
+	    
+	     <dependency>
+	      <groupId>io.zipkin.reporter2</groupId>
+	      <artifactId>zipkin-reporter-brave</artifactId>
+	    </dependency>
+	    
+	    <!-- https://mvnrepository.com/artifact/net.ttddyy.observation/datasource-micrometer-spring-boot -->
+		<dependency>
+		    <groupId>net.ttddyy.observation</groupId>
+		    <artifactId>datasource-micrometer-spring-boot</artifactId>
+		    <version>1.0.5</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.springframework/spring-aop -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-aop</artifactId>
+		</dependency>
 		
 	</dependencies>
 	

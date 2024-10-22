@@ -21,6 +21,7 @@ import com.urbanShows.customerService.dto.AuthDto;
 import com.urbanShows.customerService.dto.UserInfoDto;
 import com.urbanShows.customerService.exceptionHandler.UserNotFoundException;
 import com.urbanShows.customerService.internalAPIClient.EventServiceClient;
+import com.urbanShows.customerService.kafka.service.MessageProducer;
 import com.urbanShows.customerService.service.JwtService;
 import com.urbanShows.customerService.service.UserService;
 
@@ -43,9 +44,13 @@ public class AuthController {
 	
 	private UserService userService;
 	
+	private MessageProducer messageProducer;
+	
 	
 	@GetMapping("event-name")
 	public ResponseEntity<String> getEventName(){
+		log.info("NAME TRACE: {}", "customer service called");
+		messageProducer.sendMessage("Hello, Pranay Kohad here, anybody home?");
 		return ResponseEntity.ok(eventServiceClient.welcome().getBody());
 	}
 	
@@ -54,6 +59,7 @@ public class AuthController {
 
 	@PostMapping("login")
 	public ResponseEntity<String> login(@RequestBody AuthDto authRequest) {
+		log.info("login API called..........");
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 		if (authentication.isAuthenticated()) {
@@ -78,7 +84,9 @@ public class AuthController {
 
 	@GetMapping("get-by-name")
 	public ResponseEntity<UserInfoDto> getUserByName(@RequestParam String name) {
-		return ResponseEntity.ok(userService.getUserByName(name));
+		UserInfoDto userByName = userService.getUserByName(name);
+		log.info("NAME: {}", userByName);
+		return ResponseEntity.ok(userByName);
 	}
 
 	@GetMapping("list")

@@ -28,7 +28,7 @@ public class EventController {
 	
 	@GetMapping("test")
 	public ResponseEntity<String> test() {
-		log.info("event service api test is called");
+		log.info("NAME TRACE: {}", "event service called");
 		return ResponseEntity.ok("Pranay Kohad is my name and I am software engineer");
 	}
 
