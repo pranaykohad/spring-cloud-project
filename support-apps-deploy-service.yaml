@@ -1,3 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: common-config
+data:
+  LOKI_URL: "http://loki.default.svc.cluster.local:3100/loki/api/v1/push"
+  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://tempo.default.svc.cluster.local:9411"
+  CUSTOMER_SERVICE_URL: "http://product-service.default.svc.cluster.local:8081"
+  EVENT_SERVICE_URL: "http://order-service.default.svc.cluster.local:8082"
+  SPRING_KAFKA_BOOTSTRAP-SERVERS: "broker.default.svc.cluster.local:29092"
+---  
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -116,7 +127,7 @@ spec:
     spec:
       containers:
         - name: tempo
-          image: grafana/tempo
+          image: grafana/tempo:2.2.2
           args: ["-config.file=/etc/tempo.yaml"]
           volumeMounts:
             - name: tempo-config
@@ -250,12 +261,15 @@ data:
       evaluation_interval: 2s
 
     scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets: ['prometheus:9090']
       - job_name: 'CUSTOMER-SERVICE'
         metrics_path: '/actuator/prometheus'
         static_configs:
           - targets: ['host.docker.internal:8081'] ## only for demo purposes don't use host.docker.internal in production
             labels:
-            application: 'Customer Service'		  
+              application: 'Customer Service'   		  
 ---
 apiVersion: apps/v1
 kind: Deployment

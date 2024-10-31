@@ -4,6 +4,7 @@ import static org.springframework.cloud.gateway.server.mvc.handler.GatewayRouter
 
 import java.net.URI;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.server.mvc.filter.CircuitBreakerFilterFunctions;
 import org.springframework.cloud.gateway.server.mvc.handler.GatewayRouterFunctions;
 import org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions;
@@ -18,11 +19,17 @@ import org.springframework.web.servlet.function.ServerResponse;
 public class Routes {
 
 	private static final String FORWARD_FALLBACK_ROUTE = "forward:/fallbackRoute";
+	
+	@Value("${event-service.url}")
+	private String eventServiceUrl;
+	
+	@Value("${customer-service.url}")
+	private String customerServiceUrl;
 
 	@Bean
 	RouterFunction<ServerResponse> customerServiceRoute() {
 		return GatewayRouterFunctions.route("CUSTOMER-SERVICE")
-				.route(RequestPredicates.path("api/customer/**"), HandlerFunctions.http("http://localhost:8081"))
+				.route(RequestPredicates.path("api/customer/**"), HandlerFunctions.http(customerServiceUrl))
 				.filter(CircuitBreakerFilterFunctions.circuitBreaker("CUSTOMER-SERVICE-CIRCUIT-BREAKER",
 						URI.create(FORWARD_FALLBACK_ROUTE)))
 				.build();
@@ -31,7 +38,7 @@ public class Routes {
 	@Bean
 	RouterFunction<ServerResponse> eventServiceRoute() {
 		return GatewayRouterFunctions.route("EVENT-SERVICE")
-				.route(RequestPredicates.path("api/event/**"), HandlerFunctions.http("http://localhost:8082"))
+				.route(RequestPredicates.path("api/event/**"), HandlerFunctions.http(eventServiceUrl))
 				.filter(CircuitBreakerFilterFunctions.circuitBreaker("EVENT-SERVICE-CIRCUIT-BREAKER",
 						URI.create(FORWARD_FALLBACK_ROUTE)))
 				.build();
