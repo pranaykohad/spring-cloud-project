@@ -89,6 +89,7 @@ public class AuthController {
 		return ResponseEntity.ok(userByName);
 	}
 
+	@PreAuthorize("hasAuthority('ROLE_USER')")
 	@GetMapping("list")
 	public ResponseEntity<List<UserInfoDto>> getUsersList() {
 		return ResponseEntity.ok(userService.getUsersList());
