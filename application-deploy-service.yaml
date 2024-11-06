@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: user-service
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - image: prakohad/user-service:0.0.1-SNAPSHOT
+        name: user-service
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+        env:
+        - name: LOKI_URL
+          valueFrom:
+            configMapKeyRef:
+              key: LOKI_URL
+              name: common-config
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              name: common-config  
+      imagePullSecrets:
+      - name: my-docker-registry-secret              
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: user-service
+  name: user-service
+spec:
+  ports:
+  - port: 8081
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: user-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: event-service
+  name: event-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-service
+  template:
+    metadata:
+      labels:
+        app: event-service
+    spec:
+      containers:
+      - image: prakohad/event-service:0.0.1-SNAPSHOT
+        name: event-service
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8082
+        env:
+        - name: LOKI_URL
+          valueFrom:
+            configMapKeyRef:
+              key: LOKI_URL
+              name: common-config
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              name: common-config  
+      imagePullSecrets:
+      - name: my-docker-registry-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: event-service
+  name: event-service
+spec:
+  ports:
+  - port: 8082
+    protocol: TCP
+    targetPort: 8082
+  selector:
+    app: event-service	  
