@@ -18,7 +18,6 @@ local:
 support apps: 
 	kubectl apply -f support-apps-deploy-service.yaml
 application apps: 
-    kubectl apply -f angular-deploy-service.yaml
 	kubectl apply -f application-deploy-service.yaml
 
 

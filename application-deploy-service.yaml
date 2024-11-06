@@ -99,3 +99,43 @@ spec:
     targetPort: 8082
   selector:
     app: event-service	  
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: angular-app
+  name: angular-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: angular-app
+  template:
+    metadata:
+      labels:
+        app: angular-app
+    spec:
+      containers:
+      - image: prakohad/ang-service:v2
+        name: angular-app
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: angular-app
+  name: angular-app
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 4200
+    name: angular-port
+    nodePort: 31000
+  selector:
+    app: angular-app
+  type: NodePort    
