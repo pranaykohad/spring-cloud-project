@@ -15,3 +15,7 @@
 /event-service/*.cmd
 /docker/tempo/blocks
 /docker/tempo/tempo-data
+/api-gateway/.mvn
+/customer-service/tmp/*.log
+/event-service/logs/*.log
+/event-service/tmp/*.log
