@@ -5,9 +5,9 @@ metadata:
 data:
   LOKI_URL: "http://loki.default.svc.cluster.local:3100/loki/api/v1/push"
   MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://tempo.default.svc.cluster.local:9411"
-  CUSTOMER_SERVICE_URL: "http://product-service.default.svc.cluster.local:8081"
-  EVENT_SERVICE_URL: "http://order-service.default.svc.cluster.local:8082"
   SPRING_KAFKA_BOOTSTRAP-SERVERS: "broker.default.svc.cluster.local:29092"
+  CUSTOMER_SERVICE_URL: "http://customer-service.default.svc.cluster.local:8081"
+  EVENT_SERVICE_URL: "http://event-service.default.svc.cluster.local:8082"
 ---  
 apiVersion: apps/v1
 kind: Deployment
@@ -269,7 +269,13 @@ data:
         static_configs:
           - targets: ['host.docker.internal:8081'] ## only for demo purposes don't use host.docker.internal in production
             labels:
-              application: 'Customer Service'   		  
+              application: 'Customer Service'   
+      - job_name: 'EVENT-SERVICE'
+        metrics_path: '/actuator/prometheus'
+        static_configs:
+          - targets: ['host.docker.internal:8082'] ## only for demo purposes don't use host.docker.internal in production
+            labels:
+              application: 'Customer Service'              
 ---
 apiVersion: apps/v1
 kind: Deployment

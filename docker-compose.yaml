@@ -25,6 +25,18 @@ services:
     ports:
       - "3100:3100"
       
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - "--enable-feature=exemplar-storage"
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    volumes:
+      - "./docker/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml:ro"
+    ports:
+      - "9090:9090"
+    restart: always      
+      
   tempo:
     image: grafana/tempo
     container_name: tempo
@@ -35,21 +47,9 @@ services:
     ports:
       - "3110:3100"  # Tempo
       - "9411:9411" # zipkin
-
-  prometheus:
-    image: prom/prometheus
-    container_name: prometheus
-    command:
-      - "--enable-feature=exemplar-storage"
-      - "--config.file=/etc/prometheus/prometheus.yaml"
-    volumes:
-      - "./docker/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro"
-    ports:
-      - "9090:9090"
-    restart: always
-    
+      
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:main
     container_name: grafana
     volumes:
       - "./docker/grafana:/etc/grafana/provisioning/datasources:ro"
