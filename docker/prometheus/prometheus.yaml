@@ -9,6 +9,12 @@ scrape_configs:
   - job_name: 'CUSTOMER-SERVICE'
     metrics_path: '/actuator/prometheus'
     static_configs:
-      - targets: ['host.docker.internal:8081'] ## only for demo purposes don't use host.docker.internal in production
+      - targets: ['host.docker.internal:8081'] ## only for demo purposes don't use host.docker.internal in production ['host.docker.internal:8081']
         labels:
           application: 'Customer Service'         
+  - job_name: 'EVENT-SERVICE'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['host.docker.internal:8082'] ## only for demo purposes don't use host.docker.internal in production
+        labels:
+          application: 'Event Service'          
