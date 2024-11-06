@@ -1,0 +1,60 @@
+create kind cluster:
+kind create cluster --name pranay-local --config kind-cluster.yaml
+
+
+build and push angular app:
+docker build -t ang-service:v2 . && docker tag ang-service:v2 prakohad/ang-service:v2 && docker push prakohad/ang-service:v2
+
+docker run angular app locally:
+docker run -d -p 8080:80 --name ang-service prakohad/ang-service:v2
+
+make docker and push to docker using spring plugin:
+./mvnw spring-boot:build-image
+
+
+docker service run:
+local:
+	docker compose -f docker-compose.yaml up -d
+support apps: 
+	kubectl apply -f support-apps-deploy-service.yaml
+application apps: 
+    kubectl apply -f angular-deploy-service.yaml
+	kubectl apply -f application-deploy-service.yaml
+
+
+docker service all file inside folder:
+kubectl apply -f <folder-name>
+
+port forward:
+kubectl port-forward svc/user-service 8081:8081
+kubectl port-forward svc/angular-spr 80:80
+
+how to access pod cmd:
+kubectl exec -it svc/<service-name> -- bash
+
+how to access pod cmd:
+docker exec -it <container-id> sh
+
+
+
+portrainer docker command:
+docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:2.21.4
+
+
+username: admin
+password: Iamnothere90!
+
+-------------------------
+Azure database:
+Database name: customer-dev
+server name: customer-dev => customer-dev.database.windows.net
+Server admin login: customer-dev-admin
+Password: Pranay93!
+
+add local pc ip in database server
+
+
+
+
+
+
