@@ -1,0 +1,17 @@
+/workspace folder
+/Zipkin Local Server/run-zipkin.bat
+/Zipkin Local Server/zipkin-server-3.4.1-exec.jar
+/customer-service/.mvn/wrapper/maven-wrapper.properties
+/customer-service/logs/*.gz
+/customer-service/*.cmd
+/customer-service/*.log
+/discovery-server/.metadata
+/event-service/*.log
+/discovery-server/.sonarlint/storage/*.gz
+/customer-service/mvnw
+/event-service/.mvn/wrapper/maven-wrapper.properties
+/event-service/logs/*.gz
+/discovery-server/*.cmd
+/event-service/*.cmd
+/docker/tempo/blocks
+/docker/tempo/tempo-data
