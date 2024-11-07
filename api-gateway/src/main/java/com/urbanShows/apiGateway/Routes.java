@@ -19,11 +19,11 @@ import org.springframework.web.servlet.function.ServerResponse;
 public class Routes {
 
 	private static final String FORWARD_FALLBACK_ROUTE = "forward:/fallbackRoute";
-	
-	@Value("${event-service.url}")
+
+	@Value("${event.service.url}")
 	private String eventServiceUrl;
-	
-	@Value("${customer-service.url}")
+
+	@Value("${customer.service.url}")
 	private String customerServiceUrl;
 
 	@Bean
@@ -48,7 +48,7 @@ public class Routes {
 	RouterFunction<ServerResponse> customerServiceApiDocsRoute() {
 		return GatewayRouterFunctions.route("CUSTOMER-SERVICE-API-DOCS")
 				.route(RequestPredicates.path("customer/api-docs/**"),
-						HandlerFunctions.http("http://localhost:8081/customer/api-docs"))
+						HandlerFunctions.http(customerServiceUrl + "/customer/api-docs"))
 				.filter(CircuitBreakerFilterFunctions.circuitBreaker("CUSTOMER-SERVICE-API-DOCS-CIRCUIT-BREAKER",
 						URI.create(FORWARD_FALLBACK_ROUTE)))
 				.build();
@@ -58,7 +58,7 @@ public class Routes {
 	RouterFunction<ServerResponse> eventServiceApiDocsRoute() {
 		return GatewayRouterFunctions.route("EVENT-SERVICE-API-DOCS")
 				.route(RequestPredicates.path("event/api-docs/**"),
-						HandlerFunctions.http("http://localhost:8082/event/api-docs"))
+						HandlerFunctions.http(eventServiceUrl + "/event/api-docs"))
 				.filter(CircuitBreakerFilterFunctions.circuitBreaker("EVENT-SERVICE-API-DOCS-CIRCUIT-BREAKER",
 						URI.create(FORWARD_FALLBACK_ROUTE)))
 				.build();

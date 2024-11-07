@@ -2,6 +2,7 @@ package com.urbanShows.eventService.controller;
 
 import java.util.List;
 
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EventController {
 
-	private EventService eventService;
+	private final EventService eventService;
+	
+	private final Environment environment;
+	
+	@GetMapping("active-profile")
+	public ResponseEntity<String[]> activeProfile() {
+		String[] activeProfiles = environment.getActiveProfiles();
+		return ResponseEntity.ok(activeProfiles);
+	}	
 
 	@GetMapping("list")
 	public ResponseEntity<List<EventDto>> getCustomerList() {

@@ -1,0 +1,249 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: api-gateway
+  name: api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: api-gateway
+  template:
+    metadata:
+      labels:
+        app: api-gateway
+    spec:
+      containers:
+      - image: prakohad/api-gateway:0.0.1-SNAPSHOT
+        name: api-gateway
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8083
+        env:
+        - name: LOKI_URL
+          valueFrom:
+            configMapKeyRef:
+              key: LOKI_URL
+              name: common-config
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              name: common-config  
+        - name: CUSTOMER_SERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  CUSTOMER_SERVICE_URL
+              name: common-config    
+        - name: EVENT_SERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  EVENT_SERVICE_URL
+              name: common-config     
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              key:  SPRING_PROFILES_ACTIVE
+              name: common-config               
+      imagePullSecrets:
+      - name: my-docker-registry-secret              
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: api-gateway
+  name: api-gateway
+spec:
+  ports:
+  - port: 8083
+    protocol: TCP
+    targetPort: 8083
+  selector:
+    app: api-gateway
+---    
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: user-service
+  name: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - image: prakohad/user-service:0.0.1-SNAPSHOT
+        name: user-service
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8081
+        env:
+        - name: LOKI_URL
+          valueFrom:
+            configMapKeyRef:
+              key: LOKI_URL
+              name: common-config
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              name: common-config  
+        env:
+        - name: LOKI_URL
+          valueFrom:
+            configMapKeyRef:
+              key: LOKI_URL
+              name: common-config
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              name: common-config     
+        - name: EVENT_SERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  EVENT_SERVICE_URL
+              name: common-config    
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              key:  SPRING_PROFILES_ACTIVE
+              name: common-config                
+      imagePullSecrets:
+      - name: my-docker-registry-secret              
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: user-service
+  name: user-service
+spec:
+  ports:
+  - port: 8081
+    protocol: TCP
+    targetPort: 8081
+  selector:
+    app: user-service
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: event-service
+  name: event-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-service
+  template:
+    metadata:
+      labels:
+        app: event-service
+    spec:
+      containers:
+      - image: prakohad/event-service:0.0.1-SNAPSHOT
+        name: event-service
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8082
+        env:
+        - name: LOKI_URL
+          valueFrom:
+            configMapKeyRef:
+              key: LOKI_URL
+              name: common-config
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              name: common-config 
+        env:
+        - name: LOKI_URL
+          valueFrom:
+            configMapKeyRef:
+              key: LOKI_URL
+              name: common-config
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              name: common-config  
+        - name: CUSTOMER_SERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  CUSTOMER_SERVICE_URL
+              name: common-config  
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              key:  SPRING_PROFILES_ACTIVE
+              name: common-config                
+      imagePullSecrets:
+      - name: my-docker-registry-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: event-service
+  name: event-service
+spec:
+  ports:
+  - port: 8082
+    protocol: TCP
+    targetPort: 8082
+  selector:
+    app: event-service	  
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: angular-app
+  name: angular-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: angular-app
+  template:
+    metadata:
+      labels:
+        app: angular-app
+    spec:
+      containers:
+      - image: prakohad/ang-service:v2
+        name: angular-app
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: angular-app
+  name: angular-app
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 4200
+    name: angular-port
+    nodePort: 31000
+  selector:
+    app: angular-app
+  type: NodePort    

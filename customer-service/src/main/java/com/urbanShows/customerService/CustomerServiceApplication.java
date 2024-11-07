@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import jakarta.annotation.PostConstruct;
@@ -15,6 +16,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CustomerServiceApplication {
 
+	private final Environment environment;
+
+	CustomerServiceApplication(Environment environment) {
+		this.environment = environment;
+	}
+
 	@Value("${server.port}")
 	private String port;
 
@@ -23,12 +30,21 @@ public class CustomerServiceApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(CustomerServiceApplication.class, args);
-		log.info("Customer server is started...");
 	}
 
 	@PostConstruct
 	public void postConstruct() {
-		log.info("Swagger url: http://localhost:" + port + swaggerPath);
+		log.info("Customer Service is started on port: {}, swagger URL: {}" + port + swaggerPath);
+		final String[] activeProfiles = environment.getActiveProfiles();
+		log.info("API Gateway is started...");
+		if (activeProfiles.length == 0) {
+			log.info("No active profile is set.");
+		} else {
+			log.info("Active profiles: ");
+			for (String profile : activeProfiles) {
+				log.info(profile);
+			}
+		}
 	}
 
 }

@@ -2,6 +2,7 @@ package com.urbanShows.customerService.controller;
 
 import java.util.List;
 
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -46,6 +47,13 @@ public class AuthController {
 	
 	private MessageProducer messageProducer;
 	
+	private final Environment environment;
+	
+	@GetMapping("active-profile")
+	public ResponseEntity<String[]> activeProfile() {
+		String[] activeProfiles = environment.getActiveProfiles();
+		return ResponseEntity.ok(activeProfiles);
+	}
 	
 	@GetMapping("event-name")
 	public ResponseEntity<String> getEventName(){
