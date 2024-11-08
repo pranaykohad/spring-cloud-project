@@ -19,3 +19,5 @@
 /customer-service/tmp/*.log
 /event-service/logs/*.log
 /event-service/tmp/*.log
+/infra/Local-docker/docker/tempo/blocks
+/infra/Local-docker/docker/tempo/tempo-data
