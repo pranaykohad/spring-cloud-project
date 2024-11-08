@@ -243,7 +243,5 @@ spec:
     protocol: TCP
     targetPort: 4200
     name: angular-port
-    nodePort: 31000
   selector:
-    app: angular-app
-  type: NodePort    
+    app: angular-app   

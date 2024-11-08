@@ -1,2 +1,2 @@
 @echo off
-start cmd /k "cd ../../api-gateway && mvnw spring-boot:build-image"
+start cmd /k "cd ../../api-gateway && mvn clean install && mvnw spring-boot:build-image"
