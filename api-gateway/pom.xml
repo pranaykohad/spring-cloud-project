@@ -59,6 +59,38 @@
 	      <groupId>org.springframework.cloud</groupId>
 	      <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>
 	    </dependency>
+	    
+	    <!-- Grafana stack 1 - To collect metrics -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		
+		<!-- Grafana stack 2 - To aggregate logs -->
+		<dependency>
+		    <groupId>com.github.loki4j</groupId>
+		    <artifactId>loki-logback-appender</artifactId>
+		    <version>1.5.2</version>
+		</dependency>
+		
+		<!-- Grafana stack 3 - To collect app info -->
+		<dependency>
+	      <groupId>io.micrometer</groupId>
+	      <artifactId>micrometer-registry-prometheus</artifactId>
+	      <scope>runtime</scope>
+	    </dependency>
+	    
+	    <!-- Grafana stack 4 - To add trace id in logs -->
+	     <dependency>
+	      <groupId>io.micrometer</groupId>
+	      <artifactId>micrometer-tracing-bridge-brave</artifactId>
+	    </dependency>
+	    
+	    <!-- Grafana stack 5 - To send trace id to loki -->
+	     <dependency>
+	      <groupId>io.zipkin.reporter2</groupId>
+	      <artifactId>zipkin-reporter-brave</artifactId>
+	    </dependency>
 
 		
 	</dependencies>
