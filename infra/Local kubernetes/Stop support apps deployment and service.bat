@@ -1,2 +1,2 @@
 @echo off
-start cmd /k "kubectl delete deploy grafana loki tempo prometheus kafka && kubectl delete svc grafana loki tempo prometheus kafka"
+start cmd /k "kubectl delete deploy kafka grafana loki tempo prometheus && kubectl delete svc kafka grafana loki tempo prometheus"

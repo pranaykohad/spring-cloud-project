@@ -1,6 +1,7 @@
 package com.urbanShows.customerService.config;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestClient;
@@ -18,6 +19,9 @@ public class InternalAPIClient {
 
 	private final ObservationRegistry observationRegistry;
 
+	@Value("${event.service.url}")
+	private String eventServiceUrl;
+
 	@Bean
 	ModelMapper modelMapper() {
 		return new ModelMapper();
@@ -25,11 +29,8 @@ public class InternalAPIClient {
 
 	@Bean
 	EventServiceClient eventServiceClient() {
-		RestClient restClient = RestClient
-								.builder()
-								.baseUrl("http://localhost:8082/")
-								.observationRegistry(observationRegistry)
-								.build();
+		RestClient restClient = RestClient.builder().baseUrl(eventServiceUrl)
+				.observationRegistry(observationRegistry).build();
 		RestClientAdapter restClientAdapter = RestClientAdapter.create(restClient);
 		HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(restClientAdapter).build();
 		return httpServiceProxyFactory.createClient(EventServiceClient.class);

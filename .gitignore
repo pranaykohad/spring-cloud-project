@@ -21,3 +21,5 @@
 /event-service/tmp/*.log
 /infra/Local-docker/docker/tempo/blocks
 /infra/Local-docker/docker/tempo/tempo-data
+/customer-service/.metadata
+/customer-service/.sonarlint/storage
