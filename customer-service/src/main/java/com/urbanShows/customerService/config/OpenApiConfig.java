@@ -9,18 +9,18 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 
-
-@OpenAPIDefinition(
-        info = @Info(title = "Customer Service", version = "v1"),
-        security = @SecurityRequirement(name = "bearerAuth")
-)
-@SecurityScheme(
-        name = "bearerAuth",
-        type = SecuritySchemeType.HTTP,
-        scheme = "bearer",
-        bearerFormat = "JWT"
-)
-@Configuration
-public class OpenApiConfig {
-
-}
+//
+//@OpenAPIDefinition(
+//        info = @Info(title = "Customer Service", version = "v1"),
+//        security = @SecurityRequirement(name = "bearerAuth")
+//)
+//@SecurityScheme(
+//        name = "bearerAuth",
+//        type = SecuritySchemeType.HTTP,
+//        scheme = "bearer",
+//        bearerFormat = "JWT"
+//)
+//@Configuration
+//public class OpenApiConfig {
+//
+//}

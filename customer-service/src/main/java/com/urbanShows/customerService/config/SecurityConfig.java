@@ -29,19 +29,12 @@ public class SecurityConfig {
 
 	private JwtAuthFilter jwtAuthFilter;
 
-//	private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable()).authorizeRequests().requestMatchers(
-				"/actuator/**",
-				"api/customer/auth/**", 
-				"api/customer/kafka/**",
-				"api/products/welcome",
-				"customer/swagger-ui/**", "customer/api-docs/**"
-				).permitAll().anyRequest().authenticated()
-				.and()
-//				.exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+		http.csrf(csrf -> csrf.disable()).authorizeRequests()
+				.requestMatchers("/actuator/**", "api/customer/auth/**", "api/customer/kafka/**",
+						"api/products/welcome", "customer/swagger-ui/**", "customer/api-docs/**", "api/customer/**")
+				.permitAll().anyRequest().authenticated().and()
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
@@ -69,10 +62,5 @@ public class SecurityConfig {
 	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 	}
-
-//	@Bean
-//    ErrorDecoder errorDecoder() {
-//        return new CustomErrorDecoder();
-//    }
 
 }
