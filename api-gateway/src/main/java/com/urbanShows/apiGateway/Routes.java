@@ -25,6 +25,9 @@ public class Routes {
 
 	@Value("${customer.service.url}")
 	private String customerServiceUrl;
+	
+	@Value("${notification.service.url}")
+	private String notificationServiceUrl;
 
 	@Bean
 	RouterFunction<ServerResponse> customerServiceRoute() {
@@ -40,6 +43,15 @@ public class Routes {
 		return GatewayRouterFunctions.route("EVENT-SERVICE")
 				.route(RequestPredicates.path("api/event/**"), HandlerFunctions.http(eventServiceUrl))
 				.filter(CircuitBreakerFilterFunctions.circuitBreaker("EVENT-SERVICE-CIRCUIT-BREAKER",
+						URI.create(FORWARD_FALLBACK_ROUTE)))
+				.build();
+	}
+	
+	@Bean
+	RouterFunction<ServerResponse> notificationServiceRoute() {
+		return GatewayRouterFunctions.route("NOTIFICATION-SERVICE")
+				.route(RequestPredicates.path("api/notification/**"), HandlerFunctions.http(notificationServiceUrl))
+				.filter(CircuitBreakerFilterFunctions.circuitBreaker("NOTIFICATION-SERVICE-CIRCUIT-BREAKER",
 						URI.create(FORWARD_FALLBACK_ROUTE)))
 				.build();
 	}
@@ -60,6 +72,16 @@ public class Routes {
 				.route(RequestPredicates.path("event/api-docs/**"),
 						HandlerFunctions.http(eventServiceUrl + "/event/api-docs"))
 				.filter(CircuitBreakerFilterFunctions.circuitBreaker("EVENT-SERVICE-API-DOCS-CIRCUIT-BREAKER",
+						URI.create(FORWARD_FALLBACK_ROUTE)))
+				.build();
+	}
+	
+	@Bean
+	RouterFunction<ServerResponse> notificationServiceApiDocsRoute() {
+		return GatewayRouterFunctions.route("NOTIFICATION-SERVICE-API-DOCS")
+				.route(RequestPredicates.path("notification/api-docs/**"),
+						HandlerFunctions.http(notificationServiceUrl + "/notification/api-docs"))
+				.filter(CircuitBreakerFilterFunctions.circuitBreaker("NOTIFICATION-SERVICE-API-DOCS-CIRCUIT-BREAKER",
 						URI.create(FORWARD_FALLBACK_ROUTE)))
 				.build();
 	}
