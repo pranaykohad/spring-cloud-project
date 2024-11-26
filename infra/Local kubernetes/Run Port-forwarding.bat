@@ -11,4 +11,6 @@ start cmd /k "kubectl port-forward service/user-service 8081:8081"
 timeout /t 1 >nul
 start cmd /k "kubectl port-forward service/event-service 8082:8082"
 timeout /t 1 >nul
+start cmd /k "kubectl port-forward service/notification-service 8084:8084"
+timeout /t 1 >nul
 start cmd /k "kubectl port-forward service/angular-app 4200:80"

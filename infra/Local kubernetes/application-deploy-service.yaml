@@ -5,7 +5,7 @@ metadata:
     app: api-gateway
   name: api-gateway
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: api-gateway
@@ -45,7 +45,7 @@ spec:
           valueFrom:
             configMapKeyRef:
               key:  SPRING_PROFILES_ACTIVE
-              name: common-config               
+              name: common-config                  
       imagePullSecrets:
       - name: my-docker-registry-secret              
 ---
@@ -117,7 +117,17 @@ spec:
           valueFrom:
             configMapKeyRef:
               key:  SPRING_PROFILES_ACTIVE
-              name: common-config                
+              name: common-config    
+        - name: SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS
+          valueFrom:
+            configMapKeyRef:
+              key:  SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS
+              name: common-config  
+        - name: SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL
+              name: common-config               
       imagePullSecrets:
       - name: my-docker-registry-secret              
 ---
@@ -189,7 +199,17 @@ spec:
           valueFrom:
             configMapKeyRef:
               key:  SPRING_PROFILES_ACTIVE
-              name: common-config                
+              name: common-config  
+        - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS
+          valueFrom:
+            configMapKeyRef:
+              key:  SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS
+              name: common-config  
+        - name: SPRING_KAFKA_CONSUMER_PROPERTIES_SCHEMA_REGISTRY_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  SPRING_KAFKA_CONSUMER_PROPERTIES_SCHEMA_REGISTRY_URL
+              name: common-config              
       imagePullSecrets:
       - name: my-docker-registry-secret
 ---
@@ -206,7 +226,89 @@ spec:
     protocol: TCP
     targetPort: 8082
   selector:
-    app: event-service	  
+    app: event-service	
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: notification-service
+  name: notification-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification-service
+  template:
+    metadata:
+      labels:
+        app: notification-service
+    spec:
+      containers:
+      - image: prakohad/notification-service:0.0.1-SNAPSHOT
+        name: notification-service
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8084
+        env:
+        - name: LOKI_URL
+          valueFrom:
+            configMapKeyRef:
+              key: LOKI_URL
+              name: common-config
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              name: common-config 
+        env:
+        - name: LOKI_URL
+          valueFrom:
+            configMapKeyRef:
+              key: LOKI_URL
+              name: common-config
+        - name: MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
+              name: common-config  
+        - name: CUSTOMER_SERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  CUSTOMER_SERVICE_URL
+              name: common-config  
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              key:  SPRING_PROFILES_ACTIVE
+              name: common-config  
+        - name: SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS
+          valueFrom:
+            configMapKeyRef:
+              key:  SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS
+              name: common-config  
+        - name: SPRING_KAFKA_CONSUMER_PROPERTIES_SCHEMA_REGISTRY_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  SPRING_KAFKA_CONSUMER_PROPERTIES_SCHEMA_REGISTRY_URL
+              name: common-config              
+      imagePullSecrets:
+      - name: my-docker-registry-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: notification-service
+  name: notification-service
+spec:
+  ports:
+  - port: 8084
+    protocol: TCP
+    targetPort: 8084
+  selector:
+    app: notification-service    
 ---
 apiVersion: apps/v1
 kind: Deployment
