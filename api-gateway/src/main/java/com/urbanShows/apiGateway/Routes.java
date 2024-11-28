@@ -23,17 +23,17 @@ public class Routes {
 	@Value("${event.service.url}")
 	private String eventServiceUrl;
 
-	@Value("${customer.service.url}")
-	private String customerServiceUrl;
+	@Value("${user.service.url}")
+	private String userServiceUrl;
 	
 	@Value("${notification.service.url}")
 	private String notificationServiceUrl;
 
 	@Bean
-	RouterFunction<ServerResponse> customerServiceRoute() {
-		return GatewayRouterFunctions.route("CUSTOMER-SERVICE")
-				.route(RequestPredicates.path("api/customer/**"), HandlerFunctions.http(customerServiceUrl))
-				.filter(CircuitBreakerFilterFunctions.circuitBreaker("CUSTOMER-SERVICE-CIRCUIT-BREAKER",
+	RouterFunction<ServerResponse> userServiceRoute() {
+		return GatewayRouterFunctions.route("USER-SERVICE")
+				.route(RequestPredicates.path("api/user/**"), HandlerFunctions.http(userServiceUrl))
+				.filter(CircuitBreakerFilterFunctions.circuitBreaker("USER-SERVICE-CIRCUIT-BREAKER",
 						URI.create(FORWARD_FALLBACK_ROUTE)))
 				.build();
 	}
@@ -57,11 +57,11 @@ public class Routes {
 	}
 
 	@Bean
-	RouterFunction<ServerResponse> customerServiceApiDocsRoute() {
-		return GatewayRouterFunctions.route("CUSTOMER-SERVICE-API-DOCS")
-				.route(RequestPredicates.path("customer/api-docs/**"),
-						HandlerFunctions.http(customerServiceUrl + "/customer/api-docs"))
-				.filter(CircuitBreakerFilterFunctions.circuitBreaker("CUSTOMER-SERVICE-API-DOCS-CIRCUIT-BREAKER",
+	RouterFunction<ServerResponse> userServiceApiDocsRoute() {
+		return GatewayRouterFunctions.route("USER-SERVICE-API-DOCS")
+				.route(RequestPredicates.path("user/api-docs/**"),
+						HandlerFunctions.http(userServiceUrl + "/user/api-docs"))
+				.filter(CircuitBreakerFilterFunctions.circuitBreaker("USER-SERVICE-API-DOCS-CIRCUIT-BREAKER",
 						URI.create(FORWARD_FALLBACK_ROUTE)))
 				.build();
 	}

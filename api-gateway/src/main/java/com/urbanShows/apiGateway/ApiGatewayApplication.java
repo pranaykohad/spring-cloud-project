@@ -17,8 +17,8 @@ public class ApiGatewayApplication {
 	@Value("${server.port}")
 	private String port;
 
-	@Value("${customer.service.url}")
-	private String customerServiceUrl;
+	@Value("${user.service.url}")
+	private String userServiceUrl;
 
 	@Value("${event.service.url}")
 	private String eventServiceUrl;
@@ -37,7 +37,7 @@ public class ApiGatewayApplication {
 	@PostConstruct
 	void postConstruct() {
 		log.info("API Gateway is started on port: {}", port);
-		log.info("Customer Service URL: {}", customerServiceUrl);
+		log.info("User Service URL: {}", userServiceUrl);
 		log.info("Event Service URL: {}", eventServiceUrl);
 		log.info("Notification Service URL: {}", notificationServiceUrl);
 		String[] activeProfiles = environment.getActiveProfiles();
