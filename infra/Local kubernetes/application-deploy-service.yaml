@@ -5,7 +5,7 @@ metadata:
     app: api-gateway
   name: api-gateway
 spec:
-  replicas: 4
+  replicas: 1
   selector:
     matchLabels:
       app: api-gateway
@@ -31,16 +31,21 @@ spec:
             configMapKeyRef:
               key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
               name: common-config  
-        - name: CUSTOMER_SERVICE_URL
+        - name: USER_SERVICE_URL
           valueFrom:
             configMapKeyRef:
-              key:  CUSTOMER_SERVICE_URL
+              key:  USER_SERVICE_URL
               name: common-config    
         - name: EVENT_SERVICE_URL
           valueFrom:
             configMapKeyRef:
               key:  EVENT_SERVICE_URL
               name: common-config     
+        - name: NOTIFICATION_SERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  NOTIFICATION_SERVICE_URL
+              name: common-config							
         - name: SPRING_PROFILES_ACTIVE
           valueFrom:
             configMapKeyRef:
@@ -81,7 +86,7 @@ spec:
         app: user-service
     spec:
       containers:
-      - image: prakohad/user-service:0.0.1-SNAPSHOT
+      - image: prakohad/user-service:0.0.2-SNAPSHOT
         name: user-service
         imagePullPolicy: Always
         ports:
@@ -96,8 +101,7 @@ spec:
           valueFrom:
             configMapKeyRef:
               key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
-              name: common-config  
-        env:
+              name: common-config
         - name: LOKI_URL
           valueFrom:
             configMapKeyRef:
@@ -112,7 +116,12 @@ spec:
           valueFrom:
             configMapKeyRef:
               key:  EVENT_SERVICE_URL
-              name: common-config    
+              name: common-config
+        - name: NOTIFICATION_SERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  NOTIFICATION_SERVICE_URL
+              name: common-config   							    
         - name: SPRING_PROFILES_ACTIVE
           valueFrom:
             configMapKeyRef:
@@ -179,7 +188,6 @@ spec:
             configMapKeyRef:
               key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
               name: common-config 
-        env:
         - name: LOKI_URL
           valueFrom:
             configMapKeyRef:
@@ -190,11 +198,16 @@ spec:
             configMapKeyRef:
               key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
               name: common-config  
-        - name: CUSTOMER_SERVICE_URL
+        - name: USER_SERVICE_URL
           valueFrom:
             configMapKeyRef:
-              key:  CUSTOMER_SERVICE_URL
-              name: common-config  
+              key:  USER_SERVICE_URL
+              name: common-config
+        - name: NOTIFICATION_SERVICE_URL
+          valueFrom:
+            configMapKeyRef:
+              key:  NOTIFICATION_SERVICE_URL
+              name: common-config							  
         - name: SPRING_PROFILES_ACTIVE
           valueFrom:
             configMapKeyRef:
@@ -226,7 +239,7 @@ spec:
     protocol: TCP
     targetPort: 8082
   selector:
-    app: event-service	
+    app: event-service
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -261,7 +274,6 @@ spec:
             configMapKeyRef:
               key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
               name: common-config 
-        env:
         - name: LOKI_URL
           valueFrom:
             configMapKeyRef:
@@ -272,11 +284,16 @@ spec:
             configMapKeyRef:
               key:  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT
               name: common-config  
-        - name: CUSTOMER_SERVICE_URL
+        - name: USER_SERVICE_URL
           valueFrom:
             configMapKeyRef:
-              key:  CUSTOMER_SERVICE_URL
+              key:  USER_SERVICE_URL
               name: common-config  
+        - name: NOTIFICATION_SERVICE_URL 
+          valueFrom:
+            configMapKeyRef:
+              key:  NOTIFICATION_SERVICE_URL
+              name: common-config							
         - name: SPRING_PROFILES_ACTIVE
           valueFrom:
             configMapKeyRef:
@@ -308,7 +325,7 @@ spec:
     protocol: TCP
     targetPort: 8084
   selector:
-    app: notification-service    
+    app: notification-service 	  
 ---
 apiVersion: apps/v1
 kind: Deployment
