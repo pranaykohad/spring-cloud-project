@@ -28,8 +28,8 @@ public class EventServiceApplication {
 	@Value("${springdoc.swagger-ui.path}")
 	private String swaggerPath;
 	
-	@Value("${customer.service.url}")
-	private String customerServiceUrl;
+	@Value("${user.service.url}")
+	private String userServiceUrl;
 	
 	@Value("${spring.kafka.consumer.bootstrap-servers}")
 	private String kafkaConsumerServer;
@@ -41,7 +41,7 @@ public class EventServiceApplication {
 	@PostConstruct
 	public void postConstruct() {
 		log.info("Event Service is started on port: {}, swagger URL: {}" , port , swaggerPath);
-		log.info("Customer Service URL: {}, Kafka Consumer URL: {}" , customerServiceUrl , kafkaConsumerServer);
+		log.info("User Service URL: {}, Kafka Consumer URL: {}" , userServiceUrl , kafkaConsumerServer);
 		final String[] activeProfiles = environment.getActiveProfiles();
 		if (activeProfiles.length == 0) {
 			log.info("No active profile is set.");

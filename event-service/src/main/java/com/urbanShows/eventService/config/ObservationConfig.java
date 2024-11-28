@@ -14,7 +14,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 @RequiredArgsConstructor
 public class ObservationConfig {
 
-	private final ConcurrentKafkaListenerContainerFactory concurrentKafkaListenerContainerFactory;
+	private final ConcurrentKafkaListenerContainerFactory<?, ?> concurrentKafkaListenerContainerFactory;
 
 	@PostConstruct
 	void setObservabilityForKafkaTemplate() {
