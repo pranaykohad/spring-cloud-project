@@ -1,2 +1,2 @@
 @echo off
-start cmd /k "cd ../../angular-image && docker build -t ang-service:v2 . && docker tag ang-service:v2 prakohad/ang-service:v2 && docker push prakohad/ang-service:v2"
+start cmd /k "cd ../../admin-dashboard && docker build -t admin-dashboard:v1 . && docker tag admin-dashboard:v1 prakohad/admin-dashboard:v1 && docker push prakohad/admin-dashboard:v1"
