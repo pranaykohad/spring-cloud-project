@@ -19,11 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.urbanShows.userService.config.MessageProducer;
 import com.urbanShows.userService.dto.AuthDto;
 import com.urbanShows.userService.dto.SystemUserInfoDto;
 import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
 import com.urbanShows.userService.internalAPIClient.EventServiceClient;
+import com.urbanShows.userService.kafka.KafkaTopicEnums;
+import com.urbanShows.userService.kafka.MessageProducer;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.SystemUserService;
 
@@ -51,7 +52,7 @@ public class SystemUserAuthController {
 	@GetMapping("event-name")
 	public ResponseEntity<String> getEventName(){
 		log.info("NAME TRACE: {}", "customer service called");
-		messageProducer.sendMessage("Hello, Pranay Kohad here, anybody home?");
+		messageProducer.sendMessage(KafkaTopicEnums.USER_LOGGED_IN.name(), "Hello, Pranay Kohad here, anybody home?");
 		return ResponseEntity.ok(eventServiceClient.welcome().getBody());
 	}
 	

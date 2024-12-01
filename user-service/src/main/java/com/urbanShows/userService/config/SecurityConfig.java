@@ -32,8 +32,8 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable()).authorizeRequests()
-				.requestMatchers("/actuator/**", "api/system-user/auth/**", "api/user/kafka/**",
-						"user/swagger-ui/**", "user/api-docs/**", "api/app-user/auth/**")
+				.requestMatchers("/actuator/**", "api/user/system/auth/**", "api/user/kafka/**",
+						"user/swagger-ui/**", "user/api-docs/**", "api/user/app/auth/**")
 				.permitAll().anyRequest().authenticated().and()
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

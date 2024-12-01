@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.urbanShows.userService.config.MessageProducer;
+import com.urbanShows.userService.kafka.KafkaTopicEnums;
+import com.urbanShows.userService.kafka.MessageProducer;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class KafkaTestController {
 
 	@GetMapping("send")
 	public ResponseEntity<Boolean> sendMsg(@RequestParam String msg) {
-		kafkaPub.sendMessage(msg);
+		kafkaPub.sendMessage(KafkaTopicEnums.USER_LOGGED_IN.name(), msg);
 		return ResponseEntity.ok(true);
 	}
 
