@@ -21,22 +21,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanShows.userService.config.MessageProducer;
 import com.urbanShows.userService.dto.AuthDto;
-import com.urbanShows.userService.dto.UserInfoDto;
+import com.urbanShows.userService.dto.SystemUserInfoDto;
 import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
 import com.urbanShows.userService.internalAPIClient.EventServiceClient;
 import com.urbanShows.userService.service.JwtService;
-import com.urbanShows.userService.service.UserService;
+import com.urbanShows.userService.service.SystemUserService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("api/user/auth")
+@RequestMapping("api/system-user/auth")
 @AllArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")
-public class AuthController {
+public class SystemUserAuthController {
 
 	private JwtService jwtService;
 
@@ -44,17 +44,9 @@ public class AuthController {
 	
 	private EventServiceClient eventServiceClient;
 	
-	private UserService userService;
+	private SystemUserService userService;
 	
 	private MessageProducer messageProducer;
-	
-	private final Environment environment;
-	
-	@GetMapping("active-profile")
-	public ResponseEntity<String[]> activeProfile() {
-		String[] activeProfiles = environment.getActiveProfiles();
-		return ResponseEntity.ok(activeProfiles);
-	}
 	
 	@GetMapping("event-name")
 	public ResponseEntity<String> getEventName(){
@@ -63,11 +55,8 @@ public class AuthController {
 		return ResponseEntity.ok(eventServiceClient.welcome().getBody());
 	}
 	
-//	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
-//	@PreAuthorize("hasAuthority('ROLE_USER')")
-
 	@PostMapping("login")
-	public ResponseEntity<String> login(@RequestBody AuthDto authRequest) {
+	public ResponseEntity<String> login(@Valid @RequestBody AuthDto authRequest) {
 		log.info("login API called..........");
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
@@ -87,21 +76,19 @@ public class AuthController {
 	
 
 	@PostMapping("signup")
-	public ResponseEntity<Boolean> signup(@Valid @RequestBody UserInfoDto userInfo) {
-		return ResponseEntity.ok(userService.addUser(userInfo));
+	public ResponseEntity<Boolean> signup(@Valid @RequestBody SystemUserInfoDto userInfo) {
+		return ResponseEntity.ok(userService.addSystemUser(userInfo));
 	}
 
 	@GetMapping("get-by-name")
-	public ResponseEntity<UserInfoDto> getUserByName(@RequestParam String name) {
-		UserInfoDto userByName = userService.getUserByName(name);
-		log.info("NAME: {}", userByName);
-		return ResponseEntity.ok(userByName);
+	public ResponseEntity<SystemUserInfoDto> getUserByName(@RequestParam String name) {
+		return ResponseEntity.ok(userService.getSystemUserByName(name));
 	}
 
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	@GetMapping("list")
-	public ResponseEntity<List<UserInfoDto>> getUsersList() {
-		return ResponseEntity.ok(userService.getUsersList());
+	public ResponseEntity<List<SystemUserInfoDto>> getUsersList() {
+		return ResponseEntity.ok(userService.getSystemUsersList());
 	}
 
 	@DeleteMapping("remove")
@@ -111,7 +98,7 @@ public class AuthController {
 	}
 
 	@PatchMapping("udpate")
-	public ResponseEntity<UserInfoDto> udpateUser(@RequestBody UserInfoDto userInfo) {
+	public ResponseEntity<SystemUserInfoDto> udpateUser(@Valid @RequestBody SystemUserInfoDto userInfo) {
 		return ResponseEntity.ok(userService.udpate(userInfo));
 	}
 

@@ -1,5 +1,8 @@
 package com.urbanShows.userService.entity;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -7,22 +10,26 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserInfo {
+public class AppUserInfo {
 
 	@Id
-	private String name;
+	private String phone;
+	
+	private String internalPassword;
+	
+	private String displayName;
+
+	private String otp;
 
 	private String email;
 
-	private String password;
-
 	private List<Role> roles;
+	
+	private LocalDateTime otpDateTime; 
 
 }

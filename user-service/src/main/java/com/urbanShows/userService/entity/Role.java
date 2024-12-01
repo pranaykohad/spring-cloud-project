@@ -2,7 +2,8 @@ package com.urbanShows.userService.entity;
 
 
 public enum Role {
-	USER,
+	APP_USER,
+	SYSTEM_USER,
 	ADMIN,
 	SUPPORT
 }

@@ -32,6 +32,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
 		return new ResponseEntity<>("Acsess denied!. You do not have access to this rescouce", HttpStatus.FORBIDDEN);
 	}
+	
+	@ExceptionHandler(UnauthorizedException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ResponseEntity<String> handleAuthorizationDeniedException(UnauthorizedException ex) {
+		return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.UNAUTHORIZED);
+	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
