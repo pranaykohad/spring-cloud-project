@@ -1,4 +1,4 @@
-package com.urbanShows.userService.config;
+package com.urbanShows.userService.kafka;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,8 +16,8 @@ public class MessageProducer {
 
 	private KafkaTemplate<String, String> kafkaTemplate;
 
-	public void sendMessage(String msg) {
-		CompletableFuture<SendResult<String, String>> send = kafkaTemplate.send("USER_LOGGED_IN", msg);
+	public void sendMessage(String kafkaTopic, String message) {
+		CompletableFuture<SendResult<String, String>> send = kafkaTemplate.send(kafkaTopic, message);
 		send.whenComplete((res, exp) -> log.info("Kafka message send successfully"));
 	}
 
