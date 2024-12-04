@@ -1,6 +1,5 @@
 package com.urbanShows.userService.exceptionHandler;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,13 +11,15 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import io.jsonwebtoken.ExpiredJwtException;
+
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UserNotFoundException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
 	public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
-		return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
 	}
 
 	@ExceptionHandler(UserAlreadyExistsException.class)
@@ -30,12 +31,18 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(AuthorizationDeniedException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	public ResponseEntity<String> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
-		return new ResponseEntity<>("Acsess denied!. You do not have access to this rescouce", HttpStatus.FORBIDDEN);
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
 	}
-	
-	@ExceptionHandler(UnauthorizedException.class)
+
+	@ExceptionHandler(FileSizeExceedsException.class)
+	@ResponseStatus(HttpStatus.PRECONDITION_FAILED)
+	public ResponseEntity<String> handleFileSizeExceedsException(FileSizeExceedsException ex) {
+		return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.PRECONDITION_FAILED);
+	}
+
+	@ExceptionHandler(ExpiredJwtException.class)
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	public ResponseEntity<String> handleAuthorizationDeniedException(UnauthorizedException ex) {
+	public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex) {
 		return new ResponseEntity<>(ex.getLocalizedMessage(), HttpStatus.UNAUTHORIZED);
 	}
 

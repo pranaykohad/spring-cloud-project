@@ -18,8 +18,11 @@ public class JwtToken {
 
 	@Id
 	private String token;
+	
 	private String username;
+	
 	private List<Role> roles;
+	
 	private LocalDateTime expiration;
 
 }

@@ -13,50 +13,33 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanShows.userService.dto.AppUserInfoDto;
-import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
+import com.urbanShows.userService.dto.AppUserSigninReqDto;
 import com.urbanShows.userService.service.AppUserService;
 import com.urbanShows.userService.service.JwtService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("api/user/app/auth")
 @AllArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "*")
 public class AppUserAuthController {
 
-	private AppUserService appUserService;
+	private final AppUserService appUserService;
+	private final JwtService jwtService;
 
-	private JwtService jwtService;
-
-	// to save display name, phone, role and otp in db
-	@PostMapping("signup")
-	public ResponseEntity<Boolean> signup(@Valid @RequestBody AppUserInfoDto userInfo) {
-		return ResponseEntity.ok(appUserService.addAppUser(userInfo));
+	// to save display name, phone, role and auth token in db
+	@PostMapping("signin")
+	public ResponseEntity<Boolean> register(@Valid @RequestBody AppUserSigninReqDto appUser) {
+		return ResponseEntity.ok(appUserService.registerAppUser(appUser));
 	}
 
-	// generate otp from phone
-	@PostMapping("generate-otp")
-	public ResponseEntity<String> generateOtp(@Valid String phone) {
-		AppUserInfoDto existingAppUser = appUserService.getAppUserByPhone(phone);
-		if (existingAppUser != null) {
-			return ResponseEntity.ok(appUserService.generateAndSaveOtp(existingAppUser));
-		} else {
-			throw new UserNotFoundException("invalid user request !");
-		}
-	}
-
-	// generate token from phone and otp
+	// login by phone and auth token
 	@PostMapping("login")
-	public ResponseEntity<String> login(@Valid @RequestBody AppUserInfoDto userInfo) {
-		if (appUserService.verifyOtp(userInfo)) {
-			return ResponseEntity.ok(jwtService.generateTokenForAppUser(userInfo.getPhone()));
-		} else {
-			throw new UserNotFoundException("invalid user request !");
-		}
+	public ResponseEntity<String> login(@Valid @RequestBody AppUserInfoDto appUserDto) {
+		appUserService.authenticateAppUser(appUserDto);
+		return ResponseEntity.ok(jwtService.generateTokenForAppUser(appUserDto.getPhone()));
 	}
 
 	@GetMapping("logout")
@@ -66,17 +49,17 @@ public class AppUserAuthController {
 	}
 
 	@DeleteMapping("remove")
-	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody AppUserInfoDto userInfo) {
-		if (appUserService.verifyOtp(userInfo)) {
-			appUserService.deleteUserByPhone(userInfo.getPhone());
-			return ResponseEntity.ok(true);
-		}
-		return ResponseEntity.ok(false);
+	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody AppUserInfoDto appUserDto) {
+		appUserService.authenticateAppUser(appUserDto);
+		appUserService.deleteAppUser(appUserDto);
+		return ResponseEntity.ok(true);
 	}
 
+	// TODO: cannot change roles,
 	@PatchMapping("udpate")
-	public ResponseEntity<AppUserInfoDto> udpateUser(@Valid @RequestBody AppUserInfoDto userInfo) {
-		return ResponseEntity.ok(appUserService.udpate(userInfo));
+	public ResponseEntity<AppUserInfoDto> udpateUser(@Valid @RequestBody AppUserInfoDto appUser) {
+		appUserService.authenticateAppUser(appUser);
+		return ResponseEntity.ok(appUserService.udpate(appUser));
 	}
 
 	@GetMapping("test")

@@ -17,12 +17,12 @@ import io.micrometer.observation.annotation.Observed;
 public interface AppUserInfoRepository extends JpaRepository<AppUserInfo, String> {
 
 	AppUserInfo findByPhone(String phone);
-	
-	AppUserInfo findByPhoneAndOtp(String phone, String otp);
 
 	void deleteByPhone(String phone);
 
-	@Query("SELECT a FROM AppUserInfo a WHERE a.otpDateTime < :otpDateTime")
-	List<AppUserInfo> findByOtpDateTime(@Param("otpDateTime") LocalDateTime otpDateTime);
+	AppUserInfo findByPhoneAndOtp(String phone, String otp);
+
+	@Query("SELECT a FROM AppUserInfo a WHERE a.otpTimeStamp < :otpTimeStamp")
+	List<AppUserInfo> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
 
 }

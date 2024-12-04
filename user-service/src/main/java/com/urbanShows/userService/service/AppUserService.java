@@ -8,105 +8,132 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.urbanShows.userService.dto.AppUserInfoDto;
-import com.urbanShows.userService.dto.SystemUserInfoDto;
+import com.urbanShows.userService.dto.AppUserSigninReqDto;
 import com.urbanShows.userService.entity.AppUserInfo;
 import com.urbanShows.userService.entity.Role;
-import com.urbanShows.userService.entity.SystemUserInfo;
-import com.urbanShows.userService.exceptionHandler.UnauthorizedException;
+import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
 import com.urbanShows.userService.exceptionHandler.UserAlreadyExistsException;
 import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
+import com.urbanShows.userService.kafka.KafkaTopicEnums;
+import com.urbanShows.userService.kafka.MessageProducer;
+import com.urbanShows.userService.kafka.OtpkafkaDto;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.repository.AppUserInfoRepository;
-import com.urbanShows.userService.util.Helper;
-import com.urbanShows.userService.util.OTPGenerator;
+import com.urbanShows.userService.util.AuthTokenAndPasswordUtil;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AppUserService {
 
-	private ModelMapper modelMapper;
-	private AppUserInfoRepository appUserInfoRepo;
+	private final ModelMapper modelMapper;
+	private final AppUserInfoRepository appUserInfoRepo;
+	private final MessageProducer messageProducer;
 
-	public Boolean addAppUser(AppUserInfoDto appUserIntoDto) {
-		if (appUserIntoDto.getRoles().contains(Role.APP_USER) && appUserIntoDto.getDisplayName() != null
-				&& !appUserIntoDto.getDisplayName().isEmpty()) {
-			AppUserInfo existingAppUser = appUserInfoRepo.findByPhone(appUserIntoDto.getPhone());
-			if (existingAppUser != null) {
-				throw new UserAlreadyExistsException("This Phone number is already registred");
-			}
-			GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-					AppUserInfo.class);
-			AppUserInfo finalAppUser = mapper.dtoToEntity(appUserIntoDto);
-			finalAppUser.setInternalPassword(OTPGenerator.generatorPassword());
-			String otp = OTPGenerator.generateOTP();
-			finalAppUser.setOtp(otp);
-			finalAppUser.setOtpDateTime(LocalDateTime.now());
-			appUserInfoRepo.save(finalAppUser);
-			// send otp on user's phone
-			return true;
-		} else {
-			throw new UnauthorizedException("Invalid input paramaters");
+	public Boolean registerAppUser(AppUserSigninReqDto appUserDto) {
+		if (!appUserDto.getRoles().contains(Role.APP_USER) || appUserDto.getDisplayName() == null
+				|| (appUserDto.getDisplayName() != null && appUserDto.getDisplayName().isEmpty())) {
+			throw new AccessDeniedException("You are not authorized to do this operation");
 		}
-	}
-
-	public String generateAndSaveOtp(AppUserInfoDto appUserDto) {
-		GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-				AppUserInfo.class);
-		AppUserInfo finalAppUser = mapper.dtoToEntity(appUserDto);
-		String otp = OTPGenerator.generateOTP();
-		finalAppUser.setOtp(otp);
-		finalAppUser.setOtpDateTime(LocalDateTime.now());
-		appUserInfoRepo.save(finalAppUser);
-		// send otp on user's phone
-		return otp;
-	}
-
-	public AppUserInfoDto getAppUserByName(String phone) {
-		AppUserInfo byName = appUserInfoRepo.findByPhone(phone);
-		GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-				AppUserInfo.class);
-		return mapper.entityToDto(byName);
-	}
-
-	public List<AppUserInfoDto> getBackendUsersList() {
-		GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-				AppUserInfo.class);
-		List<AppUserInfo> all = appUserInfoRepo.findAll();
-		return mapper.entityToDto(all);
-	}
-
-	public AppUserInfoDto udpate(AppUserInfoDto appUserInfoDto) {
-		AppUserInfo existingAppUser = appUserInfoRepo.findByPhone(appUserInfoDto.getPhone());
-		if (existingAppUser == null) {
-			throw new UserNotFoundException("This Phone does not exists in system");
+		final AppUserInfo existingAppUser = appUserInfoRepo.findByPhone(appUserDto.getPhone());
+		if (existingAppUser != null) {
+			throw new UserAlreadyExistsException("User already exists in the system");
 		}
-		GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-				AppUserInfo.class);
-		AppUserInfo save = appUserInfoRepo.save(mapper.dtoToEntity(appUserInfoDto));
-		return mapper.entityToDto(save);
-	}
-
-	public boolean verifyOtp(AppUserInfoDto userInfo) {
-		AppUserInfo existingAppUser = appUserInfoRepo.findByPhoneAndOtp(userInfo.getPhone(), userInfo.getOtp());
-		return existingAppUser != null;
-	}
-
-	public AppUserInfoDto getAppUserByPhone(String phone) {
-		AppUserInfo existingAppUser = appUserInfoRepo.findByPhone(phone);
-		if (existingAppUser == null) {
-			throw new UserNotFoundException("This Phone does not exists in system");
-		}
-		GenericMapper<AppUserInfo, AppUserInfoDto> mapper = new GenericMapper<>(modelMapper, AppUserInfo.class,
-				AppUserInfoDto.class);
-		return mapper.dtoToEntity(existingAppUser);
+		final GenericMapper<AppUserSigninReqDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper,
+				AppUserSigninReqDto.class, AppUserInfo.class);
+		final AppUserInfo appUser = mapper.dtoToEntity(appUserDto);
+		appUser.setInternalPassword(AuthTokenAndPasswordUtil.generatorPassword());
+		appUser.setOtp(AuthTokenAndPasswordUtil.generateAuthToken());
+		appUser.setOtpTimeStamp(LocalDateTime.now());
+		appUserInfoRepo.save(appUser);
+		final OtpkafkaDto otpkafkaDto = new OtpkafkaDto(appUser.getPhone(), appUser.getOtp());
+		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
+		log.info("App User {} with phone is register in the system ", appUserDto.getDisplayName(),
+				appUserDto.getPhone());
+		return true;
 	}
 
 	@Transactional
-	public void deleteUserByPhone(String phone) {
-		appUserInfoRepo.deleteByPhone(phone);
+	public void deleteAppUser(AppUserInfoDto appUser) {
+		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
+				AppUserInfo.class);
+		appUserInfoRepo.delete(mapper.dtoToEntity(appUser));
+	}
+
+	public AppUserInfoDto getAppUserByName(String phone) {
+		final AppUserInfo appUser = appUserInfoRepo.findByPhone(phone);
+		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
+				AppUserInfo.class);
+		return mapper.entityToDto(appUser);
+	}
+
+	public List<AppUserInfoDto> getBackendUsersList() {
+		final List<AppUserInfo> all = appUserInfoRepo.findAll();
+		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
+				AppUserInfo.class);
+		return mapper.entityToDto(all);
+	}
+
+	public void uploadProfilePic(AppUserInfoDto appUserDto, String profilePicUrl) {
+		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
+				AppUserInfo.class);
+		final AppUserInfo appUser = mapper.dtoToEntity(appUserDto);
+		appUser.setProfilePicUrl(profilePicUrl);
+		appUserInfoRepo.save(appUser);
+	}
+
+	public AppUserInfoDto isPhoneNumberExists(String phoneNumber) {
+		final AppUserInfo existingAppUser = isAppUserExists(phoneNumber);
+		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
+				AppUserInfo.class);
+		return mapper.entityToDto(existingAppUser);
+	}
+
+	public AppUserInfoDto udpate(AppUserInfoDto appUserDto) {
+		final AppUserInfo appUser = appUserInfoRepo.findByPhone(appUserDto.getPhone());
+		if (appUser == null) {
+			throw new UserNotFoundException("User doesnot exists in the system");
+		}
+		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
+				AppUserInfo.class);
+		final AppUserInfo save = appUserInfoRepo.save(mapper.dtoToEntity(appUserDto));
+		return mapper.entityToDto(save);
+	}
+
+	public AppUserInfoDto getAppUserByPhone(String phone) {
+		final AppUserInfo appUser = isAppUserExists(phone);
+		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
+				AppUserInfo.class);
+		return mapper.entityToDto(appUser);
+	}
+
+	public AppUserInfo isAppUserExists(String phoneNumber) {
+		final AppUserInfo existingAppUser = appUserInfoRepo.findByPhone(phoneNumber);
+		if (existingAppUser == null) {
+			throw new UserNotFoundException("User doesnot exists in the system");
+		}
+		return existingAppUser;
+	}
+
+	public AppUserInfoDto authenticateAppUser(AppUserInfoDto appUserDto) {
+		verifyAppUserRole(appUserDto);
+		final AppUserInfo appUser = appUserInfoRepo.findByPhoneAndOtp(appUserDto.getPhone(), appUserDto.getOtp());
+		if (appUser == null) {
+			throw new AccessDeniedException("You are not authorized to do this operation");
+		}
+		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
+				AppUserInfo.class);
+		return mapper.entityToDto(appUser);
+	}
+
+	private void verifyAppUserRole(AppUserInfoDto appUserDto) {
+		if (appUserDto.getRoles() == null || (appUserDto.getRoles() != null
+				&& (appUserDto.getRoles().isEmpty() || !appUserDto.getRoles().contains(Role.APP_USER)))) {
+			throw new AccessDeniedException("You are not authorized to do this operation");
+		}
 	}
 
 }

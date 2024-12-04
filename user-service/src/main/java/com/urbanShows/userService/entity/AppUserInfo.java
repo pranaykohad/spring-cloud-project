@@ -19,17 +19,19 @@ public class AppUserInfo {
 
 	@Id
 	private String phone;
-	
-	private String internalPassword;
-	
-	private String displayName;
 
-	private String otp;
+	private String internalPassword;
+
+	private String displayName;
 
 	private String email;
 
 	private List<Role> roles;
+
+	private String profilePicUrl;
 	
-	private LocalDateTime otpDateTime; 
+	private String otp;
+	
+	private LocalDateTime otpTimeStamp;
 
 }

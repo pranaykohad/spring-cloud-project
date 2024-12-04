@@ -1,5 +1,6 @@
 package com.urbanShows.userService.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -28,5 +29,11 @@ public class SystemUserInfo {
 	private List<Role> roles;
 
 	private String phone;
-
+	
+	private String profilePicUrl;
+	
+	private String otp;
+	
+	private LocalDateTime otpTimeStamp;
+	
 }

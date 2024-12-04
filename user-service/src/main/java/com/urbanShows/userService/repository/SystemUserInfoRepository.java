@@ -1,12 +1,16 @@
 package com.urbanShows.userService.repository;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.urbanShows.userService.entity.SystemUserInfo;
 
 import io.micrometer.observation.annotation.Observed;
-
 
 @Repository
 @Observed
@@ -15,5 +19,10 @@ public interface SystemUserInfoRepository extends JpaRepository<SystemUserInfo, 
 	SystemUserInfo findByUserName(String userName);
 
 	void deleteByUserName(String userName);
+
+	SystemUserInfo findByUserNameAndOtp(String userName, String otp);
+
+	@Query("SELECT a FROM SystemUserInfo a WHERE a.otpTimeStamp < :otpTimeStamp")
+	List<SystemUserInfo> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
 
 }

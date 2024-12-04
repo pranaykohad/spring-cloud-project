@@ -1,5 +1,6 @@
 package com.urbanShows.userService.dto;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.urbanShows.userService.entity.Role;
@@ -30,7 +31,13 @@ public class SystemUserInfoDto {
 
 	private List<Role> roles;
 
-	@Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid mobile number")
+	@Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalidphone number")
 	private String phone;
-
+	
+	private String profilePicUrl;
+	
+	private String otp;
+	
+	private LocalDateTime otpTimeStamp;
+	
 }

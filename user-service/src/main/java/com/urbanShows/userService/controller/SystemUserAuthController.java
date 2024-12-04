@@ -1,9 +1,8 @@
 package com.urbanShows.userService.controller;
 
-
 import java.util.List;
 
-import org.springframework.core.env.Environment;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanShows.userService.dto.AuthDto;
 import com.urbanShows.userService.dto.SystemUserInfoDto;
+import com.urbanShows.userService.entity.SystemUserInfo;
 import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
 import com.urbanShows.userService.internalAPIClient.EventServiceClient;
 import com.urbanShows.userService.kafka.KafkaTopicEnums;
 import com.urbanShows.userService.kafka.MessageProducer;
+import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.SystemUserService;
 
@@ -33,74 +34,72 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("api/system-user/auth")
+@RequestMapping("api/user/system/auth")
 @AllArgsConstructor
 @Slf4j
 @CrossOrigin(origins = "*")
 public class SystemUserAuthController {
 
-	private JwtService jwtService;
+	private final JwtService jwtService;
+	private final AuthenticationManager authenticationManager;
+	private final EventServiceClient eventServiceClient;
+	private final SystemUserService systemUserService;
+	private final MessageProducer messageProducer;
+	private final ModelMapper modelMapper;
 
-	private AuthenticationManager authenticationManager;
-	
-	private EventServiceClient eventServiceClient;
-	
-	private SystemUserService userService;
-	
-	private MessageProducer messageProducer;
-	
 	@GetMapping("event-name")
-	public ResponseEntity<String> getEventName(){
+	public ResponseEntity<String> getEventName() {
 		log.info("NAME TRACE: {}", "customer service called");
-		messageProducer.sendMessage(KafkaTopicEnums.USER_LOGGED_IN.name(), "Hello, Pranay Kohad here, anybody home?");
+		messageProducer.sendStringMessage(KafkaTopicEnums.USER_LOGGED_IN.name(), "Hello, Pranay Kohad here, anybody home?");
 		return ResponseEntity.ok(eventServiceClient.welcome().getBody());
 	}
-	
+
 	@PostMapping("login")
 	public ResponseEntity<String> login(@Valid @RequestBody AuthDto authRequest) {
-		log.info("login API called..........");
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
+		final Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(authRequest.getUserName(), authRequest.getPassword()));
 		if (authentication.isAuthenticated()) {
-			return ResponseEntity.ok(jwtService.generateToken(authRequest.getUsername()));
+			return ResponseEntity.ok(jwtService.saveAndSendJwtTokenForSystemUser(authRequest.getUserName()));
 		} else {
-			throw new UserNotFoundException("invalid user request !");
+			throw new UserNotFoundException("User doesnot exists in the system");
 		}
 	}
-	
+
+	@DeleteMapping("remove")
+	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody SystemUserInfoDto systemUser) {
+		systemUserService.deleteSystemUserByUserName(systemUser);
+		return ResponseEntity.ok(true);
+	}
 
 	@GetMapping("logout")
 	public ResponseEntity<Boolean> logout(@RequestParam String token) {
 		jwtService.invalidateToken(token);
 		return ResponseEntity.ok(true);
 	}
-	
 
 	@PostMapping("signup")
-	public ResponseEntity<Boolean> signup(@Valid @RequestBody SystemUserInfoDto userInfo) {
-		return ResponseEntity.ok(userService.addSystemUser(userInfo));
+	public ResponseEntity<Boolean> signup(@Valid @RequestBody SystemUserInfoDto systemUser) {
+		return ResponseEntity.ok(systemUserService.addSystemUser(systemUser));
 	}
 
 	@GetMapping("get-by-name")
 	public ResponseEntity<SystemUserInfoDto> getUserByName(@RequestParam String name) {
-		return ResponseEntity.ok(userService.getSystemUserByName(name));
+		SystemUserInfo existingUser = systemUserService.isSystemUserExists(name);
+		GenericMapper<SystemUserInfoDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
+				SystemUserInfoDto.class, SystemUserInfo.class);
+		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	@GetMapping("list")
 	public ResponseEntity<List<SystemUserInfoDto>> getUsersList() {
-		return ResponseEntity.ok(userService.getSystemUsersList());
+		return ResponseEntity.ok(systemUserService.getSystemUsersList());
 	}
 
-	@DeleteMapping("remove")
-	public ResponseEntity<Boolean> deleteUser(String name) {
-		userService.deleteUserByName(name);
-		return ResponseEntity.ok(true);
-	}
-
+	// TODO: cannot change roles, cannot update other details with OTP
 	@PatchMapping("udpate")
 	public ResponseEntity<SystemUserInfoDto> udpateUser(@Valid @RequestBody SystemUserInfoDto userInfo) {
-		return ResponseEntity.ok(userService.udpate(userInfo));
+		return ResponseEntity.ok(systemUserService.udpate(userInfo));
 	}
 
 }

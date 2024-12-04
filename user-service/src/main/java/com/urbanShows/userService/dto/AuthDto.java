@@ -13,7 +13,8 @@ import lombok.NoArgsConstructor;
 public class AuthDto {
 
 	@NotNull(message = "Username cannot be null")
-	private String username;
+	private String userName;
+
 	@NotNull(message = "Password cannot be null")
 	private String password;
 }

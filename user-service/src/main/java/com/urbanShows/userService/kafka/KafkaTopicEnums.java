@@ -9,6 +9,10 @@ public enum KafkaTopicEnums {
 		this.kafkaTopic = kafkaTopic;
 	}
 
-	private String kafkaTopic;
+	private final String kafkaTopic;
+	
+	public String getKafkaTopic() {
+        return kafkaTopic;
+    }
 
 }

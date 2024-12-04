@@ -25,7 +25,7 @@ public class KafkaTestController {
 
 	@GetMapping("send")
 	public ResponseEntity<Boolean> sendMsg(@RequestParam String msg) {
-		kafkaPub.sendMessage(KafkaTopicEnums.USER_LOGGED_IN.name(), msg);
+		kafkaPub.sendStringMessage(KafkaTopicEnums.USER_LOGGED_IN.name(), msg);
 		return ResponseEntity.ok(true);
 	}
 
