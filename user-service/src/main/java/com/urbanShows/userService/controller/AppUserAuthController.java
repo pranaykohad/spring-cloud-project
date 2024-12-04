@@ -27,7 +27,7 @@ public class AppUserAuthController {
 	private final AppUserService appUserService;
 	private final JwtService jwtService;
 
-	@GetMapping("otp")
+	@GetMapping("generate-otp")
 	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
 	public void generateOtp(@RequestParam String phone) {
 		appUserService.generateOtpForAppUser(phone);
@@ -41,6 +41,7 @@ public class AppUserAuthController {
 
 	// login by phone and auth token
 	@PostMapping("login")
+	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
 	public ResponseEntity<String> login(@Valid @RequestBody AppUserInfoDto appUserDto) {
 		appUserService.authenticateAppUserByOtp(appUserDto);
 		return ResponseEntity.ok(jwtService.generateTokenForAppUser(appUserDto.getPhone()));

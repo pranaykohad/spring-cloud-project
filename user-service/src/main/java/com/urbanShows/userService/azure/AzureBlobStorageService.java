@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.urbanShows.userService.dto.AppUserInfoDto;
+import com.urbanShows.userService.dto.SystemUserInfoDto;
 import com.urbanShows.userService.entity.Role;
 import com.urbanShows.userService.entity.SystemUserInfo;
 import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
@@ -34,11 +35,8 @@ public class AzureBlobStorageService {
 
 	private SystemUserService systemUserService;
 
-	public String uploadSystemUserProfile(MultipartFile file, String userName) {
-		final SystemUserInfo existingSystsemUser = systemUserService.isSystemUserExists(userName);
-		if (existingSystsemUser == null) {
-			throw new UserNotFoundException("User doesnot exists in the system");
-		}
+	public String uploadSystemUserProfile(MultipartFile file, String userName, String otp) {
+		final SystemUserInfoDto existingSystsemUser = systemUserService.authenticateSystemUserByOtp(userName, otp);
 		final String originalFileName = file.getOriginalFilename();
 		if (!isValidFormat(originalFileName)) {
 			throw new InvalidFileFormatException("File format is not correct: " + originalFileName);
@@ -49,27 +47,17 @@ public class AzureBlobStorageService {
 		try {
 			final String fileUrl = uploadFile(file);
 			log.info("file: {} is uploaded/replaced in azure container", originalFileName);
-			systemUserService.uploadProfilePic(existingSystsemUser, fileUrl);
+			systemUserService.uploadProfilePicUrl(existingSystsemUser, fileUrl);
 			return fileUrl;
 		} catch (Exception e) {
 			throw new GenericException("Error while uploading file on Azure Storage");
 		}
 	}
 
-	public String uploadAppUserProfile(MultipartFile file, String phoneNumber, String otp, String role) {
+	public String uploadAppUserProfile(MultipartFile file, String phoneNumber, String otp) {
 		final AppUserInfoDto appUserDto = new AppUserInfoDto();
 		appUserDto.setPhone(phoneNumber);
 		appUserDto.setOtp(otp);
-		final List<Role> roleList = new ArrayList<>();
-		for(Role item:  Role.values()) {
-			if(role.equals(item.name())) {
-				roleList.add(item);
-			}
-		}
-		if(roleList.isEmpty()) {
-			throw new AccessDeniedException("Your role is empty");
-		}
-		appUserDto.setRoles(roleList);
 		final AppUserInfoDto existingAppUser = appUserService.authenticateAppUserByOtp(appUserDto);
 		final String originalFileName = file.getOriginalFilename();
 		if (!isValidFormat(originalFileName)) {

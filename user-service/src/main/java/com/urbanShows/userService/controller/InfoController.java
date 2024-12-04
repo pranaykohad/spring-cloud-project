@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("api/user/system-info")
+@RequestMapping("api/user/info")
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
-public class SystemInfoController {
+public class InfoController {
 
 	private final Environment environment;
 

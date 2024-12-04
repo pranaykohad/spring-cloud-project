@@ -12,12 +12,10 @@ import com.urbanShows.userService.kafka.KafkaTopicEnums;
 import com.urbanShows.userService.kafka.MessageProducer;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("api/user/kafka")
 @AllArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "*")
 public class KafkaTestController {
 

@@ -41,13 +41,10 @@ public class ProfileController {
 			@RequestPart(required = false) String phoneNumber, @RequestPart(required = false) String userName,
 			@RequestPart String otp, @RequestPart String role) {
 		String url = "";
-		if ((phoneNumber != null && !phoneNumber.isEmpty()) && (userName != null && !userName.isEmpty())) {
-			throw new AccessDeniedException("You are not authorised to do this operation");
-		}
 		if (phoneNumber != null && !phoneNumber.isEmpty()) {
-			url = azureBlobStorageService.uploadAppUserProfile(file, phoneNumber, otp, role);
+			url = azureBlobStorageService.uploadAppUserProfile(file, phoneNumber, otp);
 		} else if (userName != null && !userName.isEmpty()) {
-			url = azureBlobStorageService.uploadSystemUserProfile(file, userName);
+			url = azureBlobStorageService.uploadSystemUserProfile(file, userName, otp);
 		} else {
 			throw new UserNotFoundException("User doesnot exists in the system");
 		}

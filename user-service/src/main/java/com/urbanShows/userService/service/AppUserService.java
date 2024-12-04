@@ -71,10 +71,9 @@ public class AppUserService {
 	}
 
 	public void uploadProfilePicUrl(AppUserInfoDto appUserDto, String profilePicUrl) {
-		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-				AppUserInfo.class);
-		final AppUserInfo appUser = mapper.dtoToEntity(appUserDto);
-		appUser.setProfilePicUrl(profilePicUrl);
+		final AppUserInfo appUser = new AppUserInfo();
+		appUser.setPhone(appUserDto.getPhone());
+		appUser.setProfilePicUrl(profilePicUrl); 
 		appUserInfoRepo.save(appUser);
 	}
 
@@ -112,7 +111,7 @@ public class AppUserService {
 	}
 
 	public AppUserInfoDto authenticateAppUserByOtp(AppUserInfoDto appUserDto) {
-		verifyAppUserRole(appUserDto);
+//		verifyAppUserRole(appUserDto);
 		final AppUserInfo appUser = appUserInfoRepo.findByPhoneAndOtp(appUserDto.getPhone(), appUserDto.getOtp());
 		if (appUser == null) {
 			throw new AccessDeniedException("Phone number or OTP is not correct");
@@ -134,6 +133,13 @@ public class AppUserService {
 		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
 				AppUserInfo.class);
 		return mapper.entityToDto(appUserList);
+	}
+
+	public void updateAppUserDetails(AppUserInfoDto appUserInfoDto) {
+		isAppUserExists(appUserInfoDto.getPhone());
+		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
+				AppUserInfo.class);
+		appUserInfoRepo.save(mapper.dtoToEntity(appUserInfoDto));
 	}
 
 }
