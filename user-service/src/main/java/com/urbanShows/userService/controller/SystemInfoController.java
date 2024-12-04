@@ -11,11 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("api/user/system/auth")
+@RequestMapping("api/user/system-info")
 @AllArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "*")
-public class SystemController {
+public class SystemInfoController {
 
 	private final Environment environment;
 
