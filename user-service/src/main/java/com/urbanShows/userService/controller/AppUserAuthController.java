@@ -32,13 +32,13 @@ public class AppUserAuthController {
 	// to save display name, phone, role and auth token in db
 	@PostMapping("signin")
 	public ResponseEntity<Boolean> register(@Valid @RequestBody AppUserSigninReqDto appUser) {
-		return ResponseEntity.ok(appUserService.registerAppUser(appUser));
+		return ResponseEntity.ok(appUserService.signinAppUser(appUser));
 	}
 
 	// login by phone and auth token
 	@PostMapping("login")
 	public ResponseEntity<String> login(@Valid @RequestBody AppUserInfoDto appUserDto) {
-		appUserService.authenticateAppUser(appUserDto);
+		appUserService.authenticateAppUserByOtp(appUserDto);
 		return ResponseEntity.ok(jwtService.generateTokenForAppUser(appUserDto.getPhone()));
 	}
 
@@ -50,7 +50,7 @@ public class AppUserAuthController {
 
 	@DeleteMapping("remove")
 	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody AppUserInfoDto appUserDto) {
-		appUserService.authenticateAppUser(appUserDto);
+		appUserService.authenticateAppUserByOtp(appUserDto);
 		appUserService.deleteAppUser(appUserDto);
 		return ResponseEntity.ok(true);
 	}
@@ -58,7 +58,7 @@ public class AppUserAuthController {
 	// TODO: cannot change roles,
 	@PatchMapping("udpate")
 	public ResponseEntity<AppUserInfoDto> udpateUser(@Valid @RequestBody AppUserInfoDto appUser) {
-		appUserService.authenticateAppUser(appUser);
+		appUserService.authenticateAppUserByOtp(appUser);
 		return ResponseEntity.ok(appUserService.udpate(appUser));
 	}
 

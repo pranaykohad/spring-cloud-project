@@ -27,14 +27,16 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class SecurityConfig {
 
-	private JwtAuthFilter jwtAuthFilter;
+	private final JwtAuthFilter jwtAuthFilter;
+	private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(csrf -> csrf.disable()).authorizeRequests()
-				.requestMatchers("/actuator/**", "api/user/system/auth/**", "api/user/kafka/**",
-						"user/swagger-ui/**", "user/api-docs/**", "api/user/app/auth/**")
-				.permitAll().anyRequest().authenticated().and()
+				.requestMatchers("/actuator/**", "api/user/system/auth/**", "api/user/kafka/**", "user/swagger-ui/**",
+						"user/api-docs/**", "api/user/app/auth/**")
+				.permitAll().anyRequest().authenticated().and().exceptionHandling()
+				.authenticationEntryPoint(authenticationEntryPoint).and()
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();

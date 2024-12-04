@@ -21,6 +21,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
 	}
+	
+	@ExceptionHandler(AccessDeniedException.class)
+	@ResponseStatus(HttpStatus.UNAUTHORIZED)
+	public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+	}
 
 	@ExceptionHandler(UserAlreadyExistsException.class)
 	@ResponseStatus(HttpStatus.CONFLICT)

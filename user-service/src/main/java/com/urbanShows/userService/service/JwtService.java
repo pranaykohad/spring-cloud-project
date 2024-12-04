@@ -65,7 +65,7 @@ public class JwtService {
 		Map<String, Object> claims = new HashMap<>();
 		String token = Jwts.builder().setClaims(claims).setSubject(phone)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 )) // Set expiration time - 1 min
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // Set expiration time - 24 hour
 				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 
 		jwtTokenRepo.deleteByUsername(phone);
@@ -73,7 +73,7 @@ public class JwtService {
 		JwtToken jwtToken = new JwtToken();
 		jwtToken.setToken(token);
 		jwtToken.setUsername(phone);
-		jwtToken.setExpiration(LocalDateTime.now().plusMinutes(1)); // Set expiration time - 1 min 
+		jwtToken.setExpiration(LocalDateTime.now().plusHours(24)); // Set expiration time - 24 hour
 		jwtTokenRepo.save(jwtToken);
 
 		return token;
@@ -92,7 +92,7 @@ public class JwtService {
 		Map<String, Object> claims = new HashMap<>();
 		String token = Jwts.builder().setClaims(claims).setSubject(userName)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30)) // Set expiration time - 30 min
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 )) // Set expiration time - 24 hour
 				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 
 		jwtTokenRepo.deleteByUsername(userName);
@@ -100,7 +100,7 @@ public class JwtService {
 		JwtToken jwtToken = new JwtToken();
 		jwtToken.setToken(token);
 		jwtToken.setUsername(userName);
-		jwtToken.setExpiration(LocalDateTime.now().plusMinutes(30)); // Set expiration time - 30 min
+		jwtToken.setExpiration(LocalDateTime.now().plusHours(24)); // Set expiration time - 24 hour
 		jwtTokenRepo.save(jwtToken);
 
 		return token;

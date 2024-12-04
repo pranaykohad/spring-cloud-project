@@ -33,7 +33,7 @@ public class AppUserService {
 	private final AppUserInfoRepository appUserInfoRepo;
 	private final MessageProducer messageProducer;
 
-	public Boolean registerAppUser(AppUserSigninReqDto appUserDto) {
+	public Boolean signinAppUser(AppUserSigninReqDto appUserDto) {
 		if (!appUserDto.getRoles().contains(Role.APP_USER) || appUserDto.getDisplayName() == null
 				|| (appUserDto.getDisplayName() != null && appUserDto.getDisplayName().isEmpty())) {
 			throw new AccessDeniedException("You are not authorized to do this operation");
@@ -49,11 +49,15 @@ public class AppUserService {
 		appUser.setOtp(AuthTokenAndPasswordUtil.generateAuthToken());
 		appUser.setOtpTimeStamp(LocalDateTime.now());
 		appUserInfoRepo.save(appUser);
-		final OtpkafkaDto otpkafkaDto = new OtpkafkaDto(appUser.getPhone(), appUser.getOtp());
-		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
+		sendOtpToPhone(appUser);
 		log.info("App User {} with phone is register in the system ", appUserDto.getDisplayName(),
 				appUserDto.getPhone());
 		return true;
+	}
+
+	public void sendOtpToPhone(final AppUserInfo appUser) {
+		final OtpkafkaDto otpkafkaDto = new OtpkafkaDto(appUser.getPhone(), appUser.getOtp());
+		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
 	}
 
 	@Transactional
@@ -77,7 +81,7 @@ public class AppUserService {
 		return mapper.entityToDto(all);
 	}
 
-	public void uploadProfilePic(AppUserInfoDto appUserDto, String profilePicUrl) {
+	public void uploadProfilePicUrl(AppUserInfoDto appUserDto, String profilePicUrl) {
 		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
 				AppUserInfo.class);
 		final AppUserInfo appUser = mapper.dtoToEntity(appUserDto);
@@ -118,11 +122,11 @@ public class AppUserService {
 		return existingAppUser;
 	}
 
-	public AppUserInfoDto authenticateAppUser(AppUserInfoDto appUserDto) {
+	public AppUserInfoDto authenticateAppUserByOtp(AppUserInfoDto appUserDto) {
 		verifyAppUserRole(appUserDto);
 		final AppUserInfo appUser = appUserInfoRepo.findByPhoneAndOtp(appUserDto.getPhone(), appUserDto.getOtp());
 		if (appUser == null) {
-			throw new AccessDeniedException("You are not authorized to do this operation");
+			throw new AccessDeniedException("Phone number or OTP is not correct");
 		}
 		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
 				AppUserInfo.class);
