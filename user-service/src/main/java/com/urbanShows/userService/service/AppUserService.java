@@ -1,6 +1,5 @@
 package com.urbanShows.userService.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -14,9 +13,6 @@ import com.urbanShows.userService.entity.Role;
 import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
 import com.urbanShows.userService.exceptionHandler.UserAlreadyExistsException;
 import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
-import com.urbanShows.userService.kafka.KafkaTopicEnums;
-import com.urbanShows.userService.kafka.MessageProducer;
-import com.urbanShows.userService.kafka.OtpkafkaDto;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.repository.AppUserInfoRepository;
 import com.urbanShows.userService.util.AuthTokenAndPasswordUtil;
@@ -31,7 +27,7 @@ public class AppUserService {
 
 	private final ModelMapper modelMapper;
 	private final AppUserInfoRepository appUserInfoRepo;
-	private final MessageProducer messageProducer;
+	private final OtpService otpService;
 
 	public Boolean signinAppUser(AppUserSigninReqDto appUserDto) {
 		if (!appUserDto.getRoles().contains(Role.APP_USER) || appUserDto.getDisplayName() == null
@@ -46,18 +42,18 @@ public class AppUserService {
 				AppUserSigninReqDto.class, AppUserInfo.class);
 		final AppUserInfo appUser = mapper.dtoToEntity(appUserDto);
 		appUser.setInternalPassword(AuthTokenAndPasswordUtil.generatorPassword());
-		appUser.setOtp(AuthTokenAndPasswordUtil.generateAuthToken());
-		appUser.setOtpTimeStamp(LocalDateTime.now());
+//		appUser.setOtp(AuthTokenAndPasswordUtil.generateAuthToken());
+//		appUser.setOtpTimeStamp(LocalDateTime.now());
 		appUserInfoRepo.save(appUser);
-		sendOtpToPhone(appUser);
+		otpService.createOtpForAppUser(appUser);
 		log.info("App User {} with phone is register in the system ", appUserDto.getDisplayName(),
 				appUserDto.getPhone());
 		return true;
 	}
 
-	public void sendOtpToPhone(final AppUserInfo appUser) {
-		final OtpkafkaDto otpkafkaDto = new OtpkafkaDto(appUser.getPhone(), appUser.getOtp());
-		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
+	public void generateOtpForAppUser(String phone) {
+		final AppUserInfo existingAppUser = isAppUserExists(phone);
+		otpService.createOtpForAppUser(existingAppUser);
 	}
 
 	@Transactional
@@ -65,13 +61,6 @@ public class AppUserService {
 		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
 				AppUserInfo.class);
 		appUserInfoRepo.delete(mapper.dtoToEntity(appUser));
-	}
-
-	public AppUserInfoDto getAppUserByName(String phone) {
-		final AppUserInfo appUser = appUserInfoRepo.findByPhone(phone);
-		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-				AppUserInfo.class);
-		return mapper.entityToDto(appUser);
 	}
 
 	public List<AppUserInfoDto> getBackendUsersList() {
@@ -138,6 +127,13 @@ public class AppUserService {
 				&& (appUserDto.getRoles().isEmpty() || !appUserDto.getRoles().contains(Role.APP_USER)))) {
 			throw new AccessDeniedException("You are not authorized to do this operation");
 		}
+	}
+
+	public List<AppUserInfoDto> getUserList() {
+		final List<AppUserInfo> appUserList = appUserInfoRepo.findAll();
+		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
+				AppUserInfo.class);
+		return mapper.entityToDto(appUserList);
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.urbanShows.userService.azure;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,7 +10,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.urbanShows.userService.dto.AppUserInfoDto;
+import com.urbanShows.userService.entity.Role;
 import com.urbanShows.userService.entity.SystemUserInfo;
+import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
 import com.urbanShows.userService.exceptionHandler.FileSizeExceedsException;
 import com.urbanShows.userService.exceptionHandler.GenericException;
 import com.urbanShows.userService.exceptionHandler.InvalidFileFormatException;
@@ -52,11 +56,21 @@ public class AzureBlobStorageService {
 		}
 	}
 
-	public String uploadAppUserProfile(MultipartFile file, String phoneNumber) {
-		final AppUserInfoDto existingAppUser = appUserService.isPhoneNumberExists(phoneNumber);
-		if (existingAppUser == null) {
-			throw new UserNotFoundException("User doesnot exists in the system");
+	public String uploadAppUserProfile(MultipartFile file, String phoneNumber, String otp, String role) {
+		final AppUserInfoDto appUserDto = new AppUserInfoDto();
+		appUserDto.setPhone(phoneNumber);
+		appUserDto.setOtp(otp);
+		final List<Role> roleList = new ArrayList<>();
+		for(Role item:  Role.values()) {
+			if(role.equals(item.name())) {
+				roleList.add(item);
+			}
 		}
+		if(roleList.isEmpty()) {
+			throw new AccessDeniedException("Your role is empty");
+		}
+		appUserDto.setRoles(roleList);
+		final AppUserInfoDto existingAppUser = appUserService.authenticateAppUserByOtp(appUserDto);
 		final String originalFileName = file.getOriginalFilename();
 		if (!isValidFormat(originalFileName)) {
 			throw new InvalidFileFormatException("File format is not correct: " + originalFileName);
@@ -67,14 +81,14 @@ public class AzureBlobStorageService {
 		try {
 			final String fileUrl = uploadFile(file);
 			log.info("file: {} is uploaded/replaced in azure container", originalFileName);
-			appUserService.uploadProfilePic(existingAppUser, fileUrl);
+			appUserService.uploadProfilePicUrl(existingAppUser, fileUrl);
 			return fileUrl;
 		} catch (Exception e) {
 			throw new GenericException("Error while uploading file on Azure Storage");
 		}
 	}
 
-	private String uploadFile(MultipartFile file) {
+	public String uploadFile(MultipartFile file) {
 		final BlobContainerClient blobContainerClient = azureConfig.getBlobContainerClient();
 		blobContainerClient.createIfNotExists();
 		final String imageBlobName = file.getOriginalFilename();

@@ -9,11 +9,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.urbanShows.userService.exceptionHandler.SessionException;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.UserDetailsServiceImpl;
 
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

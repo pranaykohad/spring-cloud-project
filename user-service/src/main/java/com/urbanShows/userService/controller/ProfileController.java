@@ -6,28 +6,26 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.urbanShows.userService.azure.AzureBlobStorageService;
-import com.urbanShows.userService.service.AppUserService;
-import com.urbanShows.userService.service.SystemUserService;
+import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
+import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("api/user/profile")
 @AllArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "*")
 public class ProfileController {
 
-	private AzureBlobStorageService azureBlobStorageService;
-
-	private AppUserService appUserService;
-
-	private SystemUserService systemUserService;
+	private final AzureBlobStorageService azureBlobStorageService;
 
 	@GetMapping("download")
 	public ResponseEntity<byte[]> downloadFile() {
@@ -38,24 +36,22 @@ public class ProfileController {
 		return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
 	}
 
-//	@PostMapping("upload")
-//	public ResponseEntity<String> uploadAppUserProfilePic(@RequestParam MultipartFile file,
-//			@RequestPart String phoneNumber, @RequestPart(required = false) String userName, @RequestPart String otp) {
-//		String url = null;
-//		if (phoneNumber != null) { 
-//			AppUserInfoDto appUserInfoDto = new AppUserInfoDto();
-//			appUserInfoDto.setPhone(phoneNumber);
-//			appUserInfoDto.setOtp(otp);
-//			appUserService.verifyOtp(appUserInfoDto);
-//			url = azureBlobStorageService.uploadAppUserProfile(file, phoneNumber);
-//		} else {
-//			SystemUserInfoDto systemUserInfoDto = new SystemUserInfoDto();
-//			systemUserInfoDto.setPhone(phoneNumber);
-//			systemUserInfoDto.setOtp(otp);
-//			systemUserService.verifyOtp(systemUserInfoDto);
-//			url = azureBlobStorageService.uploadSystemUserProfile(file, userName);
-//		}
-//		return new ResponseEntity<>(url, HttpStatus.OK);
-//	}
+	@PatchMapping("update-profile-pic")
+	public ResponseEntity<String> uploadAppUserProfilePic(@RequestParam MultipartFile file,
+			@RequestPart(required = false) String phoneNumber, @RequestPart(required = false) String userName,
+			@RequestPart String otp, @RequestPart String role) {
+		String url = "";
+		if ((phoneNumber != null && !phoneNumber.isEmpty()) && (userName != null && !userName.isEmpty())) {
+			throw new AccessDeniedException("You are not authorised to do this operation");
+		}
+		if (phoneNumber != null && !phoneNumber.isEmpty()) {
+			url = azureBlobStorageService.uploadAppUserProfile(file, phoneNumber, otp, role);
+		} else if (userName != null && !userName.isEmpty()) {
+			url = azureBlobStorageService.uploadSystemUserProfile(file, userName);
+		} else {
+			throw new UserNotFoundException("User doesnot exists in the system");
+		}
+		return new ResponseEntity<>(url, HttpStatus.OK);
+	}
 
 }

@@ -14,6 +14,9 @@ import com.urbanShows.userService.entity.SystemUserInfo;
 import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
 import com.urbanShows.userService.exceptionHandler.UserAlreadyExistsException;
 import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
+import com.urbanShows.userService.kafka.KafkaTopicEnums;
+import com.urbanShows.userService.kafka.MessageProducer;
+import com.urbanShows.userService.kafka.OtpkafkaDto;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.repository.SystemUserInfoRepository;
 
@@ -26,6 +29,8 @@ public class SystemUserService {
 	private final SystemUserInfoRepository userRepo;
 	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
+	private final MessageProducer messageProducer;
+	private final OtpService otpService;
 
 	public Boolean addSystemUser(SystemUserInfoDto systemUserDto) {
 		if (systemUserDto.getRoles().contains(Role.SYSTEM_USER)) {
@@ -76,6 +81,16 @@ public class SystemUserService {
 				SystemUserInfoDto.class, SystemUserInfo.class);
 		final SystemUserInfo save = userRepo.save(mapper.dtoToEntity(userInfoDto));
 		return mapper.entityToDto(save);
+	}
+ 
+	public void generateOtpForSystemUser(String userName) { 
+		final SystemUserInfo systemUser = isSystemUserExists(userName);
+		otpService.createOtpForSystemUser(systemUser);
+	}
+	
+	public void sendOtpToPhone(String phone, String otp) {
+		final OtpkafkaDto otpkafkaDto = new OtpkafkaDto(phone, otp);
+		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
 	}
 
 }

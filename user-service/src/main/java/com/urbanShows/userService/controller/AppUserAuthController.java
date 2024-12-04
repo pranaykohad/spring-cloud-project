@@ -3,9 +3,7 @@ package com.urbanShows.userService.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +27,12 @@ public class AppUserAuthController {
 	private final AppUserService appUserService;
 	private final JwtService jwtService;
 
+	@GetMapping("otp")
+	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
+	public void generateOtp(@RequestParam String phone) {
+		appUserService.generateOtpForAppUser(phone);
+	}
+
 	// to save display name, phone, role and auth token in db
 	@PostMapping("signin")
 	public ResponseEntity<Boolean> register(@Valid @RequestBody AppUserSigninReqDto appUser) {
@@ -46,26 +50,6 @@ public class AppUserAuthController {
 	public ResponseEntity<Boolean> logout(@RequestParam String token) {
 		jwtService.invalidateToken(token);
 		return ResponseEntity.ok(true);
-	}
-
-	@DeleteMapping("remove")
-	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody AppUserInfoDto appUserDto) {
-		appUserService.authenticateAppUserByOtp(appUserDto);
-		appUserService.deleteAppUser(appUserDto);
-		return ResponseEntity.ok(true);
-	}
-
-	// TODO: cannot change roles,
-	@PatchMapping("udpate")
-	public ResponseEntity<AppUserInfoDto> udpateUser(@Valid @RequestBody AppUserInfoDto appUser) {
-		appUserService.authenticateAppUserByOtp(appUser);
-		return ResponseEntity.ok(appUserService.udpate(appUser));
-	}
-
-	@GetMapping("test")
-	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
-	public ResponseEntity<String> testApppUser() {
-		return ResponseEntity.ok("Test Ok");
 	}
 
 }

@@ -22,36 +22,27 @@ import com.urbanShows.userService.dto.AuthDto;
 import com.urbanShows.userService.dto.SystemUserInfoDto;
 import com.urbanShows.userService.entity.SystemUserInfo;
 import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
-import com.urbanShows.userService.internalAPIClient.EventServiceClient;
-import com.urbanShows.userService.kafka.KafkaTopicEnums;
-import com.urbanShows.userService.kafka.MessageProducer;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.SystemUserService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("api/user/system/auth")
 @AllArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "*")
 public class SystemUserAuthController {
 
 	private final JwtService jwtService;
 	private final AuthenticationManager authenticationManager;
-	private final EventServiceClient eventServiceClient;
 	private final SystemUserService systemUserService;
-	private final MessageProducer messageProducer;
 	private final ModelMapper modelMapper;
 
-	@GetMapping("event-name")
-	public ResponseEntity<String> getEventName() {
-		log.info("NAME TRACE: {}", "customer service called");
-		messageProducer.sendStringMessage(KafkaTopicEnums.USER_LOGGED_IN.name(), "Hello, Pranay Kohad here, anybody home?");
-		return ResponseEntity.ok(eventServiceClient.welcome().getBody());
+	@GetMapping("otp")
+	public void generateOtp(@RequestParam String userName) {
+		systemUserService.generateOtpForSystemUser(userName);
 	}
 
 	@PostMapping("login")
