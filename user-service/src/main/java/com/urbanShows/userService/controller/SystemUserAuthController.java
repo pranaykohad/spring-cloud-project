@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanShows.userService.dto.AuthDto;
-import com.urbanShows.userService.dto.SystemUserInfoDto;
+import com.urbanShows.userService.dto.SystemUserSigninDto;
 import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.SystemUserService;
@@ -30,10 +30,10 @@ public class SystemUserAuthController {
 	private final JwtService jwtService;
 	private final AuthenticationManager authenticationManager;
 	private final SystemUserService systemUserService;
-
-	@GetMapping("generate-otp")
-	public void generateOtp(@RequestParam String userName) {
-		systemUserService.generateOtpForSystemUser(userName);
+	
+	@PostMapping("signup")
+	public ResponseEntity<Boolean> signup(@Valid @RequestBody SystemUserSigninDto systemUserSigninDto) {
+		return ResponseEntity.ok(systemUserService.addSystemUser(systemUserSigninDto));
 	}
 
 	@PostMapping("login")
@@ -46,16 +46,11 @@ public class SystemUserAuthController {
 			throw new UserNotFoundException("User doesnot exists in the system");
 		}
 	}
-	
+
 	@GetMapping("logout")
 	public ResponseEntity<Boolean> logout(@RequestParam String token) {
 		jwtService.invalidateToken(token);
 		return ResponseEntity.ok(true);
-	}
-
-	@PostMapping("signup")
-	public ResponseEntity<Boolean> signup(@Valid @RequestBody SystemUserInfoDto systemUser) {
-		return ResponseEntity.ok(systemUserService.addSystemUser(systemUser));
 	}
 
 	

@@ -1,5 +1,6 @@
 package com.urbanShows.userService.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -30,20 +31,16 @@ public class AppUserService {
 	private final OtpService otpService;
 
 	public Boolean signinAppUser(AppUserSigninReqDto appUserDto) {
-		if (!appUserDto.getRoles().contains(Role.APP_USER) || appUserDto.getDisplayName() == null
-				|| (appUserDto.getDisplayName() != null && appUserDto.getDisplayName().isEmpty())) {
-			throw new AccessDeniedException("You are not authorized to do this operation");
-		}
-		final AppUserInfo existingAppUser = appUserInfoRepo.findByPhone(appUserDto.getPhone());
-		if (existingAppUser != null) {
+		if (appUserInfoRepo.existsById(appUserDto.getPhone())) {
 			throw new UserAlreadyExistsException("User already exists in the system");
 		}
 		final GenericMapper<AppUserSigninReqDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper,
 				AppUserSigninReqDto.class, AppUserInfo.class);
 		final AppUserInfo appUser = mapper.dtoToEntity(appUserDto);
+		final List<Role> roleList = new ArrayList<>();
+		roleList.add(Role.APP_USER);
+		appUser.setRoles(roleList);
 		appUser.setInternalPassword(AuthTokenAndPasswordUtil.generatorPassword());
-//		appUser.setOtp(AuthTokenAndPasswordUtil.generateAuthToken());
-//		appUser.setOtpTimeStamp(LocalDateTime.now());
 		appUserInfoRepo.save(appUser);
 		otpService.createOtpForAppUser(appUser);
 		log.info("App User {} with phone is register in the system ", appUserDto.getDisplayName(),
@@ -52,7 +49,7 @@ public class AppUserService {
 	}
 
 	public void generateOtpForAppUser(String phone) {
-		final AppUserInfo existingAppUser = isAppUserExists(phone);
+		final AppUserInfo existingAppUser = getExistingAppUser(phone);
 		otpService.createOtpForAppUser(existingAppUser);
 	}
 
@@ -70,39 +67,31 @@ public class AppUserService {
 		return mapper.entityToDto(all);
 	}
 
-	public void uploadProfilePicUrl(AppUserInfoDto appUserDto, String profilePicUrl) {
-		final AppUserInfo appUser = new AppUserInfo();
-		appUser.setPhone(appUserDto.getPhone());
-		appUser.setProfilePicUrl(profilePicUrl); 
+	public void uploadAppUserProfilePicUrl(AppUserInfo appUser, String profilePicUrl) {
+		appUser.setProfilePicUrl(profilePicUrl);
 		appUserInfoRepo.save(appUser);
 	}
 
-	public AppUserInfoDto isPhoneNumberExists(String phoneNumber) {
-		final AppUserInfo existingAppUser = isAppUserExists(phoneNumber);
+	public AppUserInfoDto udpate(AppUserInfo appUser, AppUserInfoDto newAppUserDto) {
+		appUser.setDisplayName(newAppUserDto.getDisplayName() != null &&
+				!appUser.getDisplayName().equals(newAppUserDto.getDisplayName()) ? newAppUserDto.getDisplayName()
+						: appUser.getDisplayName());
+		appUser.setEmail(newAppUserDto.getEmail() != null &&
+				!appUser.getEmail().equals(newAppUserDto.getEmail()) ? newAppUserDto.getEmail() : appUser.getEmail());
+		final AppUserInfo save = appUserInfoRepo.save(appUser);
 		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
 				AppUserInfo.class);
-		return mapper.entityToDto(existingAppUser);
-	}
-
-	public AppUserInfoDto udpate(AppUserInfoDto appUserDto) {
-		final AppUserInfo appUser = appUserInfoRepo.findByPhone(appUserDto.getPhone());
-		if (appUser == null) {
-			throw new UserNotFoundException("User doesnot exists in the system");
-		}
-		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-				AppUserInfo.class);
-		final AppUserInfo save = appUserInfoRepo.save(mapper.dtoToEntity(appUserDto));
 		return mapper.entityToDto(save);
 	}
 
 	public AppUserInfoDto getAppUserByPhone(String phone) {
-		final AppUserInfo appUser = isAppUserExists(phone);
+		final AppUserInfo appUser = getExistingAppUser(phone);
 		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
 				AppUserInfo.class);
 		return mapper.entityToDto(appUser);
 	}
 
-	public AppUserInfo isAppUserExists(String phoneNumber) {
+	public AppUserInfo getExistingAppUser(String phoneNumber) {
 		final AppUserInfo existingAppUser = appUserInfoRepo.findByPhone(phoneNumber);
 		if (existingAppUser == null) {
 			throw new UserNotFoundException("User doesnot exists in the system");
@@ -110,22 +99,12 @@ public class AppUserService {
 		return existingAppUser;
 	}
 
-	public AppUserInfoDto authenticateAppUserByOtp(AppUserInfoDto appUserDto) {
-//		verifyAppUserRole(appUserDto);
-		final AppUserInfo appUser = appUserInfoRepo.findByPhoneAndOtp(appUserDto.getPhone(), appUserDto.getOtp());
+	public AppUserInfo authenticateAppUserByOtp(String phone, String otp) {
+		final AppUserInfo appUser = appUserInfoRepo.findByPhoneAndOtp(phone, otp);
 		if (appUser == null) {
 			throw new AccessDeniedException("Phone number or OTP is not correct");
 		}
-		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-				AppUserInfo.class);
-		return mapper.entityToDto(appUser);
-	}
-
-	private void verifyAppUserRole(AppUserInfoDto appUserDto) {
-		if (appUserDto.getRoles() == null || (appUserDto.getRoles() != null
-				&& (appUserDto.getRoles().isEmpty() || !appUserDto.getRoles().contains(Role.APP_USER)))) {
-			throw new AccessDeniedException("You are not authorized to do this operation");
-		}
+		return appUser;
 	}
 
 	public List<AppUserInfoDto> getUserList() {
@@ -136,7 +115,7 @@ public class AppUserService {
 	}
 
 	public void updateAppUserDetails(AppUserInfoDto appUserInfoDto) {
-		isAppUserExists(appUserInfoDto.getPhone());
+		getExistingAppUser(appUserInfoDto.getPhone());
 		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
 				AppUserInfo.class);
 		appUserInfoRepo.save(mapper.dtoToEntity(appUserInfoDto));

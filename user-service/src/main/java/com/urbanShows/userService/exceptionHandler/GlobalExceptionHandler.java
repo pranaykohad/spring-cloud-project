@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(UserNotFoundException.class)
@@ -21,7 +23,20 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
 	}
-	
+
+	@ExceptionHandler(BlobNotFoundException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseEntity<String> BlobNotFoundException(BlobNotFoundException ex) {
+		log.error("Error while download blob. ", ex.getLocalizedMessage());
+		return new ResponseEntity<>("Error while downloading the blob from Azure. ", HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(GenericException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseEntity<String> handleGenericException(GenericException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 	@ExceptionHandler(AccessDeniedException.class)
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
 	public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {

@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 import com.urbanShows.userService.filter.JwtAuthFilter;
 import com.urbanShows.userService.service.UserDetailsServiceImpl;
@@ -32,11 +33,23 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.csrf(csrf -> csrf.disable()).authorizeRequests()
-				.requestMatchers("/actuator/**", "api/user/system/auth/**", "api/user/kafka/**", "user/swagger-ui/**",
-						"user/api-docs/**", "api/user/app/auth/**")
-				.permitAll().anyRequest().authenticated().and().exceptionHandling()
-				.authenticationEntryPoint(authenticationEntryPoint).and()
+		http
+		.csrf(csrf -> csrf.disable())
+//		.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+//				.ignoringRequestMatchers("api/user/system/auth/**", "api/user/app/auth/**")
+//				)
+				.authorizeRequests(auth -> auth
+						.requestMatchers(
+								"/actuator/**", 
+								"user/swagger-ui/**", 
+								"user/api-docs/**",
+								"api/user/system/auth/**", 
+								"api/user/app/auth/**",
+								"api/user/kafka/**",
+								"api/user/info/**")
+						.permitAll()
+						.anyRequest().authenticated())
+//				.exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
