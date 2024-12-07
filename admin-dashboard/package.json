@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve -o",
+    "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -22,6 +22,8 @@
     "@angular/router": "^18.0.0",
     "@angular/ssr": "^18.0.3",
     "admin-dashboard": "file:",
+    "bootstrap": "^5.3.3",
+    "chart.js": "^4.4.6",
     "express": "^4.18.2",
     "ngx-toastr": "^19.0.0",
     "primeng": "^17.18.12",

@@ -1,0 +1,25 @@
+<p-card id="login" class="transparent-div-opacity container-fluid">
+  <ng-template pTemplate="header">
+    <div class="d-flex justify-content-center login-header login-section pt-4">Login</div>
+  </ng-template>
+    <div class="d-flex flex-column justify-content-between">
+      <p-floatLabel>
+        <input pInputText id="username" [(ngModel)]="userName" [style]="{width: '500px'}"/>
+        <label for="username">Username</label>
+      </p-floatLabel>
+      <br/>
+      <br/>
+      <p-floatLabel>
+        <p-password [(ngModel)]="password" [feedback]="false" [toggleMask]="true" [inputStyle]="{width: '500px'}"/>
+        <label for="password">Password</label>
+      </p-floatLabel>
+      <br/>
+      <br/>
+      <p-button label="Primary" [raised]="true" [style]="{width: '500px'}" class="btn-submit"/>
+      <br/>
+      <div class="d-flex justify-content-center align-items-center">
+        <div>Don't have an account?</div>
+        <div><p-button label="Signup" [link]="true" [style]="{padding: '5px'}"/></div>
+      </div>
+    </div>
+</p-card>

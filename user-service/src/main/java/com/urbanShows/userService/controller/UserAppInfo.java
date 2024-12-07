@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("api/user/info")
+@RequestMapping("api/user/app-info")
 @AllArgsConstructor
 @CrossOrigin(origins = "*")
-public class InfoController {
+public class UserAppInfo {
 
 	private final Environment environment;
 
