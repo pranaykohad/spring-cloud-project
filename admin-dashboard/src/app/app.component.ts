@@ -1,24 +1,26 @@
-import { Component } from '@angular/core';
+import { LocalstorageService } from './../services/localstorage.service';
+import { Component, OnInit } from '@angular/core';
 import { AzureService } from '../services/azure.service';
-import { subscribe } from 'diagnostics_channel';
 import { UserAppInfoService } from '../services/user-app-info.service';
 import { SharedModule } from '../shared/shared.module';
-import { HomeComponent } from '../home/home.component';
+import { SystemUserAuthService } from '../services/system-user-auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [SharedModule, HomeComponent],
+  imports: [SharedModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  constructor(private azureService: AzureService, private userAppInfoService: UserAppInfoService) {
-    // this.azureService.getBlob().subscribe((res) => {
-    // });
+export class AppComponent implements OnInit {
 
-    // this.userAppInfoService.getCsrfToken().subscribe(res=>{
-    //   console.log(res);
-    // });
+  constructor(
+    private systemUserAuthService: SystemUserAuthService,
+    private localstorageService: LocalstorageService
+  ) {}
+
+  ngOnInit(): void {
+    this.localstorageService.getItem('jwtToken');
   }
+
 }

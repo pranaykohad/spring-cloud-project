@@ -2,3 +2,76 @@
 @import "primeng/resources/primeng.css";
 @import "bootstrap/scss/bootstrap-grid";
 @import "bootstrap/dist/css/bootstrap.min.css";
+@import "primeicons/primeicons.css";
+@import 'ngx-toastr/toastr';
+
+@font-face {
+  font-family: "Quicksand-Light";
+  src: url("assets/font/Quicksand-Light.ttf") format("truetype");
+  font-weight: normal;
+  font-size: normal;
+  font-optical-sizing: auto;
+}
+
+@font-face {
+  font-family: "Quicksand-Medium";
+  src: url("assets/font/Quicksand-Medium.ttf") format("truetype");
+  font-weight: normal;
+  font-size: normal;
+  font-optical-sizing: auto;
+}
+
+@font-face {
+  font-family: "Quicksand-Regular";
+  src: url("assets/font/Quicksand-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-size: normal;
+  font-optical-sizing: auto;
+}
+
+@font-face {
+  font-family: "Quicksand-SemiBold";
+  src: url("assets/font/Quicksand-SemiBold.ttf") format("truetype");
+  font-weight: normal;
+  font-size: normal;
+  font-optical-sizing: auto;
+}
+
+@font-face {
+  font-family: "Quicksand-Bold";
+  src: url("assets/font/Quicksand-Bold.ttf") format("truetype");
+  font-weight: normal;
+  font-size: normal;
+  font-optical-sizing: auto;
+}
+
+body,
+div,
+label {
+  font-family: "Quicksand-Medium";
+}
+
+input {
+  line-height: normal;
+}
+
+
+.font-Quicksand-Bold {
+  font-family: "Quicksand-Bold";
+}
+
+.font-Quicksand-SemiBold {
+  font-family: "Quicksand-SemiBold";
+}
+
+.font-Quicksand-Regular {
+  font-family: "Quicksand-Regular";
+}
+
+.font-Quicksand-Medium {
+  font-family: "Quicksand-Medium";
+}
+
+.font-Quicksand-Light {
+  font-family: "Quicksand-Light";
+}

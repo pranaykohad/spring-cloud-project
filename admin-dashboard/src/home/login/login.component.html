@@ -1,25 +1,34 @@
-<p-card id="login" class="transparent-div-opacity container-fluid">
-  <ng-template pTemplate="header">
-    <div class="d-flex justify-content-center login-header login-section pt-4">Login</div>
-  </ng-template>
-    <div class="d-flex flex-column justify-content-between">
-      <p-floatLabel>
-        <input pInputText id="username" [(ngModel)]="userName" [style]="{width: '500px'}"/>
-        <label for="username">Username</label>
-      </p-floatLabel>
-      <br/>
-      <br/>
-      <p-floatLabel>
-        <p-password [(ngModel)]="password" [feedback]="false" [toggleMask]="true" [inputStyle]="{width: '500px'}"/>
-        <label for="password">Password</label>
-      </p-floatLabel>
-      <br/>
-      <br/>
-      <p-button label="Primary" [raised]="true" [style]="{width: '500px'}" class="btn-submit"/>
-      <br/>
-      <div class="d-flex justify-content-center align-items-center">
-        <div>Don't have an account?</div>
-        <div><p-button label="Signup" [link]="true" [style]="{padding: '5px'}"/></div>
+<div id="login" class="d-flex justify-content-center align-items-center" style="height: 100vh">
+  <p-card [style]="{minWidth: '25vw'}">
+    <ng-template pTemplate="header">
+      <div class="container-fluid pt-5" style="text-align: center; font-size: 30px; font-family: Quicksand-Bold;">Log in
+      </div>
+    </ng-template>
+    <div class="container-fluid justify-content-center align-items-center">
+      <div class="d-flex flex-column mb-3 align-items-center">
+        <p-iconField iconPosition="left" class="mb-3">
+          <p-inputIcon styleClass="pi pi-user" />
+          <input type="username" pInputText placeholder="Username" [(ngModel)]="systemUserLoginRequest.userName"
+            [style]="{minWidth: '20vw'}" />
+        </p-iconField>
+        <p-iconField iconPosition="left">
+          <p-inputIcon styleClass="pi pi-lock" />
+          <input type="password" pInputText placeholder="password" [(ngModel)]="systemUserLoginRequest.password"
+            [style]="{minWidth: '20vw'}" />
+        </p-iconField>
+      </div>
+      <div class="d-flex justify-content-between align-items-center m-3">
+        <div>
+          <p-checkbox [(ngModel)]="rememberMe" [binary]="true" inputId="binary" /> <span
+            style="font-family: Quicksand-Bold;" class="p-2">Remember Me</span>
+        </div>
+        <div>
+          <p-button label="Reset password" [link]="true" [style]="{padding: 0, fontFamily: 'Quicksand-light'}" />
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <p-button label="Log In" [raised]="true" [style]="{borderRadius: '7px', minWidth: '20vw'}" (onClick)="login()"/>
       </div>
     </div>
-</p-card>
+  </p-card>
+</div>

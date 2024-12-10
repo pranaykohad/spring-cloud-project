@@ -1,4 +1,4 @@
-export interface SigninRequest {
+export interface SystemUserSigninRequest {
   userName: string;
   password: string;
   email: string;

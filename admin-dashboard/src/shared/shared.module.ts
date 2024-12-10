@@ -17,6 +17,10 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { PasswordModule } from 'primeng/password';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { RouterModule } from '@angular/router';
+
 
 @NgModule({
   declarations: [],
@@ -39,7 +43,10 @@ import { PasswordModule } from 'primeng/password';
     CardModule,
     InputTextModule,
     FloatLabelModule,
-    PasswordModule
+    PasswordModule,
+    IconFieldModule,
+    InputIconModule,
+    RouterModule,
   ],
   exports: [
     CommonModule,
@@ -60,7 +67,10 @@ import { PasswordModule } from 'primeng/password';
     CardModule,
     InputTextModule,
     FloatLabelModule,
-    PasswordModule
+    PasswordModule,
+    IconFieldModule,
+    InputIconModule,
+    RouterModule
   ],
 })
 export class SharedModule {}
