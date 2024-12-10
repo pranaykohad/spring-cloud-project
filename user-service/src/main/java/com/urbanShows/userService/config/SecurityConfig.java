@@ -2,6 +2,7 @@ package com.urbanShows.userService.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -15,9 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.urbanShows.userService.filter.JwtAuthFilter;
 import com.urbanShows.userService.service.UserDetailsServiceImpl;
@@ -39,9 +37,11 @@ public class SecurityConfig {
 //		.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //				.ignoringRequestMatchers("api/user/system/auth/**", "api/user/app/auth/**")
 //				)
-				.authorizeRequests(auth -> auth.requestMatchers("/actuator/**", "user/swagger-ui/**",
-						"user/api-docs/**", "api/user/system/auth/**", "api/user/app/auth/**", "api/user/kafka/**",
-						"api/user/app-info/**").permitAll().anyRequest().authenticated())
+				.authorizeRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.requestMatchers("/actuator/**", "user/swagger-ui/**", "user/api-docs/**",
+								"api/user/system/auth/**", "api/user/app/auth/**", "api/user/kafka/**",
+								"api/user/app-info/**")
+						.permitAll().anyRequest().authenticated())
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -70,17 +70,5 @@ public class SecurityConfig {
 	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 	}
-
-//	@Bean
-//	WebMvcConfigurer corsConfigurer() {
-//		return new WebMvcConfigurer() {
-//			@Override
-//			public void addCorsMappings(CorsRegistry registry) {
-//				registry.addMapping("/**").allowedOrigins("http://localhost:4200")
-//	            .allowedMethods("*")
-//	            .allowedHeaders("*");
-//			}
-//		};
-//	}
 
 }
