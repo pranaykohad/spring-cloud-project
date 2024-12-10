@@ -1,5 +1,6 @@
 package com.urbanShows.userService.controller;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -15,8 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.urbanShows.userService.azure.AzureBlobStorageService;
 import com.urbanShows.userService.dto.SystemUserInfoDto;
+import com.urbanShows.userService.dto.SystemUserResponseDto;
 import com.urbanShows.userService.dto.UserUpdateDto;
 import com.urbanShows.userService.entity.SystemUserInfo;
+import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.SystemUserService;
 
 import jakarta.validation.Valid;
@@ -30,6 +33,7 @@ public class SystemUserController {
 
 	private final SystemUserService systemUserService;
 	private final AzureBlobStorageService azureBlobStorageService;
+	private final ModelMapper modelMapper;
 
 	@PatchMapping("udpate")
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
@@ -63,13 +67,13 @@ public class SystemUserController {
 		return ResponseEntity.ok(uploadAppUserProfile);
 	}
 
-//	@GetMapping("get-by-username")
-//	public ResponseEntity<SystemUserInfoDto> getUserByName(@RequestParam String userName) {
-//		SystemUserInfo existingUser = systemUserService.getSystemUserByUserName(userName);
-//		GenericMapper<SystemUserInfoDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
-//				SystemUserInfoDto.class, SystemUserInfo.class);
-//		return ResponseEntity.ok(mapper.entityToDto(existingUser));
-//	}
+	@GetMapping("get-by-username")
+	public ResponseEntity<SystemUserResponseDto> getUserByUsername(@RequestParam String userName) {
+		SystemUserInfo existingUser = systemUserService.getExistingSystemUser(userName);
+		GenericMapper<SystemUserResponseDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
+				SystemUserResponseDto.class, SystemUserInfo.class);
+		return ResponseEntity.ok(mapper.entityToDto(existingUser));
+	}
 //
 //	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 //	@GetMapping("list")
