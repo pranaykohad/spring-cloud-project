@@ -20,6 +20,7 @@ import com.urbanShows.userService.dto.SystemUserResponseDto;
 import com.urbanShows.userService.dto.UserUpdateDto;
 import com.urbanShows.userService.entity.SystemUserInfo;
 import com.urbanShows.userService.mapper.GenericMapper;
+import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.SystemUserService;
 
 import jakarta.validation.Valid;
@@ -34,6 +35,14 @@ public class SystemUserController {
 	private final SystemUserService systemUserService;
 	private final AzureBlobStorageService azureBlobStorageService;
 	private final ModelMapper modelMapper;
+	private final JwtService jwtService;
+	
+	@GetMapping("logout")
+	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
+	public ResponseEntity<Boolean> logout(@RequestParam String token) {
+		jwtService.invalidateToken(token);
+		return ResponseEntity.ok(true);
+	}
 
 	@PatchMapping("udpate")
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")

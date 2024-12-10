@@ -5,22 +5,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.urbanShows.userService.dto.SystemUserInfoDto;
 import com.urbanShows.userService.dto.SystemUserLoginDto;
 import com.urbanShows.userService.dto.SystemUserResponseDto;
 import com.urbanShows.userService.dto.SystemUserSigninDto;
 import com.urbanShows.userService.entity.SystemUserInfo;
 import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
-import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.SystemUserService;
@@ -66,12 +61,6 @@ public class SystemUserAuthController {
 			throw new AccessDeniedException("User name or password is not correct");
 		}
 
-	}
-
-	@GetMapping("logout")
-	public ResponseEntity<Boolean> logout(@RequestParam String token) {
-		jwtService.invalidateToken(token);
-		return ResponseEntity.ok(true);
 	}
 
 }
