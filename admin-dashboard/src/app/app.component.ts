@@ -4,6 +4,7 @@ import { AzureService } from '../services/azure.service';
 import { UserAppInfoService } from '../services/user-app-info.service';
 import { SharedModule } from '../shared/shared.module';
 import { SystemUserAuthService } from '../services/system-user-auth.service';
+import { LocalStorageKeys } from '../models/Enums';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +21,6 @@ export class AppComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.localstorageService.getItem('jwtToken');
   }
 
 }

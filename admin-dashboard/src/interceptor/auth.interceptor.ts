@@ -9,6 +9,8 @@ import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
 import { LocalstorageService } from '../services/localstorage.service';
 import { Router } from '@angular/router';
+import { LocalStorageKeys } from '../models/Enums';
+import { SystemUserResponse } from '../models/SystemUserResponse';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -27,19 +29,17 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const isExcluded = this.excludedUrls.some((url) => req.url.includes(url));
-    const jwtToken = this.localstorageService.getItem('jwtToken');
+    const loggedInUserDetails: SystemUserResponse = this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
 
-    if (!isExcluded && jwtToken) {
+    if (!isExcluded && loggedInUserDetails.jwt) {
       const headers = new HttpHeaders({
-        Authorization: `Bearer ${this.localstorageService.getItem('jwtToken')}`,
+        Authorization: `Bearer ${loggedInUserDetails.jwt}`,
       });
       const clonedReq = req.clone({ headers: headers });
       return next.handle(clonedReq).pipe(
         catchError((error) => {
           if (error.status === 401) {
-            this.router.navigate([''], {
-              queryParams: { returnUrl: req.url },
-            });
+            this.router.navigate(['login']);
           }
           return throwError(() => error);
         })

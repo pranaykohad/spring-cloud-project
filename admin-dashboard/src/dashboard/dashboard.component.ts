@@ -31,7 +31,7 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.systemUserAuthService.testAPI('pranay').subscribe({
+    this.systemUserAuthService.getUserDetailsByUsername('pranay').subscribe({
       next: (res: SystemUserResponse) => {
         this.systemUserResponse = res;
       },

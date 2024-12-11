@@ -1,54 +1,37 @@
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { ToastType } from '../models/ToastType';
+import { ToastType } from '../models/Enums';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ToastService {
+  toastConfig: {} = {
+    closeButton: true,
+    easing: 'ease-in',
+    progressBar: true,
+    progressAnimation: 'increasing',
+    timeOut: 2000,
+  };
+
   constructor(private toastr: ToastrService) {}
 
   showToast(title: string, message: string, type: ToastType) {
     switch (type) {
       case ToastType.SUCCESS:
-        this.toastr.success(message, title, {
-          closeButton: true,
-          easing: 'ease-in',
-          progressBar: true,
-          progressAnimation: 'increasing',
-        });
+        this.toastr.success(message, title, this.toastConfig);
         break;
       case ToastType.ERROR:
-        this.toastr.error(message, title, {
-          closeButton: true,
-          easing: 'ease-in',
-          progressBar: true,
-          progressAnimation: 'increasing',
-        });
+        this.toastr.error(message, title, this.toastConfig);
         break;
       case ToastType.WARNING:
-        this.toastr.warning(message, title, {
-          closeButton: true,
-          easing: 'ease-in',
-          progressBar: true,
-          progressAnimation: 'increasing',
-        });
+        this.toastr.warning(message, title, this.toastConfig);
         break;
       case ToastType.INFO:
-        this.toastr.info(message, title, {
-          closeButton: true,
-          easing: 'ease-in',
-          progressBar: true,
-          progressAnimation: 'increasing',
-        });
+        this.toastr.info(message, title, this.toastConfig);
         break;
       default:
-        this.toastr.success(message, title, {
-          closeButton: true,
-          easing: 'ease-in',
-          progressBar: true,
-          progressAnimation: 'increasing',
-        });
+        this.toastr.success(message, title, this.toastConfig);
     }
   }
 }

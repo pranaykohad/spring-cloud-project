@@ -20,7 +20,8 @@ import { PasswordModule } from 'primeng/password';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { RouterModule } from '@angular/router';
-
+import { MenuModule } from 'primeng/menu';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [],
@@ -47,6 +48,8 @@ import { RouterModule } from '@angular/router';
     IconFieldModule,
     InputIconModule,
     RouterModule,
+    MenuModule,
+    ToastModule
   ],
   exports: [
     CommonModule,
@@ -70,7 +73,9 @@ import { RouterModule } from '@angular/router';
     PasswordModule,
     IconFieldModule,
     InputIconModule,
-    RouterModule
+    RouterModule,
+    MenuModule,
+    ToastModule
   ],
 })
 export class SharedModule {}

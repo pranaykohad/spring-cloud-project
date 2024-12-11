@@ -11,21 +11,19 @@ export class LocalstorageService {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
-  setItem(key: string, value: string): void {
+  setItem(key: string, value: any): void {
     if (this.isBrowser) {
-      // localStorage.setItem(key, JSON.stringify(value));
-      localStorage.setItem(key, value);
+      localStorage.setItem(key, JSON.stringify(value));
     }
   }
 
   getItem(key: string): any | null {
     if (this.isBrowser) {
       const value = localStorage.getItem(key);
-      return value;
-      // if (value) {
-      //   const userObject = JSON.parse(value);
-      //   return userObject;
-      // }
+      if (value) {
+        const userObject = JSON.parse(value);
+        return userObject;
+      }
     }
     return null;
   }

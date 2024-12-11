@@ -24,11 +24,7 @@ export class SystemUserAuthService {
   //   );
   // }
 
-  testAPI(userName: string): Observable<SystemUserResponse> {
-    let headers = new HttpHeaders({
-      Authorization: `Bearer ${this.localstorageService.getItem('jwtToken')}`,
-    });
-
+  getUserDetailsByUsername(userName: string): Observable<SystemUserResponse> {
     return this.http.get<SystemUserResponse>(
       `${this.baseUrl}api/user/system/get-by-username?userName=${userName}`);
   }
@@ -48,4 +44,10 @@ export class SystemUserAuthService {
       systemUserSigninDto
     );
   }
+
+  userLogout(token: string): Observable<boolean>{
+    return this.http.get<boolean>(
+      `${this.baseUrl}api/user/system/logout?token=${token}`);
+  }
+
 }

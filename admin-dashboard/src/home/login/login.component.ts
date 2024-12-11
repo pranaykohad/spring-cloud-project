@@ -5,7 +5,7 @@ import { SystemUserLoginRequest } from '../../models/SystemUserLoginRequest';
 import { LocalstorageService } from '../../services/localstorage.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
-import { ToastType } from '../../models/ToastType';
+import { LocalStorageKeys, ToastType } from '../../models/Enums';
 import { SystemUserResponse } from '../../models/SystemUserResponse';
 
 @Component({
@@ -21,12 +21,7 @@ export class LoginComponent implements OnInit {
     password: 'pranay',
   };
   rememberMe: boolean = false;
-  systemUserResponse: SystemUserResponse = {
-    jwt: '',
-    email: '',
-    phone: '',
-    displayName: '',
-  };
+  systemUserResponse !: SystemUserResponse;
 
   constructor(
     private systemUserAuthService: SystemUserAuthService,
@@ -43,11 +38,11 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: (res: SystemUserResponse) => {
           this.systemUserResponse = res;
-          this.localstorageService.setItem('jwtToken', res.jwt);
+          this.localstorageService.setItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS, res);
           this.router.navigate(['']);
           this.toastService.showToast(
             '',
-            `${this.systemUserResponse.displayName} logged successfully`,
+            `${this.systemUserResponse.displayName} logged in`,
             ToastType.SUCCESS
           );
         },

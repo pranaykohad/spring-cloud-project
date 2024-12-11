@@ -3,7 +3,7 @@
 @import "bootstrap/scss/bootstrap-grid";
 @import "bootstrap/dist/css/bootstrap.min.css";
 @import "primeicons/primeicons.css";
-@import 'ngx-toastr/toastr';
+@import "ngx-toastr/toastr";
 
 @font-face {
   font-family: "Quicksand-Light";
@@ -55,6 +55,9 @@ input {
   line-height: normal;
 }
 
+.pointer-cursor {
+  cursor: pointer;
+}
 
 .font-Quicksand-Bold {
   font-family: "Quicksand-Bold";
@@ -74,4 +77,19 @@ input {
 
 .font-Quicksand-Light {
   font-family: "Quicksand-Light";
+}
+
+#user-menu {
+  width: fit-content;
+  padding: 0px;
+  ul {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    justify-content: center;
+    padding: 0px;
+  }
+  .p-menuitem-link {
+    text-decoration: none;
+  }
 }
