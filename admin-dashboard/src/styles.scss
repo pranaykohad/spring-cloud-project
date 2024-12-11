@@ -93,3 +93,20 @@ input {
     text-decoration: none;
   }
 }
+
+#nav-bar-menu {
+  height: 50px;
+  border-radius: 0px;
+  background-color: orange;
+  border: 0px;
+  .p-menuitem-link {
+    text-decoration: none;
+    border-radius: 0px;
+  }
+  .p-menuitem.p-highlight > .p-menuitem-content {
+    background: rgb(251, 207, 125);
+  }
+  .p-megamenu-grid {
+    background-color: orange;
+  }
+}
