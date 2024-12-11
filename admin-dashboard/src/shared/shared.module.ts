@@ -22,6 +22,8 @@ import { InputIconModule } from 'primeng/inputicon';
 import { RouterModule } from '@angular/router';
 import { MenuModule } from 'primeng/menu';
 import { ToastModule } from 'primeng/toast';
+import { SkeletonModule } from 'primeng/skeleton';
+import { MegaMenuModule } from 'primeng/megamenu';
 
 @NgModule({
   declarations: [],
@@ -49,7 +51,9 @@ import { ToastModule } from 'primeng/toast';
     InputIconModule,
     RouterModule,
     MenuModule,
-    ToastModule
+    ToastModule,
+    SkeletonModule,
+    MegaMenuModule,
   ],
   exports: [
     CommonModule,
@@ -75,7 +79,9 @@ import { ToastModule } from 'primeng/toast';
     InputIconModule,
     RouterModule,
     MenuModule,
-    ToastModule
+    ToastModule,
+    SkeletonModule,
+    MegaMenuModule,
   ],
 })
 export class SharedModule {}

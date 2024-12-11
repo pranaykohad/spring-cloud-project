@@ -1,5 +1,5 @@
 import { LocalstorageService } from './../services/localstorage.service';
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { SystemUserResponse } from '../models/SystemUserResponse';
 import { SystemUserAuthService } from '../services/system-user-auth.service';
 import { SharedModule } from '../shared/shared.module';
@@ -14,10 +14,10 @@ import { MenuItem } from 'primeng/api';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit{
   @Input()
   systemUserResponse!: SystemUserResponse;
-  urbanShowsLogo: string = 'assets/img/Urban Shows Logo.png';
+  urbanShowsLogo!: string;
   model: MenuItem[] = [
     {
       id: 'profile',
@@ -52,6 +52,9 @@ export class NavbarComponent {
     private localstorageService: LocalstorageService,
     private router: Router
   ) {}
+  ngOnInit(): void {
+    console.log(this.systemUserResponse);
+  }
 
   openProfile() {}
 

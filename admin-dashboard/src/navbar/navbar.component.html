@@ -9,10 +9,9 @@
     <div class="p-2">menu item 1</div>
   </div>
   <div class="col-3 d-flex justify-content-end self-align-end">
-    <div style="    border: 1px solid black;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;">IMG</div>
+    <div>
+      <img src="{{systemUserResponse.profilePicUrl}}" class="user-profile-img" />
+    </div>
     <div class="font-Quicksand-SemiBold p-2 d-flex justify-content-center align-items-center" style="text-align: end">
       <div class="pointer-cursor" (click)="menu.toggle($event)">{{systemUserResponse.displayName}}</div>
       <p-menu #menu [model]="model" [popup]="true" [styleClass]="'d-flex'" id="user-menu" />

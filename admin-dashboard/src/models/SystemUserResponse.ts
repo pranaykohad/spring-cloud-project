@@ -3,4 +3,5 @@ export interface SystemUserResponse {
   email: string;
   phone: string;
   displayName: string;
+  profilePicUrl: string;
 }
