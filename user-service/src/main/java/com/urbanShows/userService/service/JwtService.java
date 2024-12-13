@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.urbanShows.userService.entity.JwtToken;
+import com.urbanShows.userService.exceptionHandler.JwtParseException;
 import com.urbanShows.userService.repository.JwtTokenRepo;
 
 import io.jsonwebtoken.Claims;
@@ -42,36 +43,43 @@ public class JwtService {
 		final Claims claims = extractAllClaims(token);
 		return claimsResolver.apply(claims);
 	}
-	
+
 	public Boolean validateTokenForUserName(String token, String userName) {
 		final UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-		return validateToken(token, userDetails);
+		boolean isTokenValidate = false;
+		try {
+			isTokenValidate = validateToken(token, userDetails);
+		} catch (Exception ex) {
+			throw new JwtParseException("Invalid Jwt Token");
+		}
+		return isTokenValidate;
 	}
-	
+
 	public Boolean validateToken(String token, UserDetails userDetails) {
 		final String username = extractUsername(token);
 		return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
 	}
-	
+
 	public void invalidateToken(String token) {
 		jwtTokenRepo.deleteById(token);
 	}
-	
+
 	@Transactional
 	public String saveAndSendJwtTokenForSystemUser(String userName) {
 		return createAndSaveToken(userName);
 	}
-	
+
 	@Transactional
 	public String generateTokenForAppUser(String phone) {
 		return createAndSaveTokenForAppUser(phone);
-	} 
-	
+	}
+
 	private String createAndSaveTokenForAppUser(String phone) {
 		Map<String, Object> claims = new HashMap<>();
 		String token = Jwts.builder().setClaims(claims).setSubject(phone)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // Set expiration time - 24 hour
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // Set expiration time - 24
+																							// hour
 				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 
 		jwtTokenRepo.deleteByUsername(phone);
@@ -98,7 +106,8 @@ public class JwtService {
 		Map<String, Object> claims = new HashMap<>();
 		String token = Jwts.builder().setClaims(claims).setSubject(userName)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 )) // Set expiration time - 24 hour
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // Set expiration time - 24
+																							// hour
 				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 
 		jwtTokenRepo.deleteByUsername(userName);

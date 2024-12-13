@@ -23,10 +23,16 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleUserNotFoundException(UserNotFoundException ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.FORBIDDEN);
 	}
+	
+	@ExceptionHandler(JwtParseException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseEntity<String> handleJwtParseException(JwtParseException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}	
 
 	@ExceptionHandler(BlobNotFoundException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-	public ResponseEntity<String> BlobNotFoundException(BlobNotFoundException ex) {
+	public ResponseEntity<String> blobNotFoundException(BlobNotFoundException ex) {
 		log.error("Error while download blob. ", ex.getLocalizedMessage());
 		return new ResponseEntity<>("Error while downloading the blob from Azure. ", HttpStatus.INTERNAL_SERVER_ERROR);
 	}

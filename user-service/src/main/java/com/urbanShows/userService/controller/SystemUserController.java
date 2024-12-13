@@ -15,7 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.urbanShows.userService.azure.AzureBlobStorageService;
 import com.urbanShows.userService.dto.SystemUserInfoDto;
-import com.urbanShows.userService.dto.SystemUserResponseDto;
+import com.urbanShows.userService.dto.UserResponseDto;
 import com.urbanShows.userService.dto.UserUpdateDto;
 import com.urbanShows.userService.entity.SystemUserInfo;
 import com.urbanShows.userService.mapper.GenericMapper;
@@ -34,11 +34,6 @@ public class SystemUserController {
 	private final AzureBlobStorageService azureBlobStorageService;
 	private final ModelMapper modelMapper;
 	private final JwtService jwtService;
-
-	@GetMapping("validate-jwt")
-	public ResponseEntity<Boolean> validateJwt(@RequestParam String jwtToken) {
-		return ResponseEntity.ok(jwtService.validateTokenForUserName(jwtToken, jwtToken));
-	}
 
 	@GetMapping("logout")
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
@@ -80,10 +75,10 @@ public class SystemUserController {
 	}
 
 	@GetMapping("get-by-username")
-	public ResponseEntity<SystemUserResponseDto> getUserByUsername(@RequestParam String userName) {
+	public ResponseEntity<UserResponseDto> getUserByUsername(@RequestParam String userName) {
 		SystemUserInfo existingUser = systemUserService.getExistingSystemUser(userName);
-		GenericMapper<SystemUserResponseDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
-				SystemUserResponseDto.class, SystemUserInfo.class);
+		GenericMapper<UserResponseDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
+				UserResponseDto.class, SystemUserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 //

@@ -84,13 +84,6 @@ public class AppUserService {
 		return mapper.entityToDto(save);
 	}
 
-	public AppUserInfoDto getAppUserByPhone(String phone) {
-		final AppUserInfo appUser = getExistingAppUser(phone);
-		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-				AppUserInfo.class);
-		return mapper.entityToDto(appUser);
-	}
-
 	public AppUserInfo getExistingAppUser(String phoneNumber) {
 		final AppUserInfo existingAppUser = appUserInfoRepo.findByPhone(phoneNumber);
 		if (existingAppUser == null) {

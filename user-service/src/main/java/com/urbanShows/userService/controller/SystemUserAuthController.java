@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanShows.userService.dto.SystemUserLoginDto;
-import com.urbanShows.userService.dto.SystemUserResponseDto;
+import com.urbanShows.userService.dto.UserResponseDto;
 import com.urbanShows.userService.dto.SystemUserSigninDto;
 import com.urbanShows.userService.entity.SystemUserInfo;
 import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
@@ -40,7 +40,7 @@ public class SystemUserAuthController {
 	}
 
 	@PostMapping("login")
-	public ResponseEntity<SystemUserResponseDto> login(@Valid @RequestBody SystemUserLoginDto systemUserLoginDto) {
+	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody SystemUserLoginDto systemUserLoginDto) {
 		try {
 			final Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(systemUserLoginDto.getUserName(),
@@ -49,9 +49,9 @@ public class SystemUserAuthController {
 				final String jwtToken = jwtService.saveAndSendJwtTokenForSystemUser(systemUserLoginDto.getUserName());
 				final SystemUserInfo existingSystemUser = systemUserService
 						.getExistingSystemUser(systemUserLoginDto.getUserName());
-				final GenericMapper<SystemUserResponseDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
-						SystemUserResponseDto.class, SystemUserInfo.class);
-				final SystemUserResponseDto systemUserResponseDto = mapper.entityToDto(existingSystemUser);
+				final GenericMapper<UserResponseDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
+						UserResponseDto.class, SystemUserInfo.class);
+				final UserResponseDto systemUserResponseDto = mapper.entityToDto(existingSystemUser);
 				systemUserResponseDto.setJwt(jwtToken);
 				return ResponseEntity.ok(systemUserResponseDto);
 			} else {
@@ -63,8 +63,9 @@ public class SystemUserAuthController {
 	}
 
 	@GetMapping("validate-jwt")
-	public ResponseEntity<Boolean> validateJwt(@RequestParam String jwtToken) {
-		return ResponseEntity.ok(jwtService.validateTokenForUserName(jwtToken, jwtToken));
+	public ResponseEntity<Boolean> validateJwt(@RequestParam String jwtToken, @RequestParam String userName) {
+		SystemUserInfo existingUser = systemUserService.getExistingSystemUser(userName);
+		return ResponseEntity.ok(jwtService.validateTokenForUserName(jwtToken, existingUser.getUserName()));
 	}
-
+	
 }

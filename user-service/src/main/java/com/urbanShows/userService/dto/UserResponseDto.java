@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SystemUserResponseDto {
+public class UserResponseDto {
 
 	@Email(message = "This email ia not valid")
 	@NotNull(message = "Email cannot be null")
