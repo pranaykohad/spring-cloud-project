@@ -5,10 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanShows.userService.dto.SystemUserLoginDto;
@@ -26,7 +27,6 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("api/user/system/auth")
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
 public class SystemUserAuthController {
 
 	private final JwtService jwtService;
@@ -60,7 +60,11 @@ public class SystemUserAuthController {
 		} catch (Exception e) {
 			throw new AccessDeniedException("User name or password is not correct");
 		}
+	}
 
+	@GetMapping("validate-jwt")
+	public ResponseEntity<Boolean> validateJwt(@RequestParam String jwtToken) {
+		return ResponseEntity.ok(jwtService.validateTokenForUserName(jwtToken, jwtToken));
 	}
 
 }

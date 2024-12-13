@@ -22,5 +22,7 @@ public class SystemUserResponseDto {
 	private String displayName;
 	
 	private String jwt;
+	
+	private String profilePicUrl;
 
 }

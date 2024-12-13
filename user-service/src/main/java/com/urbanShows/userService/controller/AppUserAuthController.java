@@ -1,7 +1,6 @@
 package com.urbanShows.userService.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +19,6 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("api/user/app/auth")
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
 public class AppUserAuthController {
 
 	private final AppUserService appUserService;

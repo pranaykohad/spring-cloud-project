@@ -3,7 +3,6 @@ package com.urbanShows.userService.controller;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -29,14 +28,18 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("api/user/system")
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
 public class SystemUserController {
 
 	private final SystemUserService systemUserService;
 	private final AzureBlobStorageService azureBlobStorageService;
 	private final ModelMapper modelMapper;
 	private final JwtService jwtService;
-	
+
+	@GetMapping("validate-jwt")
+	public ResponseEntity<Boolean> validateJwt(@RequestParam String jwtToken) {
+		return ResponseEntity.ok(jwtService.validateTokenForUserName(jwtToken, jwtToken));
+	}
+
 	@GetMapping("logout")
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	public ResponseEntity<Boolean> logout(@RequestParam String token) {

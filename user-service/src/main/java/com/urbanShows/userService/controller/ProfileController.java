@@ -1,29 +1,20 @@
 package com.urbanShows.userService.controller;
 
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.urbanShows.userService.azure.AzureBlobStorageService;
 import com.urbanShows.userService.dto.AttachmentDto;
-import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
-import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 
 @RestController
 @RequestMapping("api/user/profile")
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
 public class ProfileController {
 
 	private final AzureBlobStorageService azureBlobStorageService;
@@ -36,8 +27,7 @@ public class ProfileController {
 //		headers.setContentType(MediaType.IMAGE_PNG);
 //		return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
 //	}
-	
-	
+
 	@GetMapping("download")
 	public ResponseEntity<AttachmentDto> downloadFile() {
 		final byte[] fileData = azureBlobStorageService.downloadFile("screenshot.jpg");
