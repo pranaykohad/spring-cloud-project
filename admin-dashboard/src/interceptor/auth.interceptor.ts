@@ -31,7 +31,7 @@ export class AuthInterceptor implements HttpInterceptor {
     const isExcluded = this.excludedUrls.some((url) => req.url.includes(url));
     const loggedInUserDetails: SystemUserResponse = this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
 
-    if (!isExcluded && loggedInUserDetails.jwt) {
+    if (!isExcluded && loggedInUserDetails?.jwt) {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${loggedInUserDetails.jwt}`,
       });

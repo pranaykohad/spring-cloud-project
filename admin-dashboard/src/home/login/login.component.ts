@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
     password: 'pranay',
   };
   rememberMe: boolean = false;
-  systemUserResponse !: SystemUserResponse;
+  systemUserResponse!: SystemUserResponse;
 
   constructor(
     private systemUserAuthService: SystemUserAuthService,
@@ -38,7 +38,10 @@ export class LoginComponent implements OnInit {
       .subscribe({
         next: (res: SystemUserResponse) => {
           this.systemUserResponse = res;
-          this.localstorageService.setItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS, res);
+          this.localstorageService.setItem(
+            LocalStorageKeys.LOGGED_IN_USER_DETAILS,
+            res
+          );
           this.router.navigate(['']);
           this.toastService.showToast(
             '',
