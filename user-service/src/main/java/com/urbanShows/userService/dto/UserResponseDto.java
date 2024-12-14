@@ -1,6 +1,11 @@
 package com.urbanShows.userService.dto;
 
+import java.util.List;
+
+import com.urbanShows.userService.entity.Role;
+
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -24,5 +29,8 @@ public class UserResponseDto {
 	private String jwt;
 	
 	private String profilePicUrl;
+	
+	@NotEmpty(message = "Roles cannot be empty")
+	private List<Role> roles;
 
 }

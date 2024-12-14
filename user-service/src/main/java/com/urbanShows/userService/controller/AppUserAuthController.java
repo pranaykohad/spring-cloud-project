@@ -14,7 +14,7 @@ import com.urbanShows.userService.dto.AppUserLoginReqDto;
 import com.urbanShows.userService.dto.AppUserSigninReqDto;
 import com.urbanShows.userService.dto.UserResponseDto;
 import com.urbanShows.userService.entity.AppUserInfo;
-import com.urbanShows.userService.entity.SystemUserInfo;
+import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.AppUserService;
 import com.urbanShows.userService.service.JwtService;

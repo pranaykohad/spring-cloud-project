@@ -1,6 +1,11 @@
 package com.urbanShows.userService.dto;
 
+import java.util.List;
+
+import com.urbanShows.userService.entity.Role;
+
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -11,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SystemUserSigninDto {
+public class UserSigninDto {
 
 	@NotNull(message = "Username cannot be null")
 	private String userName;
@@ -32,5 +37,8 @@ public class SystemUserSigninDto {
 	@NotNull(message = "Display name cannot be null")
 	@Size(min = 3, message = "Display name must be at least 3 characters long")
 	private String displayName;
+	
+	@NotEmpty(message = "Roles cannot be empty")
+	private List<Role> roles;
 
 }

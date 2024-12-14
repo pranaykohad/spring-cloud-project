@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.urbanShows.userService.dto.SystemUserLoginDto;
+import com.urbanShows.userService.dto.UserLoginDto;
 import com.urbanShows.userService.dto.UserResponseDto;
-import com.urbanShows.userService.dto.SystemUserSigninDto;
-import com.urbanShows.userService.entity.SystemUserInfo;
+import com.urbanShows.userService.dto.UserSigninDto;
+import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
-import com.urbanShows.userService.service.SystemUserService;
+import com.urbanShows.userService.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -27,30 +27,30 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("api/user/system/auth")
 @AllArgsConstructor
-public class SystemUserAuthController {
+public class UserAuthController {
 
 	private final JwtService jwtService;
 	private final AuthenticationManager authenticationManager;
-	private final SystemUserService systemUserService;
+	private final UserService systemUserService;
 	private final ModelMapper modelMapper;
 
 	@PostMapping("signup")
-	public ResponseEntity<Boolean> signup(@Valid @RequestBody SystemUserSigninDto systemUserSigninDto) {
+	public ResponseEntity<Boolean> signup(@Valid @RequestBody UserSigninDto systemUserSigninDto) {
 		return ResponseEntity.ok(systemUserService.addSystemUser(systemUserSigninDto));
 	}
 
 	@PostMapping("login")
-	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody SystemUserLoginDto systemUserLoginDto) {
+	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody UserLoginDto systemUserLoginDto) {
 		try {
 			final Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(systemUserLoginDto.getUserName(),
 							systemUserLoginDto.getPassword()));
 			if (authentication.isAuthenticated()) {
 				final String jwtToken = jwtService.saveAndSendJwtTokenForSystemUser(systemUserLoginDto.getUserName());
-				final SystemUserInfo existingSystemUser = systemUserService
+				final UserInfo existingSystemUser = systemUserService
 						.getExistingSystemUser(systemUserLoginDto.getUserName());
-				final GenericMapper<UserResponseDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
-						UserResponseDto.class, SystemUserInfo.class);
+				final GenericMapper<UserResponseDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
+						UserResponseDto.class, UserInfo.class);
 				final UserResponseDto systemUserResponseDto = mapper.entityToDto(existingSystemUser);
 				systemUserResponseDto.setJwt(jwtToken);
 				return ResponseEntity.ok(systemUserResponseDto);
@@ -64,7 +64,7 @@ public class SystemUserAuthController {
 
 	@GetMapping("validate-jwt")
 	public ResponseEntity<Boolean> validateJwt(@RequestParam String jwtToken, @RequestParam String userName) {
-		SystemUserInfo existingUser = systemUserService.getExistingSystemUser(userName);
+		UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
 		return ResponseEntity.ok(jwtService.validateTokenForUserName(jwtToken, existingUser.getUserName()));
 	}
 	

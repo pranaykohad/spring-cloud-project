@@ -9,11 +9,11 @@ import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.models.BlobStorageException;
 import com.urbanShows.userService.entity.AppUserInfo;
-import com.urbanShows.userService.entity.SystemUserInfo;
+import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.exceptionHandler.BlobNotFoundException;
 import com.urbanShows.userService.exceptionHandler.GenericException;
 import com.urbanShows.userService.service.AppUserService;
-import com.urbanShows.userService.service.SystemUserService;
+import com.urbanShows.userService.service.UserService;
 import com.urbanShows.userService.util.Helper;
 
 import lombok.AllArgsConstructor;
@@ -28,9 +28,9 @@ public class AzureBlobStorageService {
 
 	private AppUserService appUserService;
 
-	private SystemUserService systemUserService;
+	private UserService systemUserService;
 
-	public boolean uploadSystemUserProfile(MultipartFile file, SystemUserInfo systemUser) {
+	public boolean uploadSystemUserProfile(MultipartFile file, UserInfo systemUser) {
 		final String originalFileName = file.getOriginalFilename();
 		Helper.validateBlob(originalFileName, file.getSize());
 		try {

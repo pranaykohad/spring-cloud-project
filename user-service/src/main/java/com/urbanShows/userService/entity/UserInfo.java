@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SystemUserInfo {
+public class UserInfo {
 
 	@Id
 	private String userName;

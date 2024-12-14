@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.urbanShows.userService.dto.AppUserInfoDto;
-import com.urbanShows.userService.dto.SystemUserInfoDto;
-import com.urbanShows.userService.dto.SystemUserSigninDto;
+import com.urbanShows.userService.dto.UserInfoDto;
+import com.urbanShows.userService.dto.UserSigninDto;
 import com.urbanShows.userService.dto.TargetUserDto;
 import com.urbanShows.userService.dto.UserUpdateDto;
 import com.urbanShows.userService.entity.AppUserInfo;
 import com.urbanShows.userService.entity.Role;
-import com.urbanShows.userService.entity.SystemUserInfo;
+import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
 import com.urbanShows.userService.exceptionHandler.UserAlreadyExistsException;
 import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
@@ -23,7 +23,7 @@ import com.urbanShows.userService.kafka.KafkaTopicEnums;
 import com.urbanShows.userService.kafka.MessageProducer;
 import com.urbanShows.userService.kafka.OtpkafkaDto;
 import com.urbanShows.userService.mapper.GenericMapper;
-import com.urbanShows.userService.repository.SystemUserInfoRepository;
+import com.urbanShows.userService.repository.UserInfoRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,44 +31,44 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class SystemUserService {
+public class UserService {
 
-	private final SystemUserInfoRepository systemUserRepo;
+	private final UserInfoRepository systemUserRepo;
 	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
 	private final MessageProducer messageProducer;
 	private final OtpService otpService;
 	private final AppUserService appUserService;
 
-	public void uploadProfilePicUrl(SystemUserInfoDto systemUserDto, String profilePicUrl) {
-		final SystemUserInfo appUser = new SystemUserInfo();
+	public void uploadProfilePicUrl(UserInfoDto systemUserDto, String profilePicUrl) {
+		final UserInfo appUser = new UserInfo();
 		appUser.setUserName(systemUserDto.getUserName());
 		appUser.setProfilePicUrl(profilePicUrl);
 		systemUserRepo.save(appUser);
 	}
 
-	public SystemUserInfo authenticateSystemUserByOtp(String userName, String otp) {
-		final SystemUserInfo systemUser = systemUserRepo.findByUserNameAndOtp(userName, otp);
+	public UserInfo authenticateSystemUserByOtp(String userName, String otp) {
+		final UserInfo systemUser = systemUserRepo.findByUserNameAndOtp(userName, otp);
 		if (systemUser == null) {
 			throw new AccessDeniedException("Username or OTP is not correct");
 		}
 		return systemUser;
 	}
 
-	public void uploadSystemUserProfilePicUrl(SystemUserInfo systemUser, String profilePicUrl) {
+	public void uploadSystemUserProfilePicUrl(UserInfo systemUser, String profilePicUrl) {
 		systemUser.setProfilePicUrl(profilePicUrl);
 		systemUserRepo.save(systemUser);
 	}
-	
-	public Boolean addSystemUser(SystemUserSigninDto systemUserSigninDto) {
+
+	public Boolean addSystemUser(UserSigninDto systemUserSigninDto) {
 		if (systemUserRepo.existsById(systemUserSigninDto.getUserName())) {
 			throw new UserAlreadyExistsException("User already exists in the system");
 		}
-		final GenericMapper<SystemUserSigninDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
-				SystemUserSigninDto.class, SystemUserInfo.class);
-		final SystemUserInfo systemUser = mapper.dtoToEntity(systemUserSigninDto);
+		final GenericMapper<UserSigninDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
+				UserSigninDto.class, UserInfo.class);
+		final UserInfo systemUser = mapper.dtoToEntity(systemUserSigninDto);
 		final List<Role> roleList = new ArrayList<>();
-		roleList.add(Role.SYSTEM_USER);
+		roleList.addAll(systemUserSigninDto.getRoles());
 		systemUser.setRoles(roleList);
 		systemUser.setPassword(passwordEncoder.encode(systemUserSigninDto.getPassword()));
 		systemUserRepo.save(systemUser);
@@ -76,30 +76,30 @@ public class SystemUserService {
 		return true;
 	}
 
-	public void uploadProfilePic(SystemUserInfo systemUser, String profilePicUrl) {
+	public void uploadProfilePic(UserInfo systemUser, String profilePicUrl) {
 		systemUser.setProfilePicUrl(profilePicUrl);
 		systemUserRepo.save(systemUser);
 	}
 
-	public SystemUserInfo getExistingSystemUser(String userName) {
-		final SystemUserInfo existingUser = systemUserRepo.findByUserName(userName);
+	public UserInfo getExistingSystemUser(String userName) {
+		final UserInfo existingUser = systemUserRepo.findByUserName(userName);
 		if (existingUser == null) {
 			throw new UserNotFoundException("User doesnot exists in the system");
 		}
 		return existingUser;
 	}
 
-	public List<SystemUserInfoDto> getSystemUsersList() {
-		final GenericMapper<SystemUserInfoDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
-				SystemUserInfoDto.class, SystemUserInfo.class);
-		final List<SystemUserInfo> all = systemUserRepo.findAll();
+	public List<UserInfoDto> getSystemUsersList() {
+		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
+				UserInfoDto.class, UserInfo.class);
+		final List<UserInfo> all = systemUserRepo.findAll();
 		return mapper.entityToDto(all);
 	}
 
 	@Transactional
-	public void deleteSystemUserByUserName(SystemUserInfoDto systemUserDto) {
-		final GenericMapper<SystemUserInfoDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
-				SystemUserInfoDto.class, SystemUserInfo.class);
+	public void deleteSystemUserByUserName(UserInfoDto systemUserDto) {
+		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
+				UserInfoDto.class, UserInfo.class);
 		systemUserRepo.delete(mapper.dtoToEntity(systemUserDto));
 	}
 
@@ -114,7 +114,7 @@ public class SystemUserService {
 	}
 
 	public void generateOtpForSystemUser(String userName) {
-		final SystemUserInfo systemUser = getExistingSystemUser(userName);
+		final UserInfo systemUser = getExistingSystemUser(userName);
 		otpService.createOtpForSystemUser(systemUser);
 	}
 
@@ -128,8 +128,8 @@ public class SystemUserService {
 		appUserService.udpate(appUser, newAppUserDto);
 	}
 
-	private void updateSystemUserDetails(SystemUserInfoDto targetUserDto) {
-		final SystemUserInfo systemUser = getExistingSystemUser(targetUserDto.getUserName());
+	private void updateSystemUserDetails(UserInfoDto targetUserDto) {
+		final UserInfo systemUser = getExistingSystemUser(targetUserDto.getUserName());
 		systemUser.setPassword(targetUserDto.getPassword() != null
 				&& !passwordEncoder.matches(targetUserDto.getPassword(), systemUser.getPassword())
 						? passwordEncoder.encode(targetUserDto.getPassword())

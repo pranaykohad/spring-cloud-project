@@ -6,9 +6,9 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.urbanShows.userService.entity.AppUserInfo;
-import com.urbanShows.userService.entity.SystemUserInfo;
+import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.repository.AppUserInfoRepository;
-import com.urbanShows.userService.repository.SystemUserInfoRepository;
+import com.urbanShows.userService.repository.UserInfoRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OtpCleanupScheduler {
 
 	private final AppUserInfoRepository appUserInfoRepo;
-	private final SystemUserInfoRepository systemUserInfoRepository;
+	private final UserInfoRepository systemUserInfoRepository;
 
 //	@Scheduled(fixedRate = 1000) // check in every 10 sec
 	public void appUserOtpCleanup() {
@@ -33,7 +33,7 @@ public class OtpCleanupScheduler {
 
 //	@Scheduled(fixedRate = 1000) // check in every 10 sec
 	public void systemUserOtpCleanup() {
-		List<SystemUserInfo> appUserListWithOtp = systemUserInfoRepository
+		List<UserInfo> appUserListWithOtp = systemUserInfoRepository
 				.findByOtpDateTime(LocalDateTime.now().minusSeconds(60));
 		appUserListWithOtp.forEach(appUser -> {
 			appUser.setOtp("");

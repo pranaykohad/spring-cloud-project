@@ -8,21 +8,21 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.urbanShows.userService.entity.SystemUserInfo;
+import com.urbanShows.userService.entity.UserInfo;
 
 import io.micrometer.observation.annotation.Observed;
 
 @Repository
 @Observed
-public interface SystemUserInfoRepository extends JpaRepository<SystemUserInfo, String> {
+public interface UserInfoRepository extends JpaRepository<UserInfo, String> {
 
-	SystemUserInfo findByUserName(String userName);
+	UserInfo findByUserName(String userName);
 
 	void deleteByUserName(String userName);
 
-	SystemUserInfo findByUserNameAndOtp(String userName, String otp);
+	UserInfo findByUserNameAndOtp(String userName, String otp);
 
-	@Query("SELECT a FROM SystemUserInfo a WHERE a.otpTimeStamp < :otpTimeStamp")
-	List<SystemUserInfo> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
+	@Query("SELECT a FROM UserInfo a WHERE a.otpTimeStamp < :otpTimeStamp")
+	List<UserInfo> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
 
 }

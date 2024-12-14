@@ -11,6 +11,6 @@ public class TargetUserDto {
 	
 	private AppUserInfoDto appUserInfoDto;
 
-	private SystemUserInfoDto systemUserInfoDto;
+	private UserInfoDto systemUserInfoDto;
 
 }

@@ -12,16 +12,16 @@ import org.springframework.stereotype.Service;
 
 import com.urbanShows.userService.entity.AppUserInfo;
 import com.urbanShows.userService.entity.Role;
-import com.urbanShows.userService.entity.SystemUserInfo;
+import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.repository.AppUserInfoRepository;
-import com.urbanShows.userService.repository.SystemUserInfoRepository;
+import com.urbanShows.userService.repository.UserInfoRepository;
 import com.urbanShows.userService.util.Helper;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
-	private SystemUserInfoRepository systemUserInfoRepo;
+	private UserInfoRepository systemUserInfoRepo;
 
 	@Autowired
 	private AppUserInfoRepository appUserInfoRepo;
@@ -38,7 +38,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			}
 			throw new UsernameNotFoundException("User not found with username: " + username);
 		} else {
-			SystemUserInfo user = systemUserInfoRepo.findByUserName(username);
+			UserInfo user = systemUserInfoRepo.findByUserName(username);
 			if (user != null) {
 				List<String> list = new ArrayList<>();
 				user.getRoles().forEach(i -> list.add(i.name()));

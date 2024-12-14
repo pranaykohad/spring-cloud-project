@@ -14,13 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.urbanShows.userService.azure.AzureBlobStorageService;
-import com.urbanShows.userService.dto.SystemUserInfoDto;
+import com.urbanShows.userService.dto.UserInfoDto;
 import com.urbanShows.userService.dto.UserResponseDto;
 import com.urbanShows.userService.dto.UserUpdateDto;
-import com.urbanShows.userService.entity.SystemUserInfo;
+import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
-import com.urbanShows.userService.service.SystemUserService;
+import com.urbanShows.userService.service.UserService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -28,9 +28,9 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("api/user/system")
 @AllArgsConstructor
-public class SystemUserController {
+public class UserController {
 
-	private final SystemUserService systemUserService;
+	private final UserService systemUserService;
 	private final AzureBlobStorageService azureBlobStorageService;
 	private final ModelMapper modelMapper;
 	private final JwtService jwtService;
@@ -45,7 +45,7 @@ public class SystemUserController {
 	@PatchMapping("udpate")
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	public ResponseEntity<Boolean> udpateUser(@Valid @RequestBody UserUpdateDto userUpdateDto) {
-		final SystemUserInfoDto systemUserDto = new SystemUserInfoDto();
+		final UserInfoDto systemUserDto = new UserInfoDto();
 		systemUserDto.setUserName(userUpdateDto.getModifierUserDto().getUserName());
 		systemUserDto.setOtp(userUpdateDto.getModifierUserDto().getOtp());
 		systemUserService.authenticateSystemUserByOtp(systemUserDto.getUserName(), systemUserDto.getOtp());
@@ -54,7 +54,7 @@ public class SystemUserController {
 
 	@DeleteMapping("remove")
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
-	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody SystemUserInfoDto systemUser) {
+	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody UserInfoDto systemUser) {
 		systemUserService.deleteSystemUserByUserName(systemUser);
 		return ResponseEntity.ok(true);
 	}
@@ -69,16 +69,16 @@ public class SystemUserController {
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	public ResponseEntity<Boolean> uploadSystemUserProfilePic(@RequestParam MultipartFile file,
 			@RequestPart String userName, @RequestPart String otp) {
-		final SystemUserInfo systemUser = systemUserService.authenticateSystemUserByOtp(userName, otp);
+		final UserInfo systemUser = systemUserService.authenticateSystemUserByOtp(userName, otp);
 		boolean uploadAppUserProfile = azureBlobStorageService.uploadSystemUserProfile(file, systemUser);
 		return ResponseEntity.ok(uploadAppUserProfile);
 	}
 
 	@GetMapping("get-by-username")
 	public ResponseEntity<UserResponseDto> getUserByUsername(@RequestParam String userName) {
-		SystemUserInfo existingUser = systemUserService.getExistingSystemUser(userName);
-		GenericMapper<UserResponseDto, SystemUserInfo> mapper = new GenericMapper<>(modelMapper,
-				UserResponseDto.class, SystemUserInfo.class);
+		UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
+		GenericMapper<UserResponseDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
+				UserResponseDto.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 //
