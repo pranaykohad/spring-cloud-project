@@ -1,3 +1,4 @@
+import { ProfileComponent } from './../profile/profile.component';
 import { Routes } from '@angular/router';
 import { AuthGuard } from '../guard/auth.guard';
 
@@ -9,10 +10,33 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('../dashboard/dashboard.component').then(
+          import('../dashboard/main/dashboard.component').then(
             (m) => m.DashboardComponent
           ),
         canActivate: [AuthGuard],
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('../dashboard/main/main/main.component').then(
+                (m) => m.MainComponent
+              ),
+          },
+          {
+            path: 'profile',
+            loadComponent: () =>
+              import('../profile/profile.component').then(
+                (m) => m.ProfileComponent
+              ),
+          },
+          {
+            path: 'setting',
+            loadComponent: () =>
+              import('../setting/setting.component').then(
+                (m) => m.SettingComponent
+              ),
+          },
+        ],
       },
       {
         path: 'login',

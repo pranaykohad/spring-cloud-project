@@ -128,23 +128,23 @@ input {
   position: absolute;
 }
 
-// ::-webkit-scrollbar {
-//   width: 8px; /* Adjust the width of the vertical scrollbar */
-//   height: 8px; /* Adjust the height of the horizontal scrollbar */
-// }
+::-webkit-scrollbar {
+  width: 8px; /* Adjust the width of the vertical scrollbar */
+  height: 8px; /* Adjust the height of the horizontal scrollbar */
+}
 
-// ::-webkit-scrollbar-track {
-//   background: #f1f1f1;
-//   border-radius: 10px; /* Optional: round the corners */
-// }
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px; /* Optional: round the corners */
+}
 
-// /* Scrollbar thumb (scroll handle) */
-// ::-webkit-scrollbar-thumb {
-//   background: #888;
-//   border-radius: 10px;
-// }
+/* Scrollbar thumb (scroll handle) */
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
 
-// /* Scrollbar thumb on hover */
-// ::-webkit-scrollbar-thumb:hover {
-//   background: #555;
-// }
+/* Scrollbar thumb on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

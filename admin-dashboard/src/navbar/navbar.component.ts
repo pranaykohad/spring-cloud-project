@@ -173,9 +173,17 @@ export class NavbarComponent implements OnInit{
   ngOnInit(): void {
   }
 
-  openProfile() {}
+  openProfile() {
+    this.router.navigate(['profile']);
+  }
 
-  openSetting() {}
+  navigateToHome(){
+    this.router.navigate(['']);
+  }
+
+  openSetting() {
+    this.router.navigate(['setting']);
+  }
 
   logout() {
     const loggedInUserDetails: SystemUserResponse =
