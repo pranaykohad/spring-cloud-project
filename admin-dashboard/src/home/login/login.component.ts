@@ -17,11 +17,12 @@ import { SystemUserResponse } from '../../models/SystemUserResponse';
 })
 export class LoginComponent implements OnInit {
   systemUserLoginRequest: SystemUserLoginRequest = {
-    userName: 'pranay',
-    password: 'pranay',
+    userName: '',
+    password: '',
   };
   rememberMe: boolean = false;
   systemUserResponse!: SystemUserResponse;
+  enableLoginButton: boolean = false;
 
   constructor(
     private systemUserAuthService: SystemUserAuthService,
@@ -31,6 +32,12 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {}
+
+  validate() {
+    this.enableLoginButton =
+      this.systemUserLoginRequest.userName.length !== 0 &&
+      this.systemUserLoginRequest.password.length !== 0;
+  }
 
   login() {
     this.systemUserAuthService
@@ -53,5 +60,9 @@ export class LoginComponent implements OnInit {
           this.toastService.showToast('', err.error, ToastType.ERROR);
         },
       });
+  }
+
+  nagivateToSignin() {
+    this.router.navigate(['signin']);
   }
 }

@@ -8,3 +8,4 @@ export enum ToastType {
 export enum LocalStorageKeys {
   LOGGED_IN_USER_DETAILS = 'LOGGED_IN_USER_DETAILS',
 }
+

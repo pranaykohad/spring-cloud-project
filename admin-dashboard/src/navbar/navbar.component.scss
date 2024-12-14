@@ -6,6 +6,10 @@
   .user-profile-img {
     width: 45px;
     height: 45px;
-    border-radius: 50%;
+    border-radius: 75%;
+    border: 1px solid black;
+    display: block;
+    text-align: center;
+    overflow: hidden;
   }
 }

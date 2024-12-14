@@ -8,10 +8,14 @@
   </div>
   <div class="col-2 d-flex justify-content-end self-align-end">
     <div>
-      <img src="{{systemUserResponse.profilePicUrl}}" class="user-profile-img" />
+      @if (systemUserResponse && systemUserResponse!.profilePicUrl) {
+        <img src="{{systemUserResponse.profilePicUrl}}" class="user-profile-img" alt="profile"/>
+      } @else {
+        <span class="user-profile-img">no img</span>
+      }
     </div>
     <div class="font-Quicksand-SemiBold p-2 d-flex justify-content-center align-items-center" style="text-align: end">
-      <div class="pointer-cursor" (click)="menu.toggle($event)">{{systemUserResponse.displayName}}</div>
+      <div class="pointer-cursor" (click)="menu.toggle($event)">{{systemUserResponse &&systemUserResponse.displayName}}</div>
       <p-menu #menu [model]="model" [popup]="true" [styleClass]="'d-flex'" id="user-menu" />
     </div>
   </div>

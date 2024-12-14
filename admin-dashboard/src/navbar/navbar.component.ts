@@ -169,8 +169,8 @@ export class NavbarComponent implements OnInit{
     private localstorageService: LocalstorageService,
     private router: Router
   ) {}
+
   ngOnInit(): void {
-    console.log(this.systemUserResponse);
   }
 
   openProfile() {}

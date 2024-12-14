@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccordionModule } from 'primeng/accordion';
 import { CheckboxModule } from 'primeng/checkbox';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ListboxModule } from 'primeng/listbox';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -24,6 +24,9 @@ import { MenuModule } from 'primeng/menu';
 import { ToastModule } from 'primeng/toast';
 import { SkeletonModule } from 'primeng/skeleton';
 import { MegaMenuModule } from 'primeng/megamenu';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { DropdownModule } from 'primeng/dropdown';
+import { TooltipModule } from 'primeng/tooltip';
 
 @NgModule({
   declarations: [],
@@ -54,6 +57,9 @@ import { MegaMenuModule } from 'primeng/megamenu';
     ToastModule,
     SkeletonModule,
     MegaMenuModule,
+    SelectButtonModule,
+    DropdownModule,
+    TooltipModule
   ],
   exports: [
     CommonModule,
@@ -82,6 +88,9 @@ import { MegaMenuModule } from 'primeng/megamenu';
     ToastModule,
     SkeletonModule,
     MegaMenuModule,
+    SelectButtonModule,
+    DropdownModule,
+    TooltipModule
   ],
 })
 export class SharedModule {}

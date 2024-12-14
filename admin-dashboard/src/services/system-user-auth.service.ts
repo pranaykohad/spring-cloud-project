@@ -40,7 +40,7 @@ export class SystemUserAuthService {
 
   userSignin(systemUserSigninDto: SystemUserSigninRequest) {
     return this.http.post<string>(
-      `${this.baseUrl}api/user/system/auth/signin`,
+      `${this.baseUrl}api/user/system/auth/signup`,
       systemUserSigninDto
     );
   }

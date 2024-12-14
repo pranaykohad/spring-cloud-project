@@ -1,1 +1,84 @@
-<p>signin works!</p>
+<div id="signin" class="d-flex justify-content-center align-items-center" style="height: 100vh">
+  <p-card [style]="{minWidth: '25vw'}">
+    <ng-template pTemplate="header">
+      <div class="container-fluid pt-5" style="text-align: center; font-size: 30px; font-family: Quicksand-Bold;">Sign
+        in
+      </div>
+    </ng-template>
+    <div class="container-fluid justify-content-center align-items-center">
+      <div class="d-flex flex-column mb-3 align-items-center">
+        <div class="mb-3 d-flex flex-column">
+          <p-iconField iconPosition="left">
+            <p-inputIcon styleClass="pi pi-user" />
+            <input type="text" pInputText placeholder="Username" [(ngModel)]="signinReq.userName"
+              [style]="{minWidth: '20vw'}" (keypress)="clearValidation('USERNAME')" />
+          </p-iconField>
+          <span class="error-cntr">{{this.signinRequestError.userName}}</span>
+        </div>
+        <div class="mb-3 d-flex flex-column">
+          <p-iconField iconPosition="left">
+            <p-inputIcon styleClass="pi pi-lock" />
+            <input type="password" pInputText placeholder="Password" [(ngModel)]="signinReq.password"
+              [style]="{minWidth: '20vw'}" (keypress)="clearValidation('PASSWORD')" />
+          </p-iconField>
+          <span class="error-cntr">{{this.signinRequestError.password}}</span>
+        </div>
+        <div class="mb-3 d-flex flex-column">
+          <p-iconField iconPosition="left">
+            <p-inputIcon styleClass="pi pi-lock" />
+            <input type="text" pInputText placeholder="Confirm password" [(ngModel)]="signinReq.confirmPassword"
+              [style]="{minWidth: '20vw'}" (keypress)="clearValidation('CONFIRMPASSWORD')" />
+          </p-iconField>
+          <span class="error-cntr">{{this.signinRequestError.confirmPassword}}</span>
+        </div>
+        <div class="mb-3 d-flex flex-column">
+          <p-iconField iconPosition="left">
+            <p-inputIcon styleClass="pi pi-envelope" />
+            <input type="text" pInputText placeholder="Email" [(ngModel)]="signinReq.email" [style]="{minWidth: '20vw'}"
+              (keypress)="clearValidation('EMAIL')" />
+          </p-iconField>
+          <span class="error-cntr">{{this.signinRequestError.email}}</span>
+        </div>
+        <div class="mb-3 d-flex flex-column">
+          <p-iconField iconPosition="left">
+            <p-inputIcon styleClass="pi pi-phone" />
+            <input type="text" pInputText placeholder="Phone" [(ngModel)]="signinReq.phone" [style]="{minWidth: '20vw'}"
+              (keypress)="clearValidation('PHONE')" maxlength="10" />
+          </p-iconField>
+          <span class="error-cntr">{{this.signinRequestError.phone}}</span>
+        </div>
+        <div class="mb-3 d-flex flex-column">
+          <p-iconField iconPosition="left">
+            <p-inputIcon styleClass="pi pi-user" />
+            <input type="text" pInputText placeholder="Display name" [(ngModel)]="signinReq.displayName"
+              [style]="{minWidth: '20vw'}" (keypress)="clearValidation('DISPLAYNAME')" />
+          </p-iconField>
+          <span class="error-cntr">{{this.signinRequestError.displayName}}</span>
+        </div>
+        <div class="d-flex flex-column">
+          <p-floatLabel>
+            <p-dropdown id="role-dropdown" [options]="rolelist" [(ngModel)]="selectedRole"
+              placeholder="Select appropriate Role" [showClear]="selectedRole" [style]="{minWidth: '20vw'}"
+              (onChange)="selectRole($event.value)" />
+          </p-floatLabel>
+          <span class="error-cntr">{{this.signinRequestError.roles}}</span>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between align-items-center m-3">
+        <div>
+          <p-checkbox [(ngModel)]="termsAndConditionsRead" [binary]="true" inputId="binary" /> <span
+            style="font-family: Quicksand-Bold;" class="p-2">I have read the
+            Terms and Conditions</span>
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <p-button label="Request for sign in" [raised]="true" [style]="{borderRadius: '7px', minWidth: '20vw'}"
+          (onClick)="signin()" [disabled]="!termsAndConditionsRead" />
+      </div>
+      <div class="d-flex justify-content-start m-3">
+        <div [style]="{marginRight: '10px'}">Already have an account?</div>
+        <p-button label="Login" [link]="true" [style]="{padding: 0, fontFamily: 'Quicksand-light'}" (onClick)="nagivateToLogin()"/>
+      </div>
+    </div>
+  </p-card>
+</div>
