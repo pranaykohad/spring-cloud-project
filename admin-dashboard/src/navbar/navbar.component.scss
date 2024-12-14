@@ -1,7 +1,13 @@
 #navbar {
+  height: 64px;
+  background-color: white;
+  border-bottom: 1px solid lightgray;
+  position: sticky;
+  top: 0;
   .home-logo {
     font-size: 25px;
     color: black;
+    margin-left: 20px;
   }
   .user-profile-img {
     width: 45px;
@@ -11,5 +17,8 @@
     display: block;
     text-align: center;
     overflow: hidden;
+  }
+  .user-name {
+    text-align: end;
   }
 }

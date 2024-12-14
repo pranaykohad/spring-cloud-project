@@ -5,6 +5,8 @@
 @import "primeicons/primeicons.css";
 @import "ngx-toastr/toastr";
 
+$primary-color: orange;
+
 @font-face {
   font-family: "Quicksand-Light";
   src: url("assets/font/Quicksand-Light.ttf") format("truetype");
@@ -43,6 +45,12 @@
   font-weight: normal;
   font-size: normal;
   font-optical-sizing: auto;
+}
+
+body {
+  background-color: #ebebe8;
+  margin: 0;
+  padding: 0;
 }
 
 body,
@@ -97,24 +105,46 @@ input {
 #nav-bar-menu {
   height: 50px;
   border-radius: 0px;
-  background-color: orange;
   border: 0px;
   .p-menuitem-link {
     text-decoration: none;
     border-radius: 0px;
   }
-  .p-menuitem.p-highlight > .p-menuitem-content {
-    background: rgb(251, 207, 125);
-  }
-  .p-megamenu-grid {
-    background-color: orange;
-  }
 }
 
-#role-dropdown_list{
+#role-dropdown_list {
   padding: 0px;
 }
 
 .p-float-label .p-dropdown .p-placeholder {
   opacity: 1;
 }
+
+.p-megamenu-panel {
+  position: absolute;
+}
+
+.p-menu-overlay {
+  position: absolute;
+}
+
+// ::-webkit-scrollbar {
+//   width: 8px; /* Adjust the width of the vertical scrollbar */
+//   height: 8px; /* Adjust the height of the horizontal scrollbar */
+// }
+
+// ::-webkit-scrollbar-track {
+//   background: #f1f1f1;
+//   border-radius: 10px; /* Optional: round the corners */
+// }
+
+// /* Scrollbar thumb (scroll handle) */
+// ::-webkit-scrollbar-thumb {
+//   background: #888;
+//   border-radius: 10px;
+// }
+
+// /* Scrollbar thumb on hover */
+// ::-webkit-scrollbar-thumb:hover {
+//   background: #555;
+// }

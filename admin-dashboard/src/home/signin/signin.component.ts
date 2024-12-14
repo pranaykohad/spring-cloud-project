@@ -64,14 +64,15 @@ export class SigninComponent implements OnInit {
 
   signin() {
     if (this.validateUser()) {
-      console.table(this.signinReq);
       this.systemUserAuthService.userSignin(this.signinReq).subscribe((res) => {
-        this.toastService.showToast(
-          '',
-          'Sign in request submitted successfully',
-          ToastType.SUCCESS
-        );
-        console.log(res);
+        if (res) {
+          this.toastService.showToast(
+            '',
+            'Sign in request submitted successfully',
+            ToastType.SUCCESS
+          );
+          this.nagivateToLogin();
+        }
       });
     }
   }
