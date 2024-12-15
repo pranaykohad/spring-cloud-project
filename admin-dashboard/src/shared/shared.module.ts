@@ -28,6 +28,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { DropdownModule } from 'primeng/dropdown';
 import { TooltipModule } from 'primeng/tooltip';
 import {TabViewModule} from 'primeng/tabview';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @NgModule({
   declarations: [],
@@ -61,7 +62,8 @@ import {TabViewModule} from 'primeng/tabview';
     SelectButtonModule,
     DropdownModule,
     TooltipModule,
-    TabViewModule
+    TabViewModule,
+    FileUploadModule
   ],
   exports: [
     CommonModule,
@@ -93,7 +95,8 @@ import {TabViewModule} from 'primeng/tabview';
     SelectButtonModule,
     DropdownModule,
     TooltipModule,
-    TabViewModule
+    TabViewModule,
+    FileUploadModule
   ],
 })
 export class SharedModule {}

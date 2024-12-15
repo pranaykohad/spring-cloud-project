@@ -7,7 +7,7 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 import { LocalStorageKeys } from '../models/Enums';
-import { SystemUserResponse } from '../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../models/SystemUserResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +29,7 @@ export class AuthGuard implements CanActivate {
   }
 
   isAuthenticated(): boolean {
-    const loggedInUserDetails: SystemUserResponse = this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
+    const loggedInUserDetails: LoggedinUserDetails = this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
     return loggedInUserDetails ? this.isTokenValid(loggedInUserDetails.jwt) : false;
   }
 

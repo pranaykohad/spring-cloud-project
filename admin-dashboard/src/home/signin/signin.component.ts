@@ -66,10 +66,8 @@ export class SigninComponent implements OnInit {
     if (this.validateUser()) {
       this.systemUserAuthService.userSignin(this.signinReq).subscribe((res) => {
         if (res) {
-          this.toastService.showToast(
-            '',
-            'Sign in request submitted successfully',
-            ToastType.SUCCESS
+          this.toastService.showSuccessToast(
+            'Sign in request submitted successfully'
           );
           this.nagivateToLogin();
         }
@@ -158,6 +156,12 @@ export class SigninComponent implements OnInit {
     if (isUserValid) {
       this.clearValidation();
     }
+    this.signinReq.displayName = this.signinReq.displayName.trim();
+    this.signinReq.password = this.signinReq.password.trim();
+    this.signinReq.confirmPassword = this.signinReq.confirmPassword.trim();
+    this.signinReq.email = this.signinReq.email.trim();
+    this.signinReq.phone = this.signinReq.phone.trim();
+    this.signinReq.userName = this.signinReq.userName.trim();
     return isUserValid;
   }
 

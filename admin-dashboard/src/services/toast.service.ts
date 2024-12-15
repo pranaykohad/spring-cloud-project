@@ -16,7 +16,23 @@ export class ToastService {
 
   constructor(private toastr: ToastrService) {}
 
-  showToast(title: string, message: string, type: ToastType) {
+  showSuccessToast(message: string) {
+    this.showToast('', message, ToastType.SUCCESS);
+  }
+
+  showErrorToast(message: string) {
+    this.showToast('', message, ToastType.ERROR);
+  }
+
+  showWarnToast(message: string) {
+    this.showToast('', message, ToastType.WARNING);
+  }
+
+  showInfoToast(message: string) {
+    this.showToast('', message, ToastType.INFO);
+  }
+
+  private showToast(title: string, message: string, type: ToastType) {
     switch (type) {
       case ToastType.SUCCESS:
         this.toastr.success(message, title, this.toastConfig);

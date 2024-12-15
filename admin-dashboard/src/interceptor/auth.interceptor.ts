@@ -10,7 +10,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { LocalstorageService } from '../services/localstorage.service';
 import { Router } from '@angular/router';
 import { LocalStorageKeys } from '../models/Enums';
-import { SystemUserResponse } from '../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../models/SystemUserResponse';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -29,7 +29,7 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const isExcluded = this.excludedUrls.some((url) => req.url.includes(url));
-    const loggedInUserDetails: SystemUserResponse = this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
+    const loggedInUserDetails: LoggedinUserDetails = this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
 
     if (!isExcluded && loggedInUserDetails?.jwt) {
       const headers = new HttpHeaders({
@@ -39,7 +39,7 @@ export class AuthInterceptor implements HttpInterceptor {
       return next.handle(clonedReq).pipe(
         catchError((error) => {
           if (error.status === 401) {
-            this.router.navigate(['login']);
+            // this.router.navigate(['login']);
           }
           return throwError(() => error);
         })

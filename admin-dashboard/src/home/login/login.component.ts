@@ -6,7 +6,7 @@ import { LocalstorageService } from '../../services/localstorage.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { LocalStorageKeys, ToastType } from '../../models/Enums';
-import { SystemUserResponse } from '../../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../../models/SystemUserResponse';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
     password: 'pranay',
   };
   rememberMe: boolean = false;
-  systemUserResponse!: SystemUserResponse;
+  loggedinUserDetails!: LoggedinUserDetails;
   enableLoginButton: boolean = false;
 
   constructor(
@@ -40,24 +40,26 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    this.systemUserLoginRequest.userName =
+      this.systemUserLoginRequest.userName.trim();
+    this.systemUserLoginRequest.password =
+      this.systemUserLoginRequest.password.trim();
     this.systemUserAuthService
       .userLogin(this.systemUserLoginRequest)
       .subscribe({
-        next: (res: SystemUserResponse) => {
-          this.systemUserResponse = res;
+        next: (res: LoggedinUserDetails) => {
+          this.loggedinUserDetails = res;
           this.localstorageService.setItem(
             LocalStorageKeys.LOGGED_IN_USER_DETAILS,
             res
           );
           this.router.navigate(['']);
-          this.toastService.showToast(
-            '',
-            `${this.systemUserResponse.displayName} logged in`,
-            ToastType.SUCCESS
+          this.toastService.showSuccessToast(
+            `${this.loggedinUserDetails.displayName} logged in`
           );
         },
         error: (err) => {
-          this.toastService.showToast('', err.error, ToastType.ERROR);
+          this.toastService.showErrorToast(err.error);
         },
       });
   }

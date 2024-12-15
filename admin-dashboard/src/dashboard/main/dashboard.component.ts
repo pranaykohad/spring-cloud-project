@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { MessageService } from './../../behaviorSubject/message.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { SystemUserResponse } from '../../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../../models/SystemUserResponse';
 import { NavbarComponent } from '../../navbar/navbar.component';
 import { LocalstorageService } from '../../services/localstorage.service';
 import { SystemUserAuthService } from '../../services/system-user-auth.service';
 import { ToastService } from '../../services/toast.service';
 import { SharedModule } from '../../shared/shared.module';
+import { Subscription } from 'rxjs/internal/Subscription';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,20 +16,35 @@ import { SharedModule } from '../../shared/shared.module';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
-export class DashboardComponent implements OnInit {
-  systemUserResponse!: SystemUserResponse;
+export class DashboardComponent implements OnInit, OnDestroy {
+  loggedinUserDetails!: LoggedinUserDetails;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private systemUserAuthService: SystemUserAuthService,
     private localstorageService: LocalstorageService,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private messageService: MessageService
   ) {}
 
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   ngOnInit(): void {
-    this.systemUserAuthService.getUserDetailsByUsername('pranay').subscribe({
-      next: (res: SystemUserResponse) => {
-        this.systemUserResponse = res;
+    this.getLoggedinUserDetails();
+    this.messageService.currentMessage$.subscribe((msg) => {
+      if (msg === 'UPDATE_LOGGEDIN_USER_DETAILS') {
+        this.getLoggedinUserDetails();
+      }
+    });
+  }
+
+  private getLoggedinUserDetails() {
+    this.systemUserAuthService.getLoggedinUserDetails().subscribe({
+      next: (res: LoggedinUserDetails) => {
+        this.loggedinUserDetails = res;
       },
     });
   }

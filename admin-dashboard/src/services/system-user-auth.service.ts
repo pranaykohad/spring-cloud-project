@@ -1,11 +1,14 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment';
-import { SystemUserResponse } from '../models/SystemUserResponse';
-import { SystemUserSigninRequest } from '../models/SystemUserSigninRequest';
 import { SystemUserLoginRequest } from '../models/SystemUserLoginRequest';
-import { LocalstorageService } from './localstorage.service';
+import { LoggedinUserDetails } from '../models/SystemUserResponse';
+import { SystemUserSigninRequest } from '../models/SystemUserSigninRequest';
+import {
+  UserBasicDetails,
+  UserSecuredDetails,
+} from '../models/UserUpdateRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -13,10 +16,7 @@ import { LocalstorageService } from './localstorage.service';
 export class SystemUserAuthService {
   private baseUrl = environment.apiUrl;
 
-  constructor(
-    private http: HttpClient,
-    private localstorageService: LocalstorageService
-  ) {}
+  constructor(private http: HttpClient) {}
 
   validateJwtToken(jwtToken: string): Observable<boolean> {
     return this.http.get<boolean>(
@@ -24,16 +24,50 @@ export class SystemUserAuthService {
     );
   }
 
-  getUserDetailsByUsername(userName: string): Observable<SystemUserResponse> {
-    return this.http.get<SystemUserResponse>(
-      `${this.baseUrl}api/user/system/get-by-username?userName=${userName}`
+  getLoggedinUserDetails(): Observable<LoggedinUserDetails> {
+    return this.http.get<LoggedinUserDetails>(
+      `${this.baseUrl}api/user/system/details`
+    );
+  }
+
+  getUserBasicDetails(): Observable<UserBasicDetails> {
+    return this.http.get<UserBasicDetails>(
+      `${this.baseUrl}api/user/system/basic-details`
+    );
+  }
+
+  getUserSecuredDetails(): Observable<UserSecuredDetails> {
+    return this.http.get<UserSecuredDetails>(
+      `${this.baseUrl}api/user/system/secured-details`
+    );
+  }
+
+  updateUserBasicDetails(
+    userBasicDetails: UserBasicDetails
+  ): Observable<Boolean> {
+    console.table(userBasicDetails);
+    const formData = new FormData();
+    formData.append('profilePicFile', userBasicDetails.profilePicFile);
+    formData.append('displayName', userBasicDetails.displayName);
+    return this.http.patch<Boolean>(
+      `${this.baseUrl}api/user/system/udpate-basic-details`,
+      formData
+    );
+  }
+
+  updateUserSecuredDetails(
+    UserBasicDetails: UserSecuredDetails
+  ): Observable<Boolean> {
+    return this.http.patch<Boolean>(
+      `${this.baseUrl}api/user/system/udpate-secured-details`,
+      UserBasicDetails
     );
   }
 
   userLogin(
     systemUserLoginDto: SystemUserLoginRequest
-  ): Observable<SystemUserResponse> {
-    return this.http.post<SystemUserResponse>(
+  ): Observable<LoggedinUserDetails> {
+    return this.http.post<LoggedinUserDetails>(
       `${this.baseUrl}api/user/system/auth/login`,
       systemUserLoginDto
     );

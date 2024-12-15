@@ -122,6 +122,7 @@ input {
 
 .p-megamenu-panel {
   position: absolute;
+  z-index: 99999999999999;
 }
 
 #profile {
@@ -138,6 +139,14 @@ input {
   }
   .p-tabview-nav {
     margin-bottom: 0px;
+  }
+  .p-tabview-panels{
+    padding-left: 35px;
+    padding-top: 30px;
+  }
+  .p-fileupload-choose {
+    position: static;
+    margin-left: 15px;
   }
 }
 
@@ -164,4 +173,12 @@ input {
 /* Scrollbar thumb on hover */
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+
+.disable-div {
+  background-color: #c5c5c5;
+  padding: 10px;
+  border-radius: 7px;
+  width: 202px;
 }

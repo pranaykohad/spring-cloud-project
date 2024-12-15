@@ -4,9 +4,44 @@
   }
   .label-margin-right {
     margin-right: 10px;
-    width: 100px;
+    width: 120px;
   }
   .div-margin-buttom {
     margin-bottom: 20px;
+  }
+  .user-profile-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 7px;
+    border: 1px solid lightgray;
+    display: block;
+    text-align: center;
+    overflow: hidden;
+  }
+  #profilePic {
+    display: none;
+  }
+  .custom-file-upload {
+    position: relative;
+    display: inline-block;
+  }
+
+  .custom-button {
+    margin-left: 20px;
+    margin-right: 20px;
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #0284c7;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+
+  .custom-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
   }
 }

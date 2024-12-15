@@ -1,11 +1,11 @@
-import { LocalstorageService } from './../services/localstorage.service';
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { SystemUserResponse } from '../models/SystemUserResponse';
+import { Component, Input, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { MegaMenuItem, MenuItem } from 'primeng/api';
+import { LocalStorageKeys } from '../models/Enums';
+import { LoggedinUserDetails } from '../models/SystemUserResponse';
 import { SystemUserAuthService } from '../services/system-user-auth.service';
 import { SharedModule } from '../shared/shared.module';
-import { Router } from '@angular/router';
-import { LocalStorageKeys } from '../models/Enums';
-import { MegaMenuItem, MenuItem } from 'primeng/api';
+import { LocalstorageService } from './../services/localstorage.service';
 
 @Component({
   selector: 'app-navbar',
@@ -16,7 +16,7 @@ import { MegaMenuItem, MenuItem } from 'primeng/api';
 })
 export class NavbarComponent implements OnInit {
   @Input()
-  systemUserResponse!: SystemUserResponse;
+  loggedinUserDetails!: LoggedinUserDetails;
   urbanShowsLogo!: string;
   model: MenuItem[] = [
     {
@@ -185,11 +185,11 @@ export class NavbarComponent implements OnInit {
   }
 
   logout() {
-    const loggedInUserDetails: SystemUserResponse =
+    const loggedinUserDetails: LoggedinUserDetails =
       this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
-    if (loggedInUserDetails !== null) {
+    if (loggedinUserDetails !== null) {
       this.systemUserAuthService
-        .userLogout(loggedInUserDetails.jwt)
+        .userLogout(loggedinUserDetails.jwt)
         .subscribe((res: boolean) => {
           if (res) {
             this.localstorageService.clear();

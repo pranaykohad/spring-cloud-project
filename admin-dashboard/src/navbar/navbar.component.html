@@ -7,14 +7,14 @@
   </div>
   <div class="col-2 d-flex justify-content-end self-align-end">
     <div>
-      @if (systemUserResponse && systemUserResponse!.profilePicUrl) {
-      <img src="{{systemUserResponse.profilePicUrl}}" class="user-profile-img" alt="profile" />
+      @if (loggedinUserDetails && loggedinUserDetails!.profilePicUrl) {
+      <img src="{{loggedinUserDetails.profilePicUrl}}" class="user-profile-img" alt="profile" />
       } @else {
       <span class="user-profile-img">no img</span>
       }
     </div>
     <div class="font-Quicksand-SemiBold p-2 d-flex justify-content-center align-items-center user-name" style="margin-right: 15px;">
-      <div class="pointer-cursor" (click)="menu.toggle($event)">{{systemUserResponse && systemUserResponse.displayName}}
+      <div class="pointer-cursor" (click)="menu.toggle($event)">{{loggedinUserDetails && loggedinUserDetails.displayName}}
       </div>
       <p-menu #menu [model]="model" [popup]="true" [styleClass]="'d-flex'" id="user-menu" autoZIndex="true" appendTo="body"/>
     </div>

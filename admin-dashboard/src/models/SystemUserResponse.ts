@@ -1,8 +1,6 @@
 
-export interface SystemUserResponse {
+export interface LoggedinUserDetails {
   jwt: string;
-  email: string;
-  phone: string;
   displayName: string;
   profilePicUrl: string;
   role: string[];
