@@ -1,0 +1,24 @@
+package com.urbanShows.userService.dto;
+
+import java.util.List;
+
+import com.urbanShows.userService.entity.Role;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class LoggedinUserDetails {
+
+	private String displayName;
+
+	private List<Role> roles;
+
+	private String jwt;
+	
+	private String profilePicUrl;
+
+}

@@ -13,7 +13,6 @@ import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.exceptionHandler.BlobNotFoundException;
 import com.urbanShows.userService.exceptionHandler.GenericException;
 import com.urbanShows.userService.service.AppUserService;
-import com.urbanShows.userService.service.UserService;
 import com.urbanShows.userService.util.Helper;
 
 import lombok.AllArgsConstructor;
@@ -28,16 +27,13 @@ public class AzureBlobStorageService {
 
 	private AppUserService appUserService;
 
-	private UserService systemUserService;
-
-	public boolean uploadSystemUserProfile(MultipartFile file, UserInfo systemUser) {
+	public String uploadSystemUserProfile(MultipartFile file, UserInfo systemUser) {
 		final String originalFileName = file.getOriginalFilename();
 		Helper.validateBlob(originalFileName, file.getSize());
 		try {
 			final String fileUrl = uploadFile(file);
 			log.info("file: {} is uploaded/replaced in azure container", originalFileName);
-			systemUserService.uploadSystemUserProfilePicUrl(systemUser, fileUrl);
-			return true;
+			return fileUrl;
 		} catch (Exception e) {
 			throw new GenericException("Error while uploading file on Azure Storage for system user");
 		}

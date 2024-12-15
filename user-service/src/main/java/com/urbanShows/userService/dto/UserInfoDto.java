@@ -3,6 +3,7 @@ package com.urbanShows.userService.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.urbanShows.userService.entity.Role;
 
 import jakarta.validation.constraints.Email;
@@ -21,6 +22,7 @@ public class UserInfoDto {
 	private String userName;
 
 	@NotNull(message = "Password cannot be null")
+	@JsonIgnore
 	private String password;
 
 	@Email(message = "This email ia not valid")
@@ -36,8 +38,10 @@ public class UserInfoDto {
 	
 	private String profilePicUrl;
 	
+	@JsonIgnore
 	private String otp;
 	
+	@JsonIgnore
 	private LocalDateTime otpTimeStamp;
 	
 }

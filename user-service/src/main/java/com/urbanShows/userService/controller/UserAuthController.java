@@ -1,5 +1,7 @@
 package com.urbanShows.userService.controller;
 
+import java.security.Principal;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -62,10 +64,16 @@ public class UserAuthController {
 		}
 	}
 
-	@GetMapping("validate-jwt")
-	public ResponseEntity<Boolean> validateJwt(@RequestParam String jwtToken, @RequestParam String userName) {
-		UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
-		return ResponseEntity.ok(jwtService.validateTokenForUserName(jwtToken, existingUser.getUserName()));
+	@GetMapping("logout")
+	public ResponseEntity<Boolean> logout(@RequestParam String token) {
+		jwtService.invalidateToken(token);
+		return ResponseEntity.ok(true);
 	}
-	
+
+	@GetMapping("validate-jwt")
+	public ResponseEntity<Boolean> validateJwt(@RequestParam String token, Principal principal) {
+		UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		return ResponseEntity.ok(jwtService.validateTokenForUserName(token, existingUser.getUserName()));
+	}
+
 }

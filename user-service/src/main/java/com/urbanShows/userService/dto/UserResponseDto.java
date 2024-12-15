@@ -16,8 +16,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponseDto {
+	
+	@NotNull(message = "UseName cannot be null")
+	private String userName;
 
-	@Email(message = "This email ia not valid")
+	@Email(message = "This email is not valid")
 	@NotNull(message = "Email cannot be null")
 	private String email;
 

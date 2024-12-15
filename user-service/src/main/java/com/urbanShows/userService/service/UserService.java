@@ -7,12 +7,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import com.urbanShows.userService.azure.AzureBlobStorageService;
 import com.urbanShows.userService.dto.AppUserInfoDto;
+import com.urbanShows.userService.dto.UserBasicDetails;
 import com.urbanShows.userService.dto.UserInfoDto;
+import com.urbanShows.userService.dto.UserSecuredDetails;
 import com.urbanShows.userService.dto.UserSigninDto;
-import com.urbanShows.userService.dto.TargetUserDto;
-import com.urbanShows.userService.dto.UserUpdateDto;
 import com.urbanShows.userService.entity.AppUserInfo;
 import com.urbanShows.userService.entity.Role;
 import com.urbanShows.userService.entity.UserInfo;
@@ -39,6 +41,7 @@ public class UserService {
 	private final MessageProducer messageProducer;
 	private final OtpService otpService;
 	private final AppUserService appUserService;
+	private final AzureBlobStorageService azureBlobStorageService;
 
 	public void uploadProfilePicUrl(UserInfoDto systemUserDto, String profilePicUrl) {
 		final UserInfo appUser = new UserInfo();
@@ -64,13 +67,15 @@ public class UserService {
 		if (systemUserRepo.existsById(systemUserSigninDto.getUserName())) {
 			throw new UserAlreadyExistsException("User already exists in the system");
 		}
-		final GenericMapper<UserSigninDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
-				UserSigninDto.class, UserInfo.class);
-		final UserInfo systemUser = mapper.dtoToEntity(systemUserSigninDto);
+		final UserInfo systemUser = new UserInfo();
 		final List<Role> roleList = new ArrayList<>();
 		roleList.addAll(systemUserSigninDto.getRoles());
 		systemUser.setRoles(roleList);
-		systemUser.setPassword(passwordEncoder.encode(systemUserSigninDto.getPassword()));
+		systemUser.setPassword(passwordEncoder.encode(systemUserSigninDto.getPassword().trim()));
+		systemUser.setDisplayName(systemUserSigninDto.getDisplayName().trim());
+		systemUser.setUserName(systemUserSigninDto.getUserName().trim());
+		systemUser.setEmail(systemUserSigninDto.getEmail().trim());
+		systemUser.setPhone(systemUserSigninDto.getPhone().trim());
 		systemUserRepo.save(systemUser);
 		log.info("System User {} is register in the system ", systemUserSigninDto.getUserName());
 		return true;
@@ -90,26 +95,24 @@ public class UserService {
 	}
 
 	public List<UserInfoDto> getSystemUsersList() {
-		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
-				UserInfoDto.class, UserInfo.class);
+		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class,
+				UserInfo.class);
 		final List<UserInfo> all = systemUserRepo.findAll();
 		return mapper.entityToDto(all);
 	}
 
 	@Transactional
 	public void deleteSystemUserByUserName(UserInfoDto systemUserDto) {
-		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
-				UserInfoDto.class, UserInfo.class);
+		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class,
+				UserInfo.class);
 		systemUserRepo.delete(mapper.dtoToEntity(systemUserDto));
 	}
 
-	public boolean udpateUserDetails(UserUpdateDto userUpdateDto) {
-		final TargetUserDto targetUserDto = userUpdateDto.getTargetUserDto();
-		if (targetUserDto.getAppUserInfoDto() != null) {
-			updateAppUserDetails(targetUserDto.getAppUserInfoDto());
-		} else if (targetUserDto.getSystemUserInfoDto() != null) {
-			updateSystemUserDetails(targetUserDto.getSystemUserInfoDto());
-		}
+	public boolean udpateSecuredUserDetails(UserSecuredDetails securedDetails, UserInfo existingSystemUser) {
+		final GenericMapper<UserSecuredDetails, UserInfoDto> mapper = new GenericMapper<>(modelMapper,
+				UserSecuredDetails.class, UserInfoDto.class);
+		UserInfoDto dtoToEntity = mapper.dtoToEntity(securedDetails);
+		updateSecuredUserDetails(dtoToEntity, existingSystemUser);
 		return true;
 	}
 
@@ -123,26 +126,40 @@ public class UserService {
 		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
 	}
 
+	public boolean udpateBasicUserDetails(UserBasicDetails basicDetails, UserInfo systemUser) {
+		systemUser.setDisplayName(StringUtils.hasText(basicDetails.getDisplayName())
+				&& !systemUser.getDisplayName().equals(basicDetails.getDisplayName())
+						? basicDetails.getDisplayName().trim()
+						: systemUser.getDisplayName());
+
+		if (basicDetails.getProfilePicFile() != null) {
+			final String fileUrl = azureBlobStorageService.uploadSystemUserProfile(basicDetails.getProfilePicFile(),
+					systemUser);
+			uploadSystemUserProfilePicUrl(systemUser, fileUrl);
+		}
+
+		systemUserRepo.save(systemUser);
+		return true;
+	}
+
 	private void updateAppUserDetails(AppUserInfoDto newAppUserDto) {
 		final AppUserInfo appUser = appUserService.getExistingAppUser(newAppUserDto.getPhone());
 		appUserService.udpate(appUser, newAppUserDto);
 	}
 
-	private void updateSystemUserDetails(UserInfoDto targetUserDto) {
-		final UserInfo systemUser = getExistingSystemUser(targetUserDto.getUserName());
-		systemUser.setPassword(targetUserDto.getPassword() != null
+	private void updateSecuredUserDetails(UserInfoDto targetUserDto, UserInfo systemUser) {
+		systemUser.setPassword(!targetUserDto.getPassword().isEmpty()
 				&& !passwordEncoder.matches(targetUserDto.getPassword(), systemUser.getPassword())
 						? passwordEncoder.encode(targetUserDto.getPassword())
 						: systemUser.getPassword());
-		systemUser.setDisplayName(targetUserDto.getDisplayName() != null
-				&& !systemUser.getDisplayName().equals(targetUserDto.getDisplayName()) ? targetUserDto.getDisplayName()
-						: systemUser.getDisplayName());
-		systemUser.setPhone(targetUserDto.getPhone() != null && !systemUser.getPhone().equals(targetUserDto.getPhone())
-				? targetUserDto.getPhone()
-				: systemUser.getPhone());
-		systemUser.setEmail(targetUserDto.getEmail() != null && !systemUser.getEmail().equals(targetUserDto.getEmail())
-				? targetUserDto.getEmail()
-				: systemUser.getEmail());
+		systemUser
+				.setPhone(!targetUserDto.getPhone().isEmpty() && !systemUser.getPhone().equals(targetUserDto.getPhone())
+						? targetUserDto.getPhone()
+						: systemUser.getPhone());
+		systemUser
+				.setEmail(!targetUserDto.getEmail().isEmpty() && !systemUser.getEmail().equals(targetUserDto.getEmail())
+						? targetUserDto.getEmail()
+						: systemUser.getEmail());
 		systemUserRepo.save(systemUser);
 	}
 

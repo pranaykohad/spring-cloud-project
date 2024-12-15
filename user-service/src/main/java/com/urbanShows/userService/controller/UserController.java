@@ -1,5 +1,7 @@
 package com.urbanShows.userService.controller;
 
+import java.security.Principal;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -9,17 +11,15 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.urbanShows.userService.azure.AzureBlobStorageService;
+import com.urbanShows.userService.dto.LoggedinUserDetails;
+import com.urbanShows.userService.dto.UserBasicDetails;
 import com.urbanShows.userService.dto.UserInfoDto;
-import com.urbanShows.userService.dto.UserResponseDto;
-import com.urbanShows.userService.dto.UserUpdateDto;
+import com.urbanShows.userService.dto.UserSecuredDetails;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.mapper.GenericMapper;
-import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.UserService;
 
 import jakarta.validation.Valid;
@@ -31,25 +31,25 @@ import lombok.AllArgsConstructor;
 public class UserController {
 
 	private final UserService systemUserService;
-	private final AzureBlobStorageService azureBlobStorageService;
 	private final ModelMapper modelMapper;
-	private final JwtService jwtService;
 
-	@GetMapping("logout")
+	@PatchMapping("udpate-basic-details")
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
-	public ResponseEntity<Boolean> logout(@RequestParam String token) {
-		jwtService.invalidateToken(token);
-		return ResponseEntity.ok(true);
+	public ResponseEntity<Boolean> udpateBacisUserDetails(@RequestParam(required = false) MultipartFile profilePicFile,
+			@RequestParam(required = false) String displayName, Principal principal) {
+		final UserInfo existingUserDetails = systemUserService.getExistingSystemUser(principal.getName());
+		final UserBasicDetails userBasicDetails = new UserBasicDetails();
+		userBasicDetails.setDisplayName(displayName);
+		userBasicDetails.setProfilePicFile(profilePicFile);
+		return ResponseEntity.ok(systemUserService.udpateBasicUserDetails(userBasicDetails, existingUserDetails));
 	}
 
-	@PatchMapping("udpate")
+	@PatchMapping("udpate-secured-details")
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
-	public ResponseEntity<Boolean> udpateUser(@Valid @RequestBody UserUpdateDto userUpdateDto) {
-		final UserInfoDto systemUserDto = new UserInfoDto();
-		systemUserDto.setUserName(userUpdateDto.getModifierUserDto().getUserName());
-		systemUserDto.setOtp(userUpdateDto.getModifierUserDto().getOtp());
-		systemUserService.authenticateSystemUserByOtp(systemUserDto.getUserName(), systemUserDto.getOtp());
-		return ResponseEntity.ok(systemUserService.udpateUserDetails(userUpdateDto));
+	public ResponseEntity<Boolean> udpateSecuredUserDetails(@Valid @RequestBody UserSecuredDetails securedDetails) {
+		final UserInfo existingUserDetails = systemUserService.authenticateSystemUserByOtp(securedDetails.getUserName(),
+				securedDetails.getOtp());
+		return ResponseEntity.ok(systemUserService.udpateSecuredUserDetails(securedDetails, existingUserDetails));
 	}
 
 	@DeleteMapping("remove")
@@ -65,22 +65,39 @@ public class UserController {
 		systemUserService.generateOtpForSystemUser(userName);
 	}
 
-	@PatchMapping("update-profile-pic")
-	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
-	public ResponseEntity<Boolean> uploadSystemUserProfilePic(@RequestParam MultipartFile file,
-			@RequestPart String userName, @RequestPart String otp) {
-		final UserInfo systemUser = systemUserService.authenticateSystemUserByOtp(userName, otp);
-		boolean uploadAppUserProfile = azureBlobStorageService.uploadSystemUserProfile(file, systemUser);
-		return ResponseEntity.ok(uploadAppUserProfile);
-	}
+//	@PatchMapping("update-profile-pic")
+//	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
+//	public ResponseEntity<Boolean> uploadSystemUserProfilePic(@RequestParam MultipartFile file,
+//			@RequestPart String userName, @RequestPart String otp) {
+//		final UserInfo systemUser = systemUserService.authenticateSystemUserByOtp(userName, otp);
+//		boolean uploadAppUserProfile = azureBlobStorageService.uploadSystemUserProfile(file, systemUser);
+//		return ResponseEntity.ok(uploadAppUserProfile);
+//	}
 
-	@GetMapping("get-by-username")
-	public ResponseEntity<UserResponseDto> getUserByUsername(@RequestParam String userName) {
-		UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
-		GenericMapper<UserResponseDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
-				UserResponseDto.class, UserInfo.class);
+	@GetMapping("details")
+	public ResponseEntity<LoggedinUserDetails> getUserDetails(Principal principal) {
+		UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		GenericMapper<LoggedinUserDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
+				LoggedinUserDetails.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
+
+	@GetMapping("basic-details")
+	public ResponseEntity<UserBasicDetails> getUserBasicDetailsByUsername(Principal principal) {
+		UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		GenericMapper<UserBasicDetails, UserInfo> mapper = new GenericMapper<>(modelMapper, UserBasicDetails.class,
+				UserInfo.class);
+		return ResponseEntity.ok(mapper.entityToDto(existingUser));
+	}
+
+	@GetMapping("secured-details")
+	public ResponseEntity<UserSecuredDetails> getUserSecuredDetailsByUsername(Principal principal) {
+		UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		GenericMapper<UserSecuredDetails, UserInfo> mapper = new GenericMapper<>(modelMapper, UserSecuredDetails.class,
+				UserInfo.class);
+		return ResponseEntity.ok(mapper.entityToDto(existingUser));
+	}
+
 //
 //	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 //	@GetMapping("list")

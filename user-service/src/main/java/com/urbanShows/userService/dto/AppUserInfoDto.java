@@ -34,6 +34,7 @@ public class AppUserInfoDto {
 
 	private String profilePicUrl;
 	
+	@JsonIgnore
 	private String otp;
 	
 	@JsonIgnore
