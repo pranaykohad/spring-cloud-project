@@ -27,6 +27,7 @@ import { MegaMenuModule } from 'primeng/megamenu';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { DropdownModule } from 'primeng/dropdown';
 import { TooltipModule } from 'primeng/tooltip';
+import {TabViewModule} from 'primeng/tabview';
 
 @NgModule({
   declarations: [],
@@ -59,7 +60,8 @@ import { TooltipModule } from 'primeng/tooltip';
     MegaMenuModule,
     SelectButtonModule,
     DropdownModule,
-    TooltipModule
+    TooltipModule,
+    TabViewModule
   ],
   exports: [
     CommonModule,
@@ -90,7 +92,8 @@ import { TooltipModule } from 'primeng/tooltip';
     MegaMenuModule,
     SelectButtonModule,
     DropdownModule,
-    TooltipModule
+    TooltipModule,
+    TabViewModule
   ],
 })
 export class SharedModule {}

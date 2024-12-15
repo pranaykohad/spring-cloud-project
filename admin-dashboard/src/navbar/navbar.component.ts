@@ -14,7 +14,7 @@ import { MegaMenuItem, MenuItem } from 'primeng/api';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent implements OnInit{
+export class NavbarComponent implements OnInit {
   @Input()
   systemUserResponse!: SystemUserResponse;
   urbanShowsLogo!: string;
@@ -170,14 +170,13 @@ export class NavbarComponent implements OnInit{
     private router: Router
   ) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   openProfile() {
     this.router.navigate(['profile']);
   }
 
-  navigateToHome(){
+  navigateToHome() {
     this.router.navigate(['']);
   }
 

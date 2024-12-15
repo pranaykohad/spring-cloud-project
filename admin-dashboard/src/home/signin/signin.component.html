@@ -73,11 +73,11 @@
       </div>
       <div class="d-flex justify-content-center">
         <p-button label="Request for sign in" [raised]="true" [style]="{borderRadius: '7px', minWidth: '20vw'}"
-          (onClick)="signin()" [disabled]="!termsAndConditionsRead" />
+          (click)="signin()" [disabled]="!termsAndConditionsRead" />
       </div>
       <div class="d-flex justify-content-start m-3">
         <div [style]="{marginRight: '10px'}">Already have an account?</div>
-        <p-button label="Login" [link]="true" [style]="{padding: 0, fontFamily: 'Quicksand-light'}" (onClick)="nagivateToLogin()"/>
+        <p-button label="Login" [link]="true" [style]="{padding: 0, fontFamily: 'Quicksand-light'}" (click)="nagivateToLogin()"/>
       </div>
     </div>
   </p-card>

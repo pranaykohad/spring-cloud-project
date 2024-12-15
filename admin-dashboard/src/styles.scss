@@ -124,6 +124,23 @@ input {
   position: absolute;
 }
 
+#profile {
+  a {
+    text-decoration: none;
+    color: black;
+  }
+  .p-tabview-nav-container {
+    position: static;
+  }
+
+  .p-tabview-title {
+    text-decoration: none;
+  }
+  .p-tabview-nav {
+    margin-bottom: 0px;
+  }
+}
+
 .p-menu-overlay {
   position: absolute;
 }

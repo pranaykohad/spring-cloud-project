@@ -18,15 +18,16 @@ export class SystemUserAuthService {
     private localstorageService: LocalstorageService
   ) {}
 
-  // validateJwtToken(jwtToken: string): Observable<boolean> {
-  //   return this.http.get<boolean>(
-  //     `${this.baseUrl}api/user/system/auth/validate-jwt-token?jwtToken=${jwtToken}`
-  //   );
-  // }
+  validateJwtToken(jwtToken: string): Observable<boolean> {
+    return this.http.get<boolean>(
+      `${this.baseUrl}api/user/system/auth/validate-jwt?token=${jwtToken}`
+    );
+  }
 
   getUserDetailsByUsername(userName: string): Observable<SystemUserResponse> {
     return this.http.get<SystemUserResponse>(
-      `${this.baseUrl}api/user/system/get-by-username?userName=${userName}`);
+      `${this.baseUrl}api/user/system/get-by-username?userName=${userName}`
+    );
   }
 
   userLogin(
@@ -34,7 +35,7 @@ export class SystemUserAuthService {
   ): Observable<SystemUserResponse> {
     return this.http.post<SystemUserResponse>(
       `${this.baseUrl}api/user/system/auth/login`,
-      systemUserLoginDto,
+      systemUserLoginDto
     );
   }
 
@@ -45,9 +46,9 @@ export class SystemUserAuthService {
     );
   }
 
-  userLogout(token: string): Observable<boolean>{
+  userLogout(token: string): Observable<boolean> {
     return this.http.get<boolean>(
-      `${this.baseUrl}api/user/system/logout?token=${token}`);
+      `${this.baseUrl}api/user/system/auth/logout?token=${token}`
+    );
   }
-
 }

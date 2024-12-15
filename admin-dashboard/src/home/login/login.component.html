@@ -27,11 +27,11 @@
         </div>
       </div>
       <div class="d-flex justify-content-center">
-        <p-button label="Log In" [raised]="true" [style]="{borderRadius: '7px', minWidth: '20vw'}" [disabled]="!enableLoginButton" (onClick)="login()"/>
+        <p-button label="Log In" [raised]="true" [style]="{borderRadius: '7px', minWidth: '20vw'}" [disabled]="!enableLoginButton" (click)="login()"/>
       </div>
       <div class="d-flex justify-content-start m-3">
         <div [style]="{marginRight: '10px'}">Don't have an account?</div>
-        <p-button label="Signin" [link]="true" [style]="{padding: 0, fontFamily: 'Quicksand-light'}" (onClick)="nagivateToSignin()"/>
+        <p-button label="Signin" [link]="true" [style]="{padding: 0, fontFamily: 'Quicksand-light'}" (click)="nagivateToSignin()"/>
       </div>
     </div>
   </p-card>

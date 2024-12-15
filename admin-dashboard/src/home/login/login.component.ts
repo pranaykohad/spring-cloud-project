@@ -17,8 +17,8 @@ import { SystemUserResponse } from '../../models/SystemUserResponse';
 })
 export class LoginComponent implements OnInit {
   systemUserLoginRequest: SystemUserLoginRequest = {
-    userName: '',
-    password: '',
+    userName: 'pranay',
+    password: 'pranay',
   };
   rememberMe: boolean = false;
   systemUserResponse!: SystemUserResponse;
