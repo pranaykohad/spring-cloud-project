@@ -5,10 +5,21 @@ export interface UserBasicDetails {
   profilePicFile: File;
 }
 
+export interface UserBasicDetailsError {
+  displayName: string;
+}
+
 export interface UserSecuredDetails {
   userName: string;
-  otp: string;
   password: string;
+  confirmPassword: string;
+  phone: string;
+  email: string;
+}
+
+export interface UserSecuredDetailsError {
+  password: string;
+  confirmPassword: string;
   phone: string;
   email: string;
 }

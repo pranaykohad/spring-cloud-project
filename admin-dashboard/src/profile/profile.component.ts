@@ -3,7 +3,9 @@ import { MessageService } from '../behaviorSubject/message.service';
 import { ToastType } from '../models/Enums';
 import {
   UserBasicDetails,
+  UserBasicDetailsError,
   UserSecuredDetails,
+  UserSecuredDetailsError,
 } from '../models/UserUpdateRequest';
 import { SystemUserAuthService } from '../services/system-user-auth.service';
 import { ToastService } from '../services/toast.service';
@@ -18,22 +20,38 @@ import { LocalstorageService } from './../services/localstorage.service';
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
-  userBasicDetails!: UserBasicDetails;
+  oldUserBasicDetails!: UserBasicDetails;
+
   newUserBasicDetails: UserBasicDetails = {
     userName: '',
     profilePicUrl: '',
     displayName: '',
     profilePicFile: new File([], ''),
   };
-  userSecuredDetails!: UserSecuredDetails;
+
+  oldUserSecuredDetails!: UserSecuredDetails;
+
   newUserSecuredDetails: UserSecuredDetails = {
     userName: '',
-    otp: '',
     password: '',
+    confirmPassword: '',
     phone: '',
     email: '',
   };
+
+  userBasicDetailsError: UserBasicDetailsError = {
+    displayName: '',
+  };
+
+  newUserSecuredDetailsError: UserSecuredDetailsError = {
+    password: '',
+    confirmPassword: '',
+    phone: '',
+    email: '',
+  };
+
   enableBasicUpdateBtn: boolean = false;
+
   enableSecuredUpdateBtn: boolean = false;
 
   constructor(
@@ -49,24 +67,26 @@ export class ProfileComponent implements OnInit {
   }
 
   updateBasicDetails() {
-    this.systemUserAuthService
-      .updateUserBasicDetails(this.newUserBasicDetails)
-      .subscribe((res: Boolean) => {
-        if (res) {
-          this.toastService.showSuccessToast(
-            'User basic details are updated successfully'
-          );
-          this.messageService.sendMessage('UPDATE_LOGGEDIN_USER_DETAILS');
-          this.enableBasicUpdateBtn = false;
-          this.newUserBasicDetails = {
-            userName: '',
-            profilePicUrl: '',
-            displayName: '',
-            profilePicFile: new File([], ''),
-          };
-          this.getUserBasicDetails();
-        }
-      });
+    if (this.validateBasicDetails()) {
+      this.systemUserAuthService
+        .updateUserBasicDetails(this.newUserBasicDetails)
+        .subscribe((res: Boolean) => {
+          if (res) {
+            this.toastService.showSuccessToast(
+              'User basic details are updated successfully'
+            );
+            this.messageService.sendMessage('UPDATE_LOGGEDIN_USER_DETAILS');
+            this.enableBasicUpdateBtn = false;
+            this.newUserBasicDetails = {
+              userName: '',
+              profilePicUrl: '',
+              displayName: '',
+              profilePicFile: new File([], ''),
+            };
+            this.getUserBasicDetails();
+          }
+        });
+    }
   }
 
   onUpload(event: Event) {
@@ -87,7 +107,7 @@ export class ProfileComponent implements OnInit {
 
       this.newUserBasicDetails.profilePicFile = new File(
         [file],
-        `${this.userBasicDetails.displayName}-profile-pic.${file.name
+        `${this.oldUserBasicDetails.displayName}-profile-pic.${file.name
           .split('.')
           .pop()}`,
         {
@@ -104,16 +124,104 @@ export class ProfileComponent implements OnInit {
     }
   }
 
-  validateBasicDetails(value: string, type: string) {
-    switch (type) {
-      case 'DISPLAYNAME':
-        this.newUserBasicDetails.displayName = value.trim();
-        this.enableBasicUpdateBtn = true;
-        break;
-    }
+  clearBasicDetailsValidation() {
+    this.userBasicDetailsError.displayName = '';
+    this.enableBasicUpdateBtn = true;
   }
 
-  updateSecuredDetails() {}
+  clearSecuredDetailsValidation(type?: string) {
+    switch (type) {
+      case 'PASSWORD':
+        this.newUserSecuredDetailsError.password = '';
+        break;
+      case 'CONFIRMPASSWORD':
+        this.newUserSecuredDetailsError.confirmPassword = '';
+        break;
+      case 'EMAIL':
+        this.newUserSecuredDetailsError.email = '';
+        break;
+      case 'PHONE':
+        this.newUserSecuredDetailsError.phone = '';
+        break;
+      default:
+        this.newUserSecuredDetailsError.password = '';
+        this.newUserSecuredDetailsError.confirmPassword = '';
+        this.newUserSecuredDetailsError.email = '';
+        this.newUserSecuredDetailsError.phone = '';
+    }
+    this.enableSecuredUpdateBtn = true;
+  }
+
+  validateBasicDetails(): boolean {
+    let isBasicDetailsValid = true;
+    if (this.newUserBasicDetails.displayName.length <= 3) {
+      this.userBasicDetailsError.displayName = 'Display name is too short!';
+      isBasicDetailsValid = false;
+    }
+    if (isBasicDetailsValid) {
+      this.clearBasicDetailsValidation();
+    }
+    this.newUserBasicDetails.displayName =
+      this.newUserBasicDetails.displayName.trim();
+    return isBasicDetailsValid;
+  }
+
+  clearPasswordField() {
+    this.newUserSecuredDetails.password = '';
+    this.newUserSecuredDetailsError.password = '';
+    this.enableSecuredUpdateBtn = true;
+  }
+
+  clearConfirmPasswordField(){
+    this.newUserSecuredDetails.confirmPassword = '';
+    this.newUserSecuredDetailsError.confirmPassword = '';
+    this.enableBasicUpdateBtn = true;
+  }
+
+  validateSecuredDetails(): boolean {
+    let isSecuredDetailsValid = true;
+    if (!this.newUserSecuredDetails.password.length) {
+      this.newUserSecuredDetailsError.password = 'Password cannot be blank!';
+      isSecuredDetailsValid = false;
+    }
+    if (!this.newUserSecuredDetails.confirmPassword.length) {
+      this.newUserSecuredDetailsError.confirmPassword =
+        'Confirm password cannot be blank!';
+      isSecuredDetailsValid = false;
+    }
+    if (
+      this.newUserSecuredDetails.password !==
+      this.newUserSecuredDetails.confirmPassword
+    ) {
+      this.newUserSecuredDetailsError.confirmPassword =
+        'Password and confirm password must be same';
+      isSecuredDetailsValid = false;
+    }
+    if (!this.isValidPhoneNumber()) {
+      this.newUserSecuredDetailsError.phone = 'Invalid phone number!';
+      isSecuredDetailsValid = false;
+    }
+    if (!this.isValidEmail()) {
+      this.newUserSecuredDetailsError.email = 'Invalid email!';
+      isSecuredDetailsValid = false;
+    }
+    if (isSecuredDetailsValid) {
+      this.clearSecuredDetailsValidation();
+    }
+    this.newUserSecuredDetails.password =
+      this.newUserSecuredDetails.password.trim();
+    this.newUserSecuredDetails.confirmPassword =
+      this.newUserSecuredDetails.confirmPassword.trim();
+    this.newUserSecuredDetails.phone = this.newUserSecuredDetails.phone.trim();
+    this.newUserSecuredDetails.email = this.newUserSecuredDetails.email.trim();
+    return isSecuredDetailsValid;
+  }
+
+  updateSecuredDetails() {
+    if (this.validateSecuredDetails()) {
+      console.log('final object: ', this.newUserSecuredDetails);
+    }
+  }
 
   cancelBasicDetailsUpdate(value: string) {
     this.getUserBasicDetails();
@@ -125,24 +233,37 @@ export class ProfileComponent implements OnInit {
 
   cancelSecuredDetailsUpdate() {
     this.getUserSecuredDetails();
+    this.clearSecuredDetailsValidation();
     this.enableSecuredUpdateBtn = false;
   }
+
 
   private getUserBasicDetails() {
     this.systemUserAuthService
       .getUserBasicDetails()
       .subscribe((res: UserBasicDetails) => {
-        this.userBasicDetails = res;
-        this.newUserBasicDetails.userName = this.userBasicDetails.userName;
+        this.oldUserBasicDetails = res;
+        this.newUserBasicDetails = this.oldUserBasicDetails;
       });
   }
 
   private getUserSecuredDetails() {
     this.systemUserAuthService
-      .getUserBasicDetails()
-      .subscribe((res: UserBasicDetails) => {
-        this.userBasicDetails = res;
-        this.newUserBasicDetails.userName = this.userBasicDetails.userName;
+      .getUserSecuredDetails()
+      .subscribe((res: UserSecuredDetails) => {
+        this.oldUserSecuredDetails = res;
+        this.newUserSecuredDetails = this.oldUserSecuredDetails;
+        this.newUserSecuredDetails.confirmPassword =
+          this.newUserSecuredDetails.password;
       });
+  }
+
+  private isValidPhoneNumber(): boolean {
+    return /^[0-9]{10}$/.test(this.newUserSecuredDetails.phone);
+  }
+
+  private isValidEmail(): boolean {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(this.newUserSecuredDetails.email);
   }
 }

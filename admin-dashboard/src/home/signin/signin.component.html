@@ -11,7 +11,7 @@
           <p-iconField iconPosition="left">
             <p-inputIcon styleClass="pi pi-user" />
             <input type="text" pInputText placeholder="Username" [(ngModel)]="signinReq.userName"
-              [style]="{minWidth: '20vw'}" (keypress)="clearValidation('USERNAME')" />
+              [style]="{minWidth: '20vw'}" (input)="clearValidation('USERNAME')" />
           </p-iconField>
           <span class="error-cntr">{{this.signinRequestError.userName}}</span>
         </div>
@@ -19,7 +19,7 @@
           <p-iconField iconPosition="left">
             <p-inputIcon styleClass="pi pi-lock" />
             <input type="password" pInputText placeholder="Password" [(ngModel)]="signinReq.password"
-              [style]="{minWidth: '20vw'}" (keypress)="clearValidation('PASSWORD')" />
+              [style]="{minWidth: '20vw'}" (input)="clearValidation('PASSWORD')" />
           </p-iconField>
           <span class="error-cntr">{{this.signinRequestError.password}}</span>
         </div>
@@ -27,7 +27,7 @@
           <p-iconField iconPosition="left">
             <p-inputIcon styleClass="pi pi-lock" />
             <input type="text" pInputText placeholder="Confirm password" [(ngModel)]="signinReq.confirmPassword"
-              [style]="{minWidth: '20vw'}" (keypress)="clearValidation('CONFIRMPASSWORD')" />
+              [style]="{minWidth: '20vw'}" (input)="clearValidation('CONFIRMPASSWORD')" />
           </p-iconField>
           <span class="error-cntr">{{this.signinRequestError.confirmPassword}}</span>
         </div>
@@ -35,7 +35,7 @@
           <p-iconField iconPosition="left">
             <p-inputIcon styleClass="pi pi-envelope" />
             <input type="text" pInputText placeholder="Email" [(ngModel)]="signinReq.email" [style]="{minWidth: '20vw'}"
-              (keypress)="clearValidation('EMAIL')" />
+              (input)="clearValidation('EMAIL')" />
           </p-iconField>
           <span class="error-cntr">{{this.signinRequestError.email}}</span>
         </div>
@@ -43,7 +43,7 @@
           <p-iconField iconPosition="left">
             <p-inputIcon styleClass="pi pi-phone" />
             <input type="text" pInputText placeholder="Phone" [(ngModel)]="signinReq.phone" [style]="{minWidth: '20vw'}"
-              (keypress)="clearValidation('PHONE')" maxlength="10" />
+              (input)="clearValidation('PHONE')" maxlength="10" />
           </p-iconField>
           <span class="error-cntr">{{this.signinRequestError.phone}}</span>
         </div>
@@ -51,7 +51,7 @@
           <p-iconField iconPosition="left">
             <p-inputIcon styleClass="pi pi-user" />
             <input type="text" pInputText placeholder="Display name" [(ngModel)]="signinReq.displayName"
-              [style]="{minWidth: '20vw'}" (keypress)="clearValidation('DISPLAYNAME')" />
+              [style]="{minWidth: '20vw'}" (input)="clearValidation('DISPLAYNAME')" />
           </p-iconField>
           <span class="error-cntr">{{this.signinRequestError.displayName}}</span>
         </div>

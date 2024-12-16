@@ -6,6 +6,11 @@
     margin-right: 10px;
     width: 120px;
   }
+  .label-margin-right-cnf-pass {
+    margin-right: 10px;
+    width: 150px;
+    margin-left: 50px;
+  }
   .div-margin-buttom {
     margin-bottom: 20px;
   }
@@ -42,6 +47,16 @@
   }
 
   .custom-button:hover {
-    background-color: #0056b3; /* Darker blue on hover */
+    background-color: #0056b3;
   }
+
+  .div-margin-right {
+    margin-right: 20px;
+  }
+
+  .error-cntr {
+    font-size: small;
+    color: red;
+  }
+
 }
