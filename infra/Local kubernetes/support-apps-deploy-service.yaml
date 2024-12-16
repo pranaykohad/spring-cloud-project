@@ -5,9 +5,10 @@ metadata:
 data:
   LOKI_URL: "http://loki.default.svc.cluster.local:3100/loki/api/v1/push"
   MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://tempo.default.svc.cluster.local:9411"
-  CUSTOMER_SERVICE_URL: "http://customer-service.default.svc.cluster.local:8081"
+  USER_SERVICE_URL: "http://user-service.default.svc.cluster.local:8081"
   EVENT_SERVICE_URL: "http://event-service.default.svc.cluster.local:8082"
   API_GATEWAY: "http://api-gateway.default.svc.cluster.local:8083"
+  NOTIFICATION_SERVICE_URL: "http://notification-service.default.svc.cluster.local:8084"
   SPRING_PROFILES_ACTIVE: "dev"
   SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS: "broker.default.svc.cluster.local:29092"
   SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS: "broker.default.svc.cluster.local:29092"
@@ -375,18 +376,18 @@ data:
       - job_name: 'prometheus'
         static_configs:
           - targets: ['prometheus:9090']
-      - job_name: 'CUSTOMER-SERVICE'
+      - job_name: 'USER-SERVICE'
         metrics_path: '/actuator/prometheus'
         static_configs:
           - targets: ['host.docker.internal:8081'] ## only for demo purposes don't use host.docker.internal in production
             labels:
-              application: 'Customer Service'   
+              application: 'User Service'   
       - job_name: 'EVENT-SERVICE'
         metrics_path: '/actuator/prometheus'
         static_configs:
           - targets: ['host.docker.internal:8082'] ## only for demo purposes don't use host.docker.internal in production
             labels:
-              application: 'Customer Service'       
+              application: 'Event Service'       
       - job_name: 'API-GATEWAY'
         metrics_path: '/actuator/prometheus'
         static_configs:
