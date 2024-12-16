@@ -344,7 +344,7 @@ spec:
         app: admin-dashboard
     spec:
       containers:
-      - image: prakohad/ang-service:v2
+      - image: prakohad/admin-dashboard:v1
         name: admin-dashboard
         imagePullPolicy: Always
         ports:
