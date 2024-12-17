@@ -1,18 +1,21 @@
 <div id="otp-component">
   <p-dialog header="Enter Otp" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
     <div class="d-flex m-1">
-      <input type="text" #otpTemp1 pInputText [(ngModel)]="otp1" class="otp-input otp-input-right-m" maxlength="1"
-        (input)="next(otpTemp2)" />
-      <input type="text" #otpTemp2 pInputText [(ngModel)]="otp2" class="otp-input otp-input-right-m" maxlength="1"
-        (input)="next(otpTemp3)" />
-      <input type="text" #otpTemp3 pInputText [(ngModel)]="otp3" class="otp-input otp-input-right-m" maxlength="1"
-        (input)="next(otpTemp4)" />
-      <input type="text" #otpTemp4 pInputText [(ngModel)]="otp4" class="otp-input otp-input-right-m" maxlength="1" (input)="next(otpTemp5)" />
-      <input type="text" #otpTemp5 pInputText [(ngModel)]="otp5" class="otp-input otp-input-right-m" maxlength="1" (input)="next(otpTemp6)" />
-      <input type="text" #otpTemp6 pInputText [(ngModel)]="otp6" class="otp-input" maxlength="1" (input)="next(null)" />
+      <input type="text" #otpTemp1 pInputText [(ngModel)]="otpArray[0]" class="otp-input otp-input-right-m"
+        maxlength="1" (input)="onInput(otpTemp1, otpTemp2)" />
+      <input type="text" #otpTemp2 pInputText [(ngModel)]="otpArray[1]" class="otp-input otp-input-right-m"
+        maxlength="1" (input)="onInput(otpTemp2, otpTemp3)" />
+      <input type="text" #otpTemp3 pInputText [(ngModel)]="otpArray[2]" class="otp-input otp-input-right-m"
+        maxlength="1" (input)="onInput(otpTemp3, otpTemp4)" />
+      <input type="text" #otpTemp4 pInputText [(ngModel)]="otpArray[3]" class="otp-input otp-input-right-m"
+        maxlength="1" (input)="onInput(otpTemp4, otpTemp5)" />
+      <input type="text" #otpTemp5 pInputText [(ngModel)]="otpArray[4]" class="otp-input otp-input-right-m"
+        maxlength="1" (input)="onInput(otpTemp5, otpTemp6)" />
+      <input type="text" #otpTemp6 pInputText [(ngModel)]="otpArray[5]" class="otp-input" maxlength="1"
+        (input)="onInput(otpTemp6, null)" />
     </div>
     <div class="flex justify-end gap-2" [style]="{marginTop: '35px'}">
-      <p-button label="Cancel" severity="secondary" (click)="visible = false" [style]="{marginRight: '20px'}"/>
+      <p-button label="Cancel" severity="secondary" (click)="visible = false" [style]="{marginRight: '20px'}" />
       <p-button label="Resend otp" (click)="resendOtp()" />
     </div>
   </p-dialog>

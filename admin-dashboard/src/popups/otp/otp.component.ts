@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SharedModule } from '../../shared/shared.module';
 import { UserService } from '../../services/user.service';
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
   selector: 'app-otp',
@@ -16,13 +16,7 @@ export class OtpComponent implements OnInit {
   @Output()
   otpEmiter: EventEmitter<string> = new EventEmitter<string>();
 
-  otp1!: string;
-  otp2!: string;
-  otp3!: string;
-  otp4!: string;
-  otp5!: string;
-  otp6!: string;
-  otpFinal!: string;
+  otpArray!: number[];
 
   constructor(private userService: UserService) {}
 
@@ -32,21 +26,17 @@ export class OtpComponent implements OnInit {
 
   private clearAndSendOtp() {
     this.userService.generateOtp().subscribe();
-    this.otp1 = '';
-    this.otp2 = '';
-    this.otp3 = '';
-    this.otp4 = '';
-    this.otp5 = '';
-    this.otp6 = '';
-    this.otpFinal = '';
+    this.otpArray = [];
   }
 
-  next(nextInput: HTMLInputElement | null) {
-    this.otpFinal =
-      this.otp1 + this.otp2 + this.otp3 + this.otp4 + this.otp5 + this.otp6;
-    nextInput?.focus();
-    if (this.otpFinal.length == 6) {
-      this.otpEmiter.emit(this.otpFinal);
+  onInput(target: any, nextInput: HTMLInputElement | null) {
+    if (!/^\d{1}$/.test(target.value)) {
+      target.value = '';
+    } else {
+      nextInput?.focus();
+      if (this.otpArray.length == 6) {
+        this.otpEmiter.emit(this.otpArray.join(''));
+      }
     }
   }
 

@@ -30,11 +30,11 @@
                 <div class="user-profile-img d-flex justify-content-center align-items-center">No image available</div>
                 }
               </div>
-              <div class="custom-file-upload">
+              <div class="custom-file-upload" class="d-flex align-items-start">
                 <label for="profilePic" class="custom-button">Choose File</label>
                 <input type="file" readonly #profilePic id="profilePic" name="file" accept="image/*"
                   (change)="onUpload($event)">
-              </div>
+                </div>
             </div>
           </div>
         </div>

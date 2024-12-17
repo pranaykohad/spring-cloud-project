@@ -29,6 +29,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { TooltipModule } from 'primeng/tooltip';
 import { TabViewModule } from 'primeng/tabview';
 import { FileUploadModule } from 'primeng/fileupload';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @NgModule({
   declarations: [],
@@ -64,6 +65,7 @@ import { FileUploadModule } from 'primeng/fileupload';
     TooltipModule,
     TabViewModule,
     FileUploadModule,
+    ProgressSpinnerModule
   ],
   exports: [
     CommonModule,
@@ -97,6 +99,7 @@ import { FileUploadModule } from 'primeng/fileupload';
     TooltipModule,
     TabViewModule,
     FileUploadModule,
+    ProgressSpinnerModule
   ],
 })
 export class SharedModule {}

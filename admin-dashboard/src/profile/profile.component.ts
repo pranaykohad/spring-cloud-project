@@ -243,7 +243,9 @@ export class ProfileComponent implements OnInit {
     this.otpComponent = this.otpContainer.createComponent(OtpComponent);
     this.otpComponent.instance.visible = true;
     this.otpComponent.instance.otpEmiter.subscribe((res) => {
+      console.log(res);
       this.newUserSecuredDetails.otp = res;
+      this.messageService.sendMessage('ENABLE_LOADER');
       this.userService
         .updateUserSecuredDetails(this.newUserSecuredDetails)
         .subscribe({
@@ -257,8 +259,13 @@ export class ProfileComponent implements OnInit {
           },
           error: (err: string) => {
             this.toastService.showErrorToast('otp is invalid or expired');
+            this.messageService.sendMessage('DISABLE_LOADER');
+          },
+          complete: () => {
+            this.messageService.sendMessage('DISABLE_LOADER');
           },
         });
+      this.cancelSecuredDetailsUpdate();
     });
   }
 

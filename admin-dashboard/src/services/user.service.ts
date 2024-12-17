@@ -34,7 +34,6 @@ export class UserService {
   updateUserBasicDetails(
     userBasicDetails: UserBasicDetails
   ): Observable<Boolean> {
-    console.table(userBasicDetails);
     const formData = new FormData();
     formData.append('profilePicFile', userBasicDetails.profilePicFile);
     formData.append('displayName', userBasicDetails.displayName);
