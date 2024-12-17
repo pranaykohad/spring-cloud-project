@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { MegaMenuItem, MenuItem } from 'primeng/api';
 import { LocalStorageKeys } from '../models/Enums';
 import { LoggedinUserDetails } from '../models/SystemUserResponse';
-import { SystemUserAuthService } from '../services/system-user-auth.service';
+import { UserAuthService } from '../services/user-auth.service';
 import { SharedModule } from '../shared/shared.module';
 import { LocalstorageService } from './../services/localstorage.service';
 
@@ -165,7 +165,7 @@ export class NavbarComponent implements OnInit {
   ];
 
   constructor(
-    private systemUserAuthService: SystemUserAuthService,
+    private systemUserAuthService: UserAuthService,
     private localstorageService: LocalstorageService,
     private router: Router
   ) {}

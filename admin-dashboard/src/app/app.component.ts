@@ -1,9 +1,9 @@
 import { LocalstorageService } from './../services/localstorage.service';
 import { Component, OnInit } from '@angular/core';
-import { AzureService } from '../services/azure.service';
+import { UserService } from '../services/user.service';
 import { UserAppInfoService } from '../services/user-app-info.service';
 import { SharedModule } from '../shared/shared.module';
-import { SystemUserAuthService } from '../services/system-user-auth.service';
+import { UserAuthService } from '../services/user-auth.service';
 import { LocalStorageKeys } from '../models/Enums';
 
 @Component({
@@ -16,7 +16,7 @@ import { LocalStorageKeys } from '../models/Enums';
 export class AppComponent implements OnInit {
 
   constructor(
-    private systemUserAuthService: SystemUserAuthService,
+    private systemUserAuthService: UserAuthService,
     private localstorageService: LocalstorageService
   ) {}
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
-import { SystemUserAuthService } from '../../services/system-user-auth.service';
+import { UserAuthService } from '../../services/user-auth.service';
 import { SystemUserLoginRequest } from '../../models/SystemUserLoginRequest';
 import { LocalstorageService } from '../../services/localstorage.service';
 import { Router } from '@angular/router';
@@ -25,7 +25,7 @@ export class LoginComponent implements OnInit {
   enableLoginButton: boolean = false;
 
   constructor(
-    private systemUserAuthService: SystemUserAuthService,
+    private systemUserAuthService: UserAuthService,
     private localstorageService: LocalstorageService,
     private router: Router,
     private toastService: ToastService

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { LoggedinUserDetails } from '../../models/SystemUserResponse';
 import { NavbarComponent } from '../../navbar/navbar.component';
 import { LocalstorageService } from '../../services/localstorage.service';
-import { SystemUserAuthService } from '../../services/system-user-auth.service';
+import { UserAuthService } from '../../services/user-auth.service';
 import { ToastService } from '../../services/toast.service';
 import { SharedModule } from '../../shared/shared.module';
 import { Subscription } from 'rxjs/internal/Subscription';
@@ -21,7 +21,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private subscription: Subscription = new Subscription();
 
   constructor(
-    private systemUserAuthService: SystemUserAuthService,
+    private systemUserAuthService: UserAuthService,
     private localstorageService: LocalstorageService,
     private router: Router,
     private toastService: ToastService,

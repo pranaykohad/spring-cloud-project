@@ -1,10 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { environment } from '../../environment';
-import { SystemUserLoginRequest } from '../models/SystemUserLoginRequest';
-import { LoggedinUserDetails } from '../models/SystemUserResponse';
-import { SystemUserSigninRequest } from '../models/SystemUserSigninRequest';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import {
   UserBasicDetails,
   UserSecuredDetails,
@@ -13,22 +10,10 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class SystemUserAuthService {
+export class UserService {
   private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
-
-  validateJwtToken(jwtToken: string): Observable<boolean> {
-    return this.http.get<boolean>(
-      `${this.baseUrl}api/user/system/auth/validate-jwt?token=${jwtToken}`
-    );
-  }
-
-  getLoggedinUserDetails(): Observable<LoggedinUserDetails> {
-    return this.http.get<LoggedinUserDetails>(
-      `${this.baseUrl}api/user/system/details`
-    );
-  }
 
   getUserBasicDetails(): Observable<UserBasicDetails> {
     return this.http.get<UserBasicDetails>(
@@ -40,6 +25,10 @@ export class SystemUserAuthService {
     return this.http.get<UserSecuredDetails>(
       `${this.baseUrl}api/user/system/secured-details`
     );
+  }
+
+  generateOtp(): Observable<void> {
+    return this.http.get<void>(`${this.baseUrl}api/user/system/generate-otp`);
   }
 
   updateUserBasicDetails(
@@ -61,28 +50,6 @@ export class SystemUserAuthService {
     return this.http.patch<Boolean>(
       `${this.baseUrl}api/user/system/udpate-secured-details`,
       UserBasicDetails
-    );
-  }
-
-  userLogin(
-    systemUserLoginDto: SystemUserLoginRequest
-  ): Observable<LoggedinUserDetails> {
-    return this.http.post<LoggedinUserDetails>(
-      `${this.baseUrl}api/user/system/auth/login`,
-      systemUserLoginDto
-    );
-  }
-
-  userSignin(systemUserSigninDto: SystemUserSigninRequest) {
-    return this.http.post<string>(
-      `${this.baseUrl}api/user/system/auth/signup`,
-      systemUserSigninDto
-    );
-  }
-
-  userLogout(token: string): Observable<boolean> {
-    return this.http.get<boolean>(
-      `${this.baseUrl}api/user/system/auth/logout?token=${token}`
     );
   }
 }

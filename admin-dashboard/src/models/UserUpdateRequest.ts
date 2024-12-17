@@ -15,6 +15,7 @@ export interface UserSecuredDetails {
   confirmPassword: string;
   phone: string;
   email: string;
+  otp: string;
 }
 
 export interface UserSecuredDetailsError {

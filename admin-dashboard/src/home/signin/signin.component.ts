@@ -5,7 +5,7 @@ import {
   SystemUserSigninRequestError,
 } from '../../models/SystemUserSigninRequest';
 import { LocalstorageService } from '../../services/localstorage.service';
-import { SystemUserAuthService } from '../../services/system-user-auth.service';
+import { UserAuthService } from '../../services/user-auth.service';
 import { ToastService } from '../../services/toast.service';
 import { SharedModule } from '../../shared/shared.module';
 import { ToastType } from '../../models/Enums';
@@ -46,7 +46,7 @@ export class SigninComponent implements OnInit {
   };
 
   constructor(
-    private systemUserAuthService: SystemUserAuthService,
+    private systemUserAuthService: UserAuthService,
     private localstorageService: LocalstorageService,
     private router: Router,
     private toastService: ToastService

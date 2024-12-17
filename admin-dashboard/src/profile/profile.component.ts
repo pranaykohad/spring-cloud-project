@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  ComponentRef,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { MessageService } from '../behaviorSubject/message.service';
 import { ToastType } from '../models/Enums';
 import {
@@ -7,15 +13,18 @@ import {
   UserSecuredDetails,
   UserSecuredDetailsError,
 } from '../models/UserUpdateRequest';
-import { SystemUserAuthService } from '../services/system-user-auth.service';
+import { UserAuthService } from '../services/user-auth.service';
 import { ToastService } from '../services/toast.service';
 import { SharedModule } from '../shared/shared.module';
 import { LocalstorageService } from './../services/localstorage.service';
+import { OtpComponent } from '../popups/otp/otp.component';
+import { UserService } from '../services/user.service';
+import { error } from 'console';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, OtpComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })
@@ -37,6 +46,7 @@ export class ProfileComponent implements OnInit {
     confirmPassword: '',
     phone: '',
     email: '',
+    otp: '',
   };
 
   userBasicDetailsError: UserBasicDetailsError = {
@@ -54,11 +64,16 @@ export class ProfileComponent implements OnInit {
 
   enableSecuredUpdateBtn: boolean = false;
 
+  @ViewChild('otpContainer', { read: ViewContainerRef, static: true })
+  otpContainer!: ViewContainerRef;
+  otpComponent!: ComponentRef<OtpComponent>;
+
   constructor(
     private toastService: ToastService,
-    private systemUserAuthService: SystemUserAuthService,
+    private systemUserAuthService: UserAuthService,
     private localstorageService: LocalstorageService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
@@ -68,7 +83,7 @@ export class ProfileComponent implements OnInit {
 
   updateBasicDetails() {
     if (this.validateBasicDetails()) {
-      this.systemUserAuthService
+      this.userService
         .updateUserBasicDetails(this.newUserBasicDetails)
         .subscribe((res: Boolean) => {
           if (res) {
@@ -86,6 +101,12 @@ export class ProfileComponent implements OnInit {
             this.getUserBasicDetails();
           }
         });
+    }
+  }
+
+  updateSecuredDetails() {
+    if (this.validateSecuredDetails()) {
+      this.loadOtpCompoment();
     }
   }
 
@@ -172,7 +193,7 @@ export class ProfileComponent implements OnInit {
     this.enableSecuredUpdateBtn = true;
   }
 
-  clearConfirmPasswordField(){
+  clearConfirmPasswordField() {
     this.newUserSecuredDetails.confirmPassword = '';
     this.newUserSecuredDetailsError.confirmPassword = '';
     this.enableBasicUpdateBtn = true;
@@ -217,10 +238,28 @@ export class ProfileComponent implements OnInit {
     return isSecuredDetailsValid;
   }
 
-  updateSecuredDetails() {
-    if (this.validateSecuredDetails()) {
-      console.log('final object: ', this.newUserSecuredDetails);
-    }
+  private loadOtpCompoment() {
+    this.otpContainer.clear();
+    this.otpComponent = this.otpContainer.createComponent(OtpComponent);
+    this.otpComponent.instance.visible = true;
+    this.otpComponent.instance.otpEmiter.subscribe((res) => {
+      this.newUserSecuredDetails.otp = res;
+      this.userService
+        .updateUserSecuredDetails(this.newUserSecuredDetails)
+        .subscribe({
+          next: (res: Boolean) => {
+            if (res) {
+              this.toastService.showSuccessToast(
+                'Secured details are updated successfully'
+              );
+              this.otpComponent.instance.visible = false;
+            }
+          },
+          error: (err: string) => {
+            this.toastService.showErrorToast('otp is invalid or expired');
+          },
+        });
+    });
   }
 
   cancelBasicDetailsUpdate(value: string) {
@@ -237,9 +276,8 @@ export class ProfileComponent implements OnInit {
     this.enableSecuredUpdateBtn = false;
   }
 
-
   private getUserBasicDetails() {
-    this.systemUserAuthService
+    this.userService
       .getUserBasicDetails()
       .subscribe((res: UserBasicDetails) => {
         this.oldUserBasicDetails = res;
@@ -248,7 +286,7 @@ export class ProfileComponent implements OnInit {
   }
 
   private getUserSecuredDetails() {
-    this.systemUserAuthService
+    this.userService
       .getUserSecuredDetails()
       .subscribe((res: UserSecuredDetails) => {
         this.oldUserSecuredDetails = res;

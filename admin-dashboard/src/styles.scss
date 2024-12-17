@@ -140,7 +140,7 @@ input {
   .p-tabview-nav {
     margin-bottom: 0px;
   }
-  .p-tabview-panels{
+  .p-tabview-panels {
     padding-left: 35px;
     padding-top: 30px;
   }
@@ -175,7 +175,6 @@ input {
   background: #555;
 }
 
-
 .disable-div {
   background-color: #c5c5c5;
   padding: 10px;
@@ -191,4 +190,8 @@ input {
   background-color: white;
   color: black;
   border-color: black;
+}
+
+.p-button {
+  border-radius: 7px;
 }
