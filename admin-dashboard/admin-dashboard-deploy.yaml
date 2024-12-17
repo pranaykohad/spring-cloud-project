@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: admin-dashboard
+  name: admin-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-dashboard
+  template:
+    metadata:
+      labels:
+        app: admin-dashboard
+    spec:
+      containers:
+      - image: prakohad/admin-dashboard:v1
+        name: admin-dashboard
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: admin-dashboard
+  name: admin-dashboard
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+#    targetPort: 4200
+    name: admin-dashboard-port
+  selector:
+    app: admin-dashboard  

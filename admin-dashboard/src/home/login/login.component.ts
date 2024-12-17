@@ -29,9 +29,12 @@ export class LoginComponent implements OnInit {
     private localstorageService: LocalstorageService,
     private router: Router,
     private toastService: ToastService
-  ) {}
+  ) {
 
-  ngOnInit(): void {}
+  }
+
+  ngOnInit(): void {
+  }
 
   validate() {
     this.enableLoginButton =

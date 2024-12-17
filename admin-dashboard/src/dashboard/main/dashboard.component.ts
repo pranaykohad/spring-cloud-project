@@ -33,6 +33,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
     this.getLoggedinUserDetails();
     this.messageService.currentMessage$.subscribe((msg) => {
       if (msg === 'UPDATE_LOGGEDIN_USER_DETAILS') {
