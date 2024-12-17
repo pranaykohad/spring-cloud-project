@@ -14,10 +14,10 @@ public class UserSecuredDetails {
 
 	@NotNull(message = "Username cannot be null")
 	private String userName;
+	
+	private String otp;
 
 	private String password;
-
-	private String otp;
 
 	@Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid mobile number")
 	private String phone;
