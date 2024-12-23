@@ -49,7 +49,7 @@
       }
     </p-tabPanel>
     <p-tabPanel header="Secured Details">
-      @if (newUserSecuredDetails && newUserSecuredDetails.userName) {
+      @if (editableUserSecuredDetailsRes && editableUserSecuredDetailsRes.userName) {
       <div>
         <div class="d-flex">
           <div class="d-flex align-items-center div-margin-buttom div-margin-right">
@@ -57,7 +57,7 @@
             <div class="d-flex">
               <div class="d-flex flex-column">
                 <input type="password" placeholder="new password" (paste)="$event.preventDefault()" pInputText
-                  pSize="normal" [(ngModel)]="newUserSecuredDetails.password"
+                  pSize="normal" [(ngModel)]="editableUserSecuredDetailsRes.password"
                   (input)="clearSecuredDetailsValidation('PASSWORD')" />
                 <span class="error-cntr">{{newUserSecuredDetailsError.password}}</span>
               </div>
@@ -72,7 +72,7 @@
             <div class="d-flex">
               <div class="d-flex flex-column">
                 <input type="text" placeholder="new confirm password" (paste)="$event.preventDefault()" pInputText
-                  pSize="normal" [(ngModel)]="newUserSecuredDetails.confirmPassword"
+                  pSize="normal" [(ngModel)]="editableUserSecuredDetailsRes.confirmPassword"
                   (input)="clearSecuredDetailsValidation('CONFIRMPASSWORD')" />
                 <span class="error-cntr">{{newUserSecuredDetailsError.confirmPassword}}</span>
               </div>
@@ -86,7 +86,7 @@
         <div class="d-flex align-items-center div-margin-buttom">
           <div class="label-margin-right">Phone:</div>
           <div class="d-flex flex-column">
-            <input type="text" pInputText pSize="normal" [(ngModel)]="newUserSecuredDetails.phone"
+            <input type="text" pInputText pSize="normal" [(ngModel)]="editableUserSecuredDetailsRes.phone"
               (input)="clearSecuredDetailsValidation('PHONE')" maxlength="10" />
             <span class="error-cntr">{{newUserSecuredDetailsError.phone}}</span>
           </div>
@@ -94,7 +94,7 @@
         <div class="d-flex align-items-center div-margin-buttom">
           <div class="label-margin-right">Email:</div>
           <div class="d-flex flex-column">
-            <input type="text" pInputText pSize="normal" [(ngModel)]="newUserSecuredDetails.email"
+            <input type="text" pInputText pSize="normal" [(ngModel)]="editableUserSecuredDetailsRes.email"
               (input)="clearSecuredDetailsValidation('EMAIL')" />
             <span class="error-cntr">{{newUserSecuredDetailsError.email}}</span>
           </div>

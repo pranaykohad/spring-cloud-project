@@ -65,7 +65,7 @@ export class OtpComponent implements OnInit, OnDestroy {
 
   private clearAndSendOtp() {
     this.enableProgressBar = true;
-    this.userService.generateOtp().subscribe(); // do not gnerate new otp while testing
+    // this.userService.generateOtp().subscribe(); // do not gnerate new otp while testing
     this.otpArray = [];
 
     this.timeInterval = setInterval(() => {

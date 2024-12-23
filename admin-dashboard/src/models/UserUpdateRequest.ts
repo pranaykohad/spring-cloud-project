@@ -9,7 +9,22 @@ export interface UserBasicDetailsError {
   displayName: string;
 }
 
-export interface UserSecuredDetails {
+export interface UserSecuredDetailsReq {
+  userName: string;
+  password: string;
+  phone: string;
+  email: string;
+  otp: string;
+}
+
+export interface UserSecuredDetailsRes {
+  userName: string;
+  password: string;
+  phone: string;
+  email: string;
+}
+
+export interface EditableUserSecuredDetailsRes {
   userName: string;
   password: string;
   confirmPassword: string;

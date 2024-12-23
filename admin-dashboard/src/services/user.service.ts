@@ -4,7 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   UserBasicDetails,
-  UserSecuredDetails,
+  UserSecuredDetailsReq,
+  UserSecuredDetailsRes,
 } from '../models/UserUpdateRequest';
 
 @Injectable({
@@ -18,12 +19,6 @@ export class UserService {
   getUserBasicDetails(): Observable<UserBasicDetails> {
     return this.http.get<UserBasicDetails>(
       `${this.baseUrl}api/user/system/basic-details`
-    );
-  }
-
-  getUserSecuredDetails(): Observable<UserSecuredDetails> {
-    return this.http.get<UserSecuredDetails>(
-      `${this.baseUrl}api/user/system/secured-details`
     );
   }
 
@@ -43,11 +38,17 @@ export class UserService {
     );
   }
 
+  getUserSecuredDetails(): Observable<UserSecuredDetailsRes> {
+    return this.http.get<UserSecuredDetailsRes>(
+      `${this.baseUrl}api/user/system/secured-details`
+    );
+  }
+
   updateUserSecuredDetails(
-    UserBasicDetails: UserSecuredDetails
+    UserBasicDetails: UserSecuredDetailsReq
   ): Observable<Boolean> {
     return this.http.patch<Boolean>(
-      `${this.baseUrl}api/user/system/udpate-secured-details`,
+      `${this.baseUrl}api/user/system/update-secured-details`,
       UserBasicDetails
     );
   }

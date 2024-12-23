@@ -6,24 +6,25 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { MessageService } from '../behaviorSubject/message.service';
-import { ToastType } from '../models/Enums';
 import {
   UserBasicDetails,
   UserBasicDetailsError,
-  UserSecuredDetails,
   UserSecuredDetailsError,
+  UserSecuredDetailsReq,
+  UserSecuredDetailsRes,
 } from '../models/UserUpdateRequest';
-import { UserAuthService } from '../services/user-auth.service';
-import { ToastService } from '../services/toast.service';
-import { SharedModule } from '../shared/shared.module';
-import { LocalstorageService } from './../services/localstorage.service';
 import { OtpComponent } from '../popups/otp/otp.component';
+import { ToastService } from '../services/toast.service';
+import { UserAuthService } from '../services/user-auth.service';
 import { UserService } from '../services/user.service';
+import { SharedModule } from '../shared/shared.module';
+import { EditableUserSecuredDetailsRes } from './../models/UserUpdateRequest';
+import { LocalstorageService } from './../services/localstorage.service';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [SharedModule, OtpComponent],
+  imports: [SharedModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
 })
@@ -37,12 +38,13 @@ export class ProfileComponent implements OnInit {
     profilePicFile: new File([], ''),
   };
 
-  oldUserSecuredDetails!: UserSecuredDetails;
+  userSecuredDetailsRes!: UserSecuredDetailsRes;
 
-  newUserSecuredDetails: UserSecuredDetails = {
+  editableUserSecuredDetailsRes!: EditableUserSecuredDetailsRes;
+
+  userSecuredDetailsReq: UserSecuredDetailsReq = {
     userName: '',
     password: '',
-    confirmPassword: '',
     phone: '',
     email: '',
     otp: '',
@@ -187,31 +189,31 @@ export class ProfileComponent implements OnInit {
   }
 
   clearPasswordField() {
-    this.newUserSecuredDetails.password = '';
+    this.userSecuredDetailsReq.password = '';
     this.newUserSecuredDetailsError.password = '';
     this.enableSecuredUpdateBtn = true;
   }
 
   clearConfirmPasswordField() {
-    this.newUserSecuredDetails.confirmPassword = '';
+    this.editableUserSecuredDetailsRes.confirmPassword = '';
     this.newUserSecuredDetailsError.confirmPassword = '';
     this.enableBasicUpdateBtn = true;
   }
 
   validateSecuredDetails(): boolean {
     let isSecuredDetailsValid = true;
-    if (!this.newUserSecuredDetails.password.length) {
+    if (!this.editableUserSecuredDetailsRes.password.length) {
       this.newUserSecuredDetailsError.password = 'Password cannot be blank!';
       isSecuredDetailsValid = false;
     }
-    if (!this.newUserSecuredDetails.confirmPassword.length) {
+    if (!this.editableUserSecuredDetailsRes.confirmPassword.length) {
       this.newUserSecuredDetailsError.confirmPassword =
         'Confirm password cannot be blank!';
       isSecuredDetailsValid = false;
     }
     if (
-      this.newUserSecuredDetails.password !==
-      this.newUserSecuredDetails.confirmPassword
+      this.editableUserSecuredDetailsRes.password !==
+      this.editableUserSecuredDetailsRes.confirmPassword
     ) {
       this.newUserSecuredDetailsError.confirmPassword =
         'Password and confirm password must be same';
@@ -228,12 +230,14 @@ export class ProfileComponent implements OnInit {
     if (isSecuredDetailsValid) {
       this.clearSecuredDetailsValidation();
     }
-    this.newUserSecuredDetails.password =
-      this.newUserSecuredDetails.password.trim();
-    this.newUserSecuredDetails.confirmPassword =
-      this.newUserSecuredDetails.confirmPassword.trim();
-    this.newUserSecuredDetails.phone = this.newUserSecuredDetails.phone.trim();
-    this.newUserSecuredDetails.email = this.newUserSecuredDetails.email.trim();
+    this.editableUserSecuredDetailsRes.password =
+      this.editableUserSecuredDetailsRes.password.trim();
+    this.editableUserSecuredDetailsRes.confirmPassword =
+      this.editableUserSecuredDetailsRes.confirmPassword.trim();
+    this.editableUserSecuredDetailsRes.phone =
+      this.editableUserSecuredDetailsRes.phone.trim();
+    this.editableUserSecuredDetailsRes.email =
+      this.editableUserSecuredDetailsRes.email.trim();
     return isSecuredDetailsValid;
   }
 
@@ -242,11 +246,17 @@ export class ProfileComponent implements OnInit {
     this.otpComponent = this.otpContainer.createComponent(OtpComponent);
     this.otpComponent.instance.visible = true;
     this.otpComponent.instance.otpEmiter.subscribe((res) => {
-      console.log(res);
-      this.newUserSecuredDetails.otp = res;
+      this.editableUserSecuredDetailsRes.otp = res;
       this.messageService.sendMessage('ENABLE_LOADER');
+      const finalObject = {
+        userName: this.editableUserSecuredDetailsRes.userName,
+        otp: this.editableUserSecuredDetailsRes.otp,
+        password: this.editableUserSecuredDetailsRes.password,
+        phone: this.editableUserSecuredDetailsRes.phone,
+        email: this.editableUserSecuredDetailsRes.email,
+      };
       this.userService
-        .updateUserSecuredDetails(this.newUserSecuredDetails)
+        .updateUserSecuredDetails(finalObject)
         .subscribe({
           next: (res: Boolean) => {
             if (res) {
@@ -294,20 +304,25 @@ export class ProfileComponent implements OnInit {
   private getUserSecuredDetails() {
     this.userService
       .getUserSecuredDetails()
-      .subscribe((res: UserSecuredDetails) => {
-        this.oldUserSecuredDetails = res;
-        this.newUserSecuredDetails = this.oldUserSecuredDetails;
-        this.newUserSecuredDetails.confirmPassword =
-          this.newUserSecuredDetails.password;
+      .subscribe((res: UserSecuredDetailsRes) => {
+        this.userSecuredDetailsRes = res;
+        this.editableUserSecuredDetailsRes = {
+          userName: res.userName,
+          password: res.password,
+          confirmPassword: res.password,
+          phone: res.phone,
+          email: res.email,
+          otp: '',
+        };
       });
   }
 
   private isValidPhoneNumber(): boolean {
-    return /^[0-9]{10}$/.test(this.newUserSecuredDetails.phone);
+    return /^[0-9]{10}$/.test(this.editableUserSecuredDetailsRes.phone);
   }
 
   private isValidEmail(): boolean {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(this.newUserSecuredDetails.email);
+    return emailRegex.test(this.editableUserSecuredDetailsRes.email);
   }
 }

@@ -7,7 +7,7 @@ import { LoggedinUserDetails } from '../models/SystemUserResponse';
 import { SystemUserSigninRequest } from '../models/SystemUserSigninRequest';
 import {
   UserBasicDetails,
-  UserSecuredDetails,
+  UserSecuredDetailsReq,
 } from '../models/UserUpdateRequest';
 
 @Injectable({
