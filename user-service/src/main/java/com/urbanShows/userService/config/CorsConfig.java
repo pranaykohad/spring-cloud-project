@@ -9,6 +9,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 // Uncomment this to enable direct calls from angular app
+
 //@Configuration
 //public class CorsConfig {
 //

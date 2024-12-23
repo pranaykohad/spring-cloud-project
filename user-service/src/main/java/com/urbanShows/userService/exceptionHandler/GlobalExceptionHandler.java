@@ -29,6 +29,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<String> handleJwtParseException(JwtParseException ex) {
 		return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}	
+	
+	@ExceptionHandler(IncorrectOtpException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseEntity<String> handleIncorrectOtpException(IncorrectOtpException ex) {
+		return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 	@ExceptionHandler(BlobNotFoundException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -45,8 +51,10 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(AccessDeniedException.class)
 	@ResponseStatus(HttpStatus.UNAUTHORIZED)
-	public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException ex) {
-		return new ResponseEntity<>(ex.getMessage(), HttpStatus.UNAUTHORIZED);
+	public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException ex) {
+		final HashMap<String, String> map = new HashMap<>();
+		map.put("error", ex.getMessage());
+		return new ResponseEntity<>(map, HttpStatus.UNAUTHORIZED);
 	}
 
 	@ExceptionHandler(UserAlreadyExistsException.class)

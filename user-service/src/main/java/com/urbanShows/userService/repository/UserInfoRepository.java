@@ -17,6 +17,8 @@ import io.micrometer.observation.annotation.Observed;
 public interface UserInfoRepository extends JpaRepository<UserInfo, String> {
 
 	UserInfo findByUserName(String userName);
+	
+	UserInfo findByUserNameAndPassword(String userName, String password);
 
 	void deleteByUserName(String userName);
 

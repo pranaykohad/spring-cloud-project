@@ -17,7 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.urbanShows.userService.dto.LoggedinUserDetails;
 import com.urbanShows.userService.dto.UserBasicDetails;
 import com.urbanShows.userService.dto.UserInfoDto;
-import com.urbanShows.userService.dto.UserSecuredDetails;
+import com.urbanShows.userService.dto.UserSecuredDetailsReq;
+import com.urbanShows.userService.dto.UserSecuredDetailsRes;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.UserService;
@@ -46,8 +47,9 @@ public class UserController {
 
 	@PatchMapping("udpate-secured-details")
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
-	public ResponseEntity<Boolean> udpateSecuredUserDetails(@Valid @RequestBody UserSecuredDetails securedDetails) {
-		final UserInfo existingUserDetails = systemUserService.authenticateSystemUserByOtp(securedDetails.getUserName(),
+	public ResponseEntity<Boolean> udpateSecuredUserDetails(@Valid @RequestBody UserSecuredDetailsReq securedDetails,
+			Principal principal) {
+		final UserInfo existingUserDetails = systemUserService.authenticateSystemUserByOtp(principal.getName(),
 				securedDetails.getOtp());
 		return ResponseEntity.ok(systemUserService.udpateSecuredUserDetails(securedDetails, existingUserDetails));
 	}
@@ -61,8 +63,8 @@ public class UserController {
 
 	@GetMapping("generate-otp")
 	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
-	public void generateOtp(@RequestParam String userName) {
-		systemUserService.generateOtpForSystemUser(userName);
+	public void generateOtp(Principal principal) {
+		systemUserService.generateOtpForSystemUser(principal.getName());
 	}
 
 //	@PatchMapping("update-profile-pic")
@@ -76,25 +78,25 @@ public class UserController {
 
 	@GetMapping("details")
 	public ResponseEntity<LoggedinUserDetails> getUserDetails(Principal principal) {
-		UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
-		GenericMapper<LoggedinUserDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
+		final UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		final GenericMapper<LoggedinUserDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				LoggedinUserDetails.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
 	@GetMapping("basic-details")
 	public ResponseEntity<UserBasicDetails> getUserBasicDetailsByUsername(Principal principal) {
-		UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
-		GenericMapper<UserBasicDetails, UserInfo> mapper = new GenericMapper<>(modelMapper, UserBasicDetails.class,
-				UserInfo.class);
+		final UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		final GenericMapper<UserBasicDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
+				UserBasicDetails.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
 	@GetMapping("secured-details")
-	public ResponseEntity<UserSecuredDetails> getUserSecuredDetailsByUsername(Principal principal) {
-		UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
-		GenericMapper<UserSecuredDetails, UserInfo> mapper = new GenericMapper<>(modelMapper, UserSecuredDetails.class,
-				UserInfo.class);
+	public ResponseEntity<UserSecuredDetailsRes> getUserSecuredDetailsByUsername(Principal principal) {
+		final UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		final GenericMapper<UserSecuredDetailsRes, UserInfo> mapper = new GenericMapper<>(modelMapper,
+				UserSecuredDetailsRes.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 

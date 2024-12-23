@@ -2,6 +2,7 @@ package com.urbanShows.userService.service;
 
 import java.security.Key;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +30,8 @@ public class JwtService {
 	private JwtTokenRepo jwtTokenRepo;
 	private UserDetailsServiceImpl userDetailsService;
 
-	public static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+	private static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
+	private static final LocalDateTime EXPIRATION = LocalDateTime.now().plusHours(24);
 
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
@@ -71,26 +73,7 @@ public class JwtService {
 
 	@Transactional
 	public String generateTokenForAppUser(String phone) {
-		return createAndSaveTokenForAppUser(phone);
-	}
-
-	private String createAndSaveTokenForAppUser(String phone) {
-		Map<String, Object> claims = new HashMap<>();
-		String token = Jwts.builder().setClaims(claims).setSubject(phone)
-				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // Set expiration time - 24
-																							// hour
-				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
-
-		jwtTokenRepo.deleteByUsername(phone);
-
-		JwtToken jwtToken = new JwtToken();
-		jwtToken.setToken(token);
-		jwtToken.setUsername(phone);
-		jwtToken.setExpiration(LocalDateTime.now().plusHours(24)); // Set expiration time - 24 hour
-		jwtTokenRepo.save(jwtToken);
-
-		return token;
+		return createAndSaveToken(phone);
 	}
 
 	private Claims extractAllClaims(String token) {
@@ -102,20 +85,19 @@ public class JwtService {
 		return jwtToken == null || jwtToken.getExpiration().isBefore(LocalDateTime.now());
 	}
 
-	private String createAndSaveToken(String userName) {
+	private String createAndSaveToken(String id) {
 		Map<String, Object> claims = new HashMap<>();
-		String token = Jwts.builder().setClaims(claims).setSubject(userName)
+		String token = Jwts.builder().setClaims(claims).setSubject(id)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24)) // Set expiration time - 24
-																							// hour
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 
-		jwtTokenRepo.deleteByUsername(userName);
+		jwtTokenRepo.deleteByUsername(id);
 
 		JwtToken jwtToken = new JwtToken();
-		jwtToken.setToken(token);
-		jwtToken.setUsername(userName);
-		jwtToken.setExpiration(LocalDateTime.now().plusHours(24)); // Set expiration time - 24 hour
+		jwtToken.setToken(token); 
+		jwtToken.setUsername(id);
+		jwtToken.setExpiration(EXPIRATION);
 		jwtTokenRepo.save(jwtToken);
 
 		return token;

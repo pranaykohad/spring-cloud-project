@@ -27,7 +27,7 @@ public class OtpCleanupScheduler {
 		appUserListWithOtp.forEach(appUser -> {
 			appUser.setOtp("");
 			appUserInfoRepo.save(appUser);
-			log.debug("Otp is cleared for phone: {}", appUser.getPhone());
+			log.debug("Otps are cleared for app users");
 		});
 	}
 
@@ -38,7 +38,7 @@ public class OtpCleanupScheduler {
 		appUserListWithOtp.forEach(appUser -> {
 			appUser.setOtp("");
 			systemUserInfoRepository.save(appUser);
-			log.debug("Otp is cleared for phone: {}", appUser.getPhone());
+			log.debug("Otps are cleared for system users");
 		});
 	}
 

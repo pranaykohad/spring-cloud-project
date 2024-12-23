@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.urbanShows.userService.entity.AppUserInfo;
-import com.urbanShows.userService.entity.Role;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.repository.AppUserInfoRepository;
 import com.urbanShows.userService.repository.UserInfoRepository;
@@ -27,25 +26,25 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	private AppUserInfoRepository appUserInfoRepo;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		if (Helper.isPhonenumber(username)) {
-			AppUserInfo user = appUserInfoRepo.findByPhone(username);
+	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+		if (Helper.isPhonenumber(id)) {
+			final AppUserInfo user = appUserInfoRepo.findByPhone(id);
 			if (user != null) {
-				List<String> list = new ArrayList<>();
+				final List<String> list = new ArrayList<>();
 				user.getRoles().forEach(i -> list.add(i.name()));
 				return User.builder().username(user.getPhone()).password(user.getInternalPassword())
 						.roles(list.toArray(new String[0])).build();
 			}
-			throw new UsernameNotFoundException("User not found with username: " + username);
+			throw new UsernameNotFoundException("User not found with username: " + id);
 		} else {
-			UserInfo user = systemUserInfoRepo.findByUserName(username);
+			final UserInfo user = systemUserInfoRepo.findByUserName(id);
 			if (user != null) {
-				List<String> list = new ArrayList<>();
+				final List<String> list = new ArrayList<>();
 				user.getRoles().forEach(i -> list.add(i.name()));
 				return User.builder().username(user.getUserName()).password(user.getPassword())
 						.roles(list.toArray(new String[0])).build();
 			}
-			throw new UsernameNotFoundException("User not found with username: " + username);
+			throw new UsernameNotFoundException("User not found with username: " + id);
 		}
 	}
 }

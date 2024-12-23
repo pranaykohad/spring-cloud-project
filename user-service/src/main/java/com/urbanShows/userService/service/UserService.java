@@ -13,12 +13,13 @@ import com.urbanShows.userService.azure.AzureBlobStorageService;
 import com.urbanShows.userService.dto.AppUserInfoDto;
 import com.urbanShows.userService.dto.UserBasicDetails;
 import com.urbanShows.userService.dto.UserInfoDto;
-import com.urbanShows.userService.dto.UserSecuredDetails;
+import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSigninDto;
 import com.urbanShows.userService.entity.AppUserInfo;
 import com.urbanShows.userService.entity.Role;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
+import com.urbanShows.userService.exceptionHandler.IncorrectOtpException;
 import com.urbanShows.userService.exceptionHandler.UserAlreadyExistsException;
 import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
 import com.urbanShows.userService.kafka.KafkaTopicEnums;
@@ -53,7 +54,15 @@ public class UserService {
 	public UserInfo authenticateSystemUserByOtp(String userName, String otp) {
 		final UserInfo systemUser = systemUserRepo.findByUserNameAndOtp(userName, otp);
 		if (systemUser == null) {
-			throw new AccessDeniedException("Username or OTP is not correct");
+			throw new IncorrectOtpException("OTP is not correct or expired");
+		}
+		return systemUser;
+	}
+	
+	public UserInfo authenticateSystemUserByPassword(String userName, String password) {
+		final UserInfo systemUser = systemUserRepo.findByUserNameAndPassword(userName, passwordEncoder.encode(password.trim()));
+		if (systemUser == null) {
+			throw new AccessDeniedException("Username or password is not correct");
 		}
 		return systemUser;
 	}
@@ -108,9 +117,9 @@ public class UserService {
 		systemUserRepo.delete(mapper.dtoToEntity(systemUserDto));
 	}
 
-	public boolean udpateSecuredUserDetails(UserSecuredDetails securedDetails, UserInfo existingSystemUser) {
-		final GenericMapper<UserSecuredDetails, UserInfoDto> mapper = new GenericMapper<>(modelMapper,
-				UserSecuredDetails.class, UserInfoDto.class);
+	public boolean udpateSecuredUserDetails(UserSecuredDetailsReq securedDetails, UserInfo existingSystemUser) {
+		final GenericMapper<UserSecuredDetailsReq, UserInfoDto> mapper = new GenericMapper<>(modelMapper,
+				UserSecuredDetailsReq.class, UserInfoDto.class);
 		UserInfoDto dtoToEntity = mapper.dtoToEntity(securedDetails);
 		updateSecuredUserDetails(dtoToEntity, existingSystemUser);
 		return true;
