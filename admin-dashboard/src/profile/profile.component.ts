@@ -189,7 +189,7 @@ export class ProfileComponent implements OnInit {
   }
 
   clearPasswordField() {
-    this.userSecuredDetailsReq.password = '';
+    this.editableUserSecuredDetailsRes.password = '';
     this.newUserSecuredDetailsError.password = '';
     this.enableSecuredUpdateBtn = true;
   }
@@ -263,6 +263,7 @@ export class ProfileComponent implements OnInit {
               this.toastService.showSuccessToast(
                 'Secured details are updated successfully'
               );
+              this.getUserSecuredDetails();
               this.otpComponent.instance.visible = false;
             }
           },
