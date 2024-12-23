@@ -58,9 +58,10 @@ public class UserService {
 		}
 		return systemUser;
 	}
-	
+
 	public UserInfo authenticateSystemUserByPassword(String userName, String password) {
-		final UserInfo systemUser = systemUserRepo.findByUserNameAndPassword(userName, passwordEncoder.encode(password.trim()));
+		final UserInfo systemUser = systemUserRepo.findByUserNameAndPassword(userName,
+				passwordEncoder.encode(password.trim()));
 		if (systemUser == null) {
 			throw new AccessDeniedException("Username or password is not correct");
 		}
@@ -157,10 +158,10 @@ public class UserService {
 	}
 
 	private void updateSecuredUserDetails(UserInfoDto targetUserDto, UserInfo systemUser) {
-//		systemUser.setPassword(!targetUserDto.getPassword().isEmpty()
-//				&& !passwordEncoder.matches(targetUserDto.getPassword(), systemUser.getPassword())
-//						? passwordEncoder.encode(targetUserDto.getPassword())
-//						: systemUser.getPassword());
+		if (!targetUserDto.getPassword().isEmpty()
+				&& !passwordEncoder.matches(targetUserDto.getPassword(), systemUser.getPassword())) {
+			systemUser.setPassword(passwordEncoder.encode(targetUserDto.getPassword()));
+		}
 		systemUser
 				.setPhone(!targetUserDto.getPhone().isEmpty() && !systemUser.getPhone().equals(targetUserDto.getPhone())
 						? targetUserDto.getPhone()
