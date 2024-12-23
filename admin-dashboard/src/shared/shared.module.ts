@@ -30,6 +30,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TabViewModule } from 'primeng/tabview';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @NgModule({
   declarations: [],
@@ -65,7 +66,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     TooltipModule,
     TabViewModule,
     FileUploadModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    ProgressBarModule
   ],
   exports: [
     CommonModule,
@@ -99,7 +101,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     TooltipModule,
     TabViewModule,
     FileUploadModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    ProgressBarModule
   ],
 })
 export class SharedModule {}

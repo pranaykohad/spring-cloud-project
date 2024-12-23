@@ -4,4 +4,6 @@ export interface LoggedinUserDetails {
   displayName: string;
   profilePicUrl: string;
   role: string[];
+  userName: string;
+  phone: string;
 }

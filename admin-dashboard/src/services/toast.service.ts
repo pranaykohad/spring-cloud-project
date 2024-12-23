@@ -11,7 +11,7 @@ export class ToastService {
     easing: 'ease-in',
     progressBar: true,
     progressAnimation: 'increasing',
-    timeOut: 2000,
+    timeOut: 3000,
   };
 
   constructor(private toastr: ToastrService) {}

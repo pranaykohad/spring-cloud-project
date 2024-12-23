@@ -19,7 +19,6 @@ import { SharedModule } from '../shared/shared.module';
 import { LocalstorageService } from './../services/localstorage.service';
 import { OtpComponent } from '../popups/otp/otp.component';
 import { UserService } from '../services/user.service';
-import { error } from 'console';
 
 @Component({
   selector: 'app-profile',

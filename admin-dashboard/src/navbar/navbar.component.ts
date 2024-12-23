@@ -192,7 +192,9 @@ export class NavbarComponent implements OnInit {
         .userLogout(loggedinUserDetails.jwt)
         .subscribe((res: boolean) => {
           if (res) {
+            const inMemoryUserName = this.localstorageService.getItem(LocalStorageKeys.INMEMORY_USERNAME);
             this.localstorageService.clear();
+            this.localstorageService.setItem(LocalStorageKeys.INMEMORY_USERNAME, inMemoryUserName);
             this.router.navigate(['login']);
           }
         });

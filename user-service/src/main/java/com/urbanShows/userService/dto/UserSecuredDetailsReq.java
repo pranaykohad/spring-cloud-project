@@ -10,11 +10,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSecuredDetails {
+public class UserSecuredDetailsReq {
 
 	@NotNull(message = "Username cannot be null")
 	private String userName;
-	
+
 	private String otp;
 
 	private String password;

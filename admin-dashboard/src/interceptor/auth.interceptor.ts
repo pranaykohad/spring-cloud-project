@@ -11,6 +11,7 @@ import { LocalstorageService } from '../services/localstorage.service';
 import { Router } from '@angular/router';
 import { LocalStorageKeys } from '../models/Enums';
 import { LoggedinUserDetails } from '../models/SystemUserResponse';
+import { ToastService } from '../services/toast.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -21,7 +22,8 @@ export class AuthInterceptor implements HttpInterceptor {
 
   constructor(
     private localstorageService: LocalstorageService,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService
   ) {}
 
   intercept(
@@ -29,23 +31,31 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const isExcluded = this.excludedUrls.some((url) => req.url.includes(url));
-    const loggedInUserDetails: LoggedinUserDetails = this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
+    const loggedInUserDetails: LoggedinUserDetails =
+      this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
 
     if (!isExcluded && loggedInUserDetails?.jwt) {
       const headers = new HttpHeaders({
         Authorization: `Bearer ${loggedInUserDetails.jwt}`,
       });
-      const clonedReq = req.clone({ headers: headers });
-      return next.handle(clonedReq).pipe(
-        catchError((error) => {
-          if (error.status === 401) {
-            // this.router.navigate(['login']);
-          }
-          return throwError(() => error);
-        })
-      );
+      req = req.clone({ headers: headers });
     }
 
-    return next.handle(req);
+    return this.Appinterceptor(next, req);
+  }
+
+  private Appinterceptor(
+    next: HttpHandler,
+    clonedReq: HttpRequest<any>
+  ): Observable<HttpEvent<any>> {
+    return next.handle(clonedReq).pipe(
+      catchError((error) => {
+        if (error.status === 401) {
+          this.toastService.showErrorToast(error.error.error);
+          this.router.navigate(['login']);
+        }
+        return throwError(() => error);
+      })
+    );
   }
 }

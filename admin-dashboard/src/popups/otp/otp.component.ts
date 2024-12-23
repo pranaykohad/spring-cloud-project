@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnDestroy,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { SharedModule } from '../../shared/shared.module';
 
@@ -9,24 +16,36 @@ import { SharedModule } from '../../shared/shared.module';
   templateUrl: './otp.component.html',
   styleUrl: './otp.component.scss',
 })
-export class OtpComponent implements OnInit {
+export class OtpComponent implements OnInit, OnDestroy {
   @Input()
   visible!: boolean;
 
   @Output()
   otpEmiter: EventEmitter<string> = new EventEmitter<string>();
 
+  currentTimerValue: number = 0;
+  otpTimeout: number = 60;
+  warningTimeout: number = 50;
   otpArray!: number[];
+  enableResendBtn: boolean = false;
+  enableProgressBar: boolean = false;
+
+  private timeInterval: any;
 
   constructor(private userService: UserService) {}
+
+  ngOnDestroy(): void {
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
+  }
 
   ngOnInit(): void {
     this.clearAndSendOtp();
   }
 
-  private clearAndSendOtp() {
-    this.userService.generateOtp().subscribe();
-    this.otpArray = [];
+  getCurrentTimerValue() {
+    return Math.abs((this.currentTimerValue / this.otpTimeout) * 100);
   }
 
   onInput(target: any, nextInput: HTMLInputElement | null) {
@@ -42,5 +61,22 @@ export class OtpComponent implements OnInit {
 
   resendOtp() {
     this.clearAndSendOtp();
+  }
+
+  private clearAndSendOtp() {
+    this.enableProgressBar = true;
+    this.userService.generateOtp().subscribe(); // do not gnerate new otp while testing
+    this.otpArray = [];
+
+    this.timeInterval = setInterval(() => {
+      if (this.currentTimerValue < this.otpTimeout) {
+        this.currentTimerValue = this.currentTimerValue + 1;
+      } else {
+        clearInterval(this.timeInterval);
+        this.enableResendBtn = true;
+        this.enableProgressBar = false;
+        this.currentTimerValue = 0;
+      }
+    }, 1000);
   }
 }

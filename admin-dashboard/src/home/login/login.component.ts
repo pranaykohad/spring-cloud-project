@@ -17,8 +17,8 @@ import { LoggedinUserDetails } from '../../models/SystemUserResponse';
 })
 export class LoginComponent implements OnInit {
   systemUserLoginRequest: SystemUserLoginRequest = {
-    userName: 'pranay',
-    password: 'pranay',
+    userName: '',
+    password: '',
   };
   rememberMe: boolean = false;
   loggedinUserDetails!: LoggedinUserDetails;
@@ -29,11 +29,16 @@ export class LoginComponent implements OnInit {
     private localstorageService: LocalstorageService,
     private router: Router,
     private toastService: ToastService
-  ) {
-
-  }
+  ) {}
 
   ngOnInit(): void {
+    const inMemoryUserName = this.localstorageService.getItem(
+      LocalStorageKeys.INMEMORY_USERNAME
+    );
+    if (inMemoryUserName) {
+      this.systemUserLoginRequest.userName = inMemoryUserName;
+      this.rememberMe = true;
+    }
   }
 
   validate() {
@@ -49,21 +54,26 @@ export class LoginComponent implements OnInit {
       this.systemUserLoginRequest.password.trim();
     this.systemUserAuthService
       .userLogin(this.systemUserLoginRequest)
-      .subscribe({
-        next: (res: LoggedinUserDetails) => {
-          this.loggedinUserDetails = res;
+      .subscribe((res: LoggedinUserDetails) => {
+        this.loggedinUserDetails = res;
+        this.localstorageService.setItem(
+          LocalStorageKeys.LOGGED_IN_USER_DETAILS,
+          res
+        );
+        if (this.rememberMe) {
           this.localstorageService.setItem(
-            LocalStorageKeys.LOGGED_IN_USER_DETAILS,
-            res
+            LocalStorageKeys.INMEMORY_USERNAME,
+            this.loggedinUserDetails.userName
           );
-          this.router.navigate(['']);
-          this.toastService.showSuccessToast(
-            `${this.loggedinUserDetails.displayName} logged in`
+        } else {
+          this.localstorageService.removeItem(
+            LocalStorageKeys.INMEMORY_USERNAME
           );
-        },
-        error: (err) => {
-          this.toastService.showErrorToast(err.error);
-        },
+        }
+        this.router.navigate(['']);
+        this.toastService.showSuccessToast(
+          `${this.loggedinUserDetails.displayName} logged in`
+        );
       });
   }
 
