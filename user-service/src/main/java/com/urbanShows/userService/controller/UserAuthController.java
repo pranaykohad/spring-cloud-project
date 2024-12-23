@@ -1,9 +1,11 @@
 package com.urbanShows.userService.controller;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.urbanShows.userService.dto.UserInfoDto;
 import com.urbanShows.userService.dto.UserLoginDto;
 import com.urbanShows.userService.dto.UserResponseDto;
 import com.urbanShows.userService.dto.UserSigninDto;
@@ -48,7 +51,6 @@ public class UserAuthController {
 			final Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(systemUserLoginDto.getUserName(),
 							systemUserLoginDto.getPassword()));
-			SecurityContextHolder.getContext().setAuthentication(authentication);
 			if (authentication.isAuthenticated()) {
 				final String jwtToken = jwtService.saveAndSendJwtTokenForSystemUser(systemUserLoginDto.getUserName());
 				final UserInfo existingSystemUser = systemUserService
@@ -77,5 +79,5 @@ public class UserAuthController {
 		UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
 		return ResponseEntity.ok(jwtService.validateTokenForUserName(token, existingUser.getUserName()));
 	}
-
+	
 }

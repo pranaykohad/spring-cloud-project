@@ -31,7 +31,7 @@ public class AppUserAuthController {
 	private final JwtService jwtService;
 	private final ModelMapper modelMapper;
 
-	@PostMapping("signin")
+	@PostMapping("signup")
 	public ResponseEntity<Boolean> register(@Valid @RequestBody AppUserSigninReqDto appUserSigninReqDto) {
 		return ResponseEntity.ok(appUserService.signinAppUser(appUserSigninReqDto));
 	}

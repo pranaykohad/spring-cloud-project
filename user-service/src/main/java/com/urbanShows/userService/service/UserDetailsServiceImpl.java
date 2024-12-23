@@ -2,8 +2,10 @@ package com.urbanShows.userService.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.urbanShows.userService.entity.AppUserInfo;
+import com.urbanShows.userService.entity.Role;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.repository.AppUserInfoRepository;
 import com.urbanShows.userService.repository.UserInfoRepository;
@@ -30,21 +33,22 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		if (Helper.isPhonenumber(id)) {
 			final AppUserInfo user = appUserInfoRepo.findByPhone(id);
 			if (user != null) {
-				final List<String> list = new ArrayList<>();
-				user.getRoles().forEach(i -> list.add(i.name()));
-				return User.builder().username(user.getPhone()).password(user.getInternalPassword())
-						.roles(list.toArray(new String[0])).build();
+				return buildUser(user.getPhone(), user.getInternalPassword(), user.getRoles());
 			}
-			throw new UsernameNotFoundException("User not found with username: " + id);
+			throw new UsernameNotFoundException("User not found with phone: " + id);
 		} else {
 			final UserInfo user = systemUserInfoRepo.findByUserName(id);
 			if (user != null) {
-				final List<String> list = new ArrayList<>();
-				user.getRoles().forEach(i -> list.add(i.name()));
-				return User.builder().username(user.getUserName()).password(user.getPassword())
-						.roles(list.toArray(new String[0])).build();
+				return buildUser(user.getUserName(), user.getPassword(), user.getRoles());
 			}
 			throw new UsernameNotFoundException("User not found with username: " + id);
 		}
 	}
+
+	private UserDetails buildUser(String userName, String password, List<Role> roles) {
+		final List<String> list = new ArrayList<>();
+		roles.forEach(i -> list.add(i.name()));
+		return User.builder().username(userName).password(password).roles(list.toArray(new String[0])).build();
+	}
+
 }

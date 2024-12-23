@@ -157,10 +157,10 @@ public class UserService {
 	}
 
 	private void updateSecuredUserDetails(UserInfoDto targetUserDto, UserInfo systemUser) {
-		systemUser.setPassword(!targetUserDto.getPassword().isEmpty()
-				&& !passwordEncoder.matches(targetUserDto.getPassword(), systemUser.getPassword())
-						? passwordEncoder.encode(targetUserDto.getPassword())
-						: systemUser.getPassword());
+//		systemUser.setPassword(!targetUserDto.getPassword().isEmpty()
+//				&& !passwordEncoder.matches(targetUserDto.getPassword(), systemUser.getPassword())
+//						? passwordEncoder.encode(targetUserDto.getPassword())
+//						: systemUser.getPassword());
 		systemUser
 				.setPhone(!targetUserDto.getPhone().isEmpty() && !systemUser.getPhone().equals(targetUserDto.getPhone())
 						? targetUserDto.getPhone()
