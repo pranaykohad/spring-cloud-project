@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.urbanShows.userService.entity.Role;
+import com.urbanShows.userService.entity.Status;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -22,7 +23,6 @@ public class UserInfoDto {
 	private String userName;
 
 	@NotNull(message = "Password cannot be null")
-	@JsonIgnore
 	private String password;
 
 	@Email(message = "This email ia not valid")
@@ -37,6 +37,10 @@ public class UserInfoDto {
 	private List<Role> roles;
 	
 	private String profilePicUrl;
+	
+	private LocalDateTime createdAt;
+	
+	private Status status;
 	
 	@JsonIgnore
 	private String otp;

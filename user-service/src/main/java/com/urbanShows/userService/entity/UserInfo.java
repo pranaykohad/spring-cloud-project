@@ -36,4 +36,8 @@ public class UserInfo {
 	
 	private LocalDateTime otpTimeStamp;
 	
+	private LocalDateTime createdAt;
+	
+	private Status status;
+	
 }

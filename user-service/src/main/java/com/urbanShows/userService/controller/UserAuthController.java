@@ -1,15 +1,12 @@
 package com.urbanShows.userService.controller;
 
 import java.security.Principal;
-import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,12 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.urbanShows.userService.dto.UserInfoDto;
 import com.urbanShows.userService.dto.UserLoginDto;
 import com.urbanShows.userService.dto.UserResponseDto;
 import com.urbanShows.userService.dto.UserSigninDto;
 import com.urbanShows.userService.entity.UserInfo;
-import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
+import com.urbanShows.userService.exception.AccessDeniedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.UserService;
@@ -47,14 +43,13 @@ public class UserAuthController {
 
 	@PostMapping("login")
 	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody UserLoginDto systemUserLoginDto) {
+		final UserInfo existingSystemUser = systemUserService.isUserActive(systemUserLoginDto.getUserName());
 		try {
 			final Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(systemUserLoginDto.getUserName(),
 							systemUserLoginDto.getPassword()));
 			if (authentication.isAuthenticated()) {
 				final String jwtToken = jwtService.saveAndSendJwtTokenForSystemUser(systemUserLoginDto.getUserName());
-				final UserInfo existingSystemUser = systemUserService
-						.getExistingSystemUser(systemUserLoginDto.getUserName());
 				final GenericMapper<UserResponseDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
 						UserResponseDto.class, UserInfo.class);
 				final UserResponseDto systemUserResponseDto = mapper.entityToDto(existingSystemUser);
@@ -76,7 +71,7 @@ public class UserAuthController {
 
 	@GetMapping("validate-jwt")
 	public ResponseEntity<Boolean> validateJwt(@RequestParam String token, Principal principal) {
-		UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
 		return ResponseEntity.ok(jwtService.validateTokenForUserName(token, existingUser.getUserName()));
 	}
 	

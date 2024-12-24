@@ -1,5 +1,6 @@
 package com.urbanShows.userService.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,18 +11,21 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.urbanShows.userService.azure.AzureBlobStorageService;
-import com.urbanShows.userService.dto.AppUserInfoDto;
+import com.urbanShows.userService.constants.ColumnConfigList;
+import com.urbanShows.userService.dto.ColumnConfig;
 import com.urbanShows.userService.dto.UserBasicDetails;
 import com.urbanShows.userService.dto.UserInfoDto;
+import com.urbanShows.userService.dto.UserInfoListDto;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSigninDto;
-import com.urbanShows.userService.entity.AppUserInfo;
 import com.urbanShows.userService.entity.Role;
+import com.urbanShows.userService.entity.Status;
 import com.urbanShows.userService.entity.UserInfo;
-import com.urbanShows.userService.exceptionHandler.AccessDeniedException;
-import com.urbanShows.userService.exceptionHandler.IncorrectOtpException;
-import com.urbanShows.userService.exceptionHandler.UserAlreadyExistsException;
-import com.urbanShows.userService.exceptionHandler.UserNotFoundException;
+import com.urbanShows.userService.exception.AccessDeniedException;
+import com.urbanShows.userService.exception.IncorrectOtpException;
+import com.urbanShows.userService.exception.UserAlreadyExistsException;
+import com.urbanShows.userService.exception.UserInactiveException;
+import com.urbanShows.userService.exception.UserNotFoundException;
 import com.urbanShows.userService.kafka.KafkaTopicEnums;
 import com.urbanShows.userService.kafka.MessageProducer;
 import com.urbanShows.userService.kafka.OtpkafkaDto;
@@ -41,7 +45,6 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final MessageProducer messageProducer;
 	private final OtpService otpService;
-	private final AppUserService appUserService;
 	private final AzureBlobStorageService azureBlobStorageService;
 
 	public void uploadProfilePicUrl(UserInfoDto systemUserDto, String profilePicUrl) {
@@ -86,29 +89,31 @@ public class UserService {
 		systemUser.setUserName(systemUserSigninDto.getUserName().trim());
 		systemUser.setEmail(systemUserSigninDto.getEmail().trim());
 		systemUser.setPhone(systemUserSigninDto.getPhone().trim());
+		systemUser.setStatus(Status.INACTIVE);
+		roleList.stream().filter(i -> i.equals(Role.SUPER_ADMIN_USER))
+				.forEach(i -> systemUser.setStatus(Status.ACTIVE));
+		systemUser.setCreatedAt(LocalDateTime.now());
 		systemUserRepo.save(systemUser);
 		log.info("System User {} is register in the system ", systemUserSigninDto.getUserName());
 		return true;
 	}
 
-	public void uploadProfilePic(UserInfo systemUser, String profilePicUrl) {
-		systemUser.setProfilePicUrl(profilePicUrl);
-		systemUserRepo.save(systemUser);
-	}
-
-	public UserInfo getExistingSystemUser(String userName) {
-		final UserInfo existingUser = systemUserRepo.findByUserName(userName);
-		if (existingUser == null) {
-			throw new UserNotFoundException("User doesnot exists in the system");
-		}
-		return existingUser;
-	}
-
-	public List<UserInfoDto> getSystemUsersList() {
+	public UserInfoListDto getSystemUsersList() {
 		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class,
 				UserInfo.class);
+		
+		final long count = systemUserRepo.count();
+		final ColumnConfig columnConfig = new ColumnConfig();
+		columnConfig.setColumns(ColumnConfigList.USER_COlUMNS);
+		columnConfig.setRowsPerPage(10);
+		columnConfig.setTotalRows(count);
+		
 		final List<UserInfo> all = systemUserRepo.findAll();
-		return mapper.entityToDto(all);
+		final UserInfoListDto userInfoListDto = new UserInfoListDto();
+		userInfoListDto.setUserInfoList(mapper.entityToDto(all));
+		userInfoListDto.setColumnConfig(columnConfig);
+		
+		return userInfoListDto;
 	}
 
 	@Transactional
@@ -152,11 +157,6 @@ public class UserService {
 		return true;
 	}
 
-	private void updateAppUserDetails(AppUserInfoDto newAppUserDto) {
-		final AppUserInfo appUser = appUserService.getExistingAppUser(newAppUserDto.getPhone());
-		appUserService.udpate(appUser, newAppUserDto);
-	}
-
 	private void updateSecuredUserDetails(UserInfoDto targetUserDto, UserInfo systemUser) {
 		if (!targetUserDto.getPassword().isEmpty()
 				&& !passwordEncoder.matches(targetUserDto.getPassword(), systemUser.getPassword())) {
@@ -171,6 +171,23 @@ public class UserService {
 						? targetUserDto.getEmail()
 						: systemUser.getEmail());
 		systemUserRepo.save(systemUser);
+	}
+
+	public UserInfo isUserActive(String userName) {
+		final UserInfo existingSystemUser = getExistingSystemUser(userName);
+		if (existingSystemUser.getStatus().equals(Status.ACTIVE)) {
+			return existingSystemUser;
+		} else {
+			throw new UserInactiveException("The user is not active. Please contact the supervisor for assistance");
+		}
+	}
+
+	private UserInfo getExistingSystemUser(String userName) {
+		final UserInfo existingUser = systemUserRepo.findByUserName(userName);
+		if (existingUser == null) {
+			throw new UserNotFoundException("User doesnot exists in the system");
+		}
+		return existingUser;
 	}
 
 }

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.urbanShows.userService.entity.JwtToken;
-import com.urbanShows.userService.exceptionHandler.JwtParseException;
+import com.urbanShows.userService.exception.JwtParseException;
 import com.urbanShows.userService.repository.JwtTokenRepo;
 
 import io.jsonwebtoken.Claims;

@@ -10,8 +10,8 @@ import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.models.BlobStorageException;
 import com.urbanShows.userService.entity.AppUserInfo;
 import com.urbanShows.userService.entity.UserInfo;
-import com.urbanShows.userService.exceptionHandler.BlobNotFoundException;
-import com.urbanShows.userService.exceptionHandler.GenericException;
+import com.urbanShows.userService.exception.BlobNotFoundException;
+import com.urbanShows.userService.exception.GenericException;
 import com.urbanShows.userService.service.AppUserService;
 import com.urbanShows.userService.util.Helper;
 

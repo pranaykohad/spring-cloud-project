@@ -1,8 +1,8 @@
 package com.urbanShows.userService.util;
 
 import com.urbanShows.userService.azure.AzureConfig;
-import com.urbanShows.userService.exceptionHandler.FileSizeExceedsException;
-import com.urbanShows.userService.exceptionHandler.InvalidFileFormatException;
+import com.urbanShows.userService.exception.FileSizeExceedsException;
+import com.urbanShows.userService.exception.InvalidFileFormatException;
 
 public class Helper {
 

@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.urbanShows.userService.dto.LoggedinUserDetails;
 import com.urbanShows.userService.dto.UserBasicDetails;
 import com.urbanShows.userService.dto.UserInfoDto;
+import com.urbanShows.userService.dto.UserInfoListDto;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSecuredDetailsRes;
 import com.urbanShows.userService.entity.UserInfo;
@@ -30,16 +31,16 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("api/user/system")
 @AllArgsConstructor
+@PreAuthorize("hasAnyAuthority('ROLE_SYSTEM_USER', 'ROLE_SUPER_ADMIN_USER')")
 public class UserController {
 
 	private final UserService systemUserService;
 	private final ModelMapper modelMapper;
 
-	@PatchMapping("udpate-basic-details")
-	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
+	@PatchMapping("update-basic-details")
 	public ResponseEntity<Boolean> udpateBacisUserDetails(@RequestParam(required = false) MultipartFile profilePicFile,
 			@RequestParam(required = false) String displayName, Principal principal) {
-		final UserInfo existingUserDetails = systemUserService.getExistingSystemUser(principal.getName());
+		final UserInfo existingUserDetails = systemUserService.isUserActive(principal.getName());
 		final UserBasicDetails userBasicDetails = new UserBasicDetails();
 		userBasicDetails.setDisplayName(displayName);
 		userBasicDetails.setProfilePicFile(profilePicFile);
@@ -47,14 +48,12 @@ public class UserController {
 	}
 
 	@DeleteMapping("remove")
-	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody UserInfoDto systemUser) {
 		systemUserService.deleteSystemUserByUserName(systemUser);
 		return ResponseEntity.ok(true);
 	}
 
 	@GetMapping("generate-otp")
-	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	public void generateOtp(Principal principal) {
 		systemUserService.generateOtpForSystemUser(principal.getName());
 	}
@@ -69,44 +68,40 @@ public class UserController {
 //	}
 
 	@GetMapping("details")
-	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	public ResponseEntity<LoggedinUserDetails> getUserDetails(Principal principal) {
-		final UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
 		final GenericMapper<LoggedinUserDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				LoggedinUserDetails.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
 	@GetMapping("basic-details")
-	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	public ResponseEntity<UserBasicDetails> getUserBasicDetailsByUsername(Principal principal) {
-		final UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
 		final GenericMapper<UserBasicDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				UserBasicDetails.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
 	@GetMapping("secured-details")
-	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	public ResponseEntity<UserSecuredDetailsRes> getUserSecuredDetailsByUsername(Principal principal) {
-		final UserInfo existingUser = systemUserService.getExistingSystemUser(principal.getName());
+		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
 		final GenericMapper<UserSecuredDetailsRes, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				UserSecuredDetailsRes.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
-	
+
 	@PatchMapping("update-secured-details")
-	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
 	public ResponseEntity<Boolean> udpateSecuredUserDetails(@Valid @RequestBody UserSecuredDetailsReq securedDetails,
 			Principal principal) {
 		final UserInfo existingUserDetails = systemUserService.authenticateSystemUserByOtp(principal.getName(),
 				securedDetails.getOtp());
 		return ResponseEntity.ok(systemUserService.udpateSecuredUserDetails(securedDetails, existingUserDetails));
 	}
-	
-	@GetMapping("system-user-list")
-	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
-	public ResponseEntity<List<UserInfoDto>> getUsersList(Principal principal) {
+
+	@GetMapping("user-list")
+	public ResponseEntity<UserInfoListDto> getUsersList(Principal principal) {
+		systemUserService.isUserActive(principal.getName());
 		return ResponseEntity.ok(systemUserService.getSystemUsersList());
 	}
 
