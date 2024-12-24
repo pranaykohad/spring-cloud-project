@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environment';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../environment';
+import { UserInfoListObject } from '../models/UserInfo';
 import {
   UserBasicDetails,
   UserSecuredDetailsReq,
@@ -33,7 +34,7 @@ export class UserService {
     formData.append('profilePicFile', userBasicDetails.profilePicFile);
     formData.append('displayName', userBasicDetails.displayName);
     return this.http.patch<Boolean>(
-      `${this.baseUrl}api/user/system/udpate-basic-details`,
+      `${this.baseUrl}api/user/system/update-basic-details`,
       formData
     );
   }
@@ -50,6 +51,12 @@ export class UserService {
     return this.http.patch<Boolean>(
       `${this.baseUrl}api/user/system/update-secured-details`,
       UserBasicDetails
+    );
+  }
+
+  getUserInfoList(): Observable<UserInfoListObject> {
+    return this.http.get<UserInfoListObject>(
+      `${this.baseUrl}api/user/system/user-list`
     );
   }
 }

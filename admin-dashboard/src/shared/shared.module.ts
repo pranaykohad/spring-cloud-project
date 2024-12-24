@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AccordionModule } from 'primeng/accordion';
 import { CheckboxModule } from 'primeng/checkbox';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { ListboxModule } from 'primeng/listbox';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -31,6 +31,9 @@ import { TabViewModule } from 'primeng/tabview';
 import { FileUploadModule } from 'primeng/fileupload';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { TagModule } from 'primeng/tag';
+import { ColumnPipe } from '../pipes/column.pipe';
+import { RolePipe } from '../pipes/role.pipe';
 
 @NgModule({
   declarations: [],
@@ -67,7 +70,10 @@ import { ProgressBarModule } from 'primeng/progressbar';
     TabViewModule,
     FileUploadModule,
     ProgressSpinnerModule,
-    ProgressBarModule
+    ProgressBarModule,
+    TagModule,
+    ColumnPipe,
+    RolePipe
   ],
   exports: [
     CommonModule,
@@ -102,7 +108,10 @@ import { ProgressBarModule } from 'primeng/progressbar';
     TabViewModule,
     FileUploadModule,
     ProgressSpinnerModule,
-    ProgressBarModule
+    ProgressBarModule,
+    TagModule,
+    ColumnPipe,
+    RolePipe
   ],
 })
 export class SharedModule {}

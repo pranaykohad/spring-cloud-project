@@ -57,7 +57,7 @@
         </div>
         <div class="d-flex flex-column">
           <p-floatLabel>
-            <p-dropdown id="role-dropdown" [options]="rolelist" [(ngModel)]="selectedRole"
+            <p-dropdown id="role-dropdown" [options]="roleList" [(ngModel)]="selectedRole" [optionLabel]="'name'"
               placeholder="Select appropriate Role" [showClear]="selectedRole" [style]="{minWidth: '20vw'}"
               (onChange)="selectRole($event.value)" />
           </p-floatLabel>

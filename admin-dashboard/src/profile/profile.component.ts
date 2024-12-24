@@ -67,6 +67,7 @@ export class ProfileComponent implements OnInit {
 
   @ViewChild('otpContainer', { read: ViewContainerRef, static: true })
   otpContainer!: ViewContainerRef;
+
   otpComponent!: ComponentRef<OtpComponent>;
 
   constructor(

@@ -8,7 +8,7 @@ import { LocalstorageService } from '../../services/localstorage.service';
 import { UserAuthService } from '../../services/user-auth.service';
 import { ToastService } from '../../services/toast.service';
 import { SharedModule } from '../../shared/shared.module';
-import { ToastType } from '../../models/Enums';
+import { Role } from '../../models/Role';
 
 @Component({
   selector: 'app-signin',
@@ -18,13 +18,29 @@ import { ToastType } from '../../models/Enums';
   styleUrl: './signin.component.scss',
 })
 export class SigninComponent implements OnInit {
-  rolelist: string[] = [
-    'SYSTEM_USER',
-    'ADMIN_USER',
-    'SUPPORT_USER',
-    'ORGANIZER_USER',
+  roleList: Role[] = [
+    {
+      name: 'SYSTEM_USER',
+      value: 'SYSTEM_USER',
+    },
+    {
+      name: 'ADMIN_USER',
+      value: 'ADMIN_USER',
+    },
+    {
+      name: 'SUPER_ADMIN_USER',
+      value: 'SUPER_ADMIN_USER',
+    },
+    {
+      name: 'SUPPORT_USER',
+      value: 'SUPPORT_USER',
+    },
+    {
+      name: 'ORGANIZER_USER',
+      value: 'ORGANIZER_USER',
+    },
   ];
-  selectedRole!: string;
+  selectedRole!: Role;
   termsAndConditionsRead: boolean = false;
   signinReq: SystemUserSigninRequest = {
     userName: '',
@@ -54,10 +70,10 @@ export class SigninComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  selectRole(roleValue: string) {
+  selectRole(roleValue: Role) {
     this.signinReq.roles = [];
     if (roleValue !== null) {
-      this.signinReq.roles.push(roleValue);
+      this.signinReq.roles.push(roleValue.value);
       this.clearValidation('ROLE');
     }
   }

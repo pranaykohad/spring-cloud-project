@@ -1,4 +1,4 @@
-package com.urbanShows.userService.exceptionHandler;
+package com.urbanShows.userService.exception;
 
 
 public class GenericException extends RuntimeException {

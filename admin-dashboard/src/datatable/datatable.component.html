@@ -1,0 +1,47 @@
+@if(userInfoListObject){
+<p-table [paginator]="false" [rows]="userInfoListObject.columnConfig.rowsPerPage" [showCurrentPageReport]="true"
+  [styleClass]="'border-grey'" id="datatable" [columns]="userInfoListObject.columnConfig.columns"
+  [value]="userInfoListObject.userInfoList">
+  <ng-template pTemplate="header" let-columns>
+    <tr class="border-grey">
+      @for (column of columns; track $index) {
+      <th>{{column | column}}</th>
+      }
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-userInfo let-columns="columns">
+    <tr class="border-grey">
+      @for (column of columns; track $index) {
+      @if (column === "password") {
+      <td>
+        <div [class]="'ellipsis'">{{userInfo[column]}}</div>
+      </td>
+      } @else if(column === "profilePicUrl") {
+      <td style="padding: 5px">
+        @if(userInfo.profilePicUrl){
+        <img src="{{userInfo.profilePicUrl}}" class="user-profile-img" />
+        } @else {
+      <td class="no-img">no image</td>
+      }
+      </td>
+      } @else if (column === "status") {
+      <td>
+        <p-tag [value]="userInfo[column]" [severity]="userInfo[column] === 'ACTIVE' ? 'success' : 'danger'" />
+      </td>
+      } @else if (column === "createdAt") {
+      <td>
+        {{userInfo[column] | date: 'medium'}}
+      </td>
+      } @else if (column === "roles") {
+      <td>
+        {{userInfo[column] | role}}
+      </td>
+      } @else {
+      <td>{{userInfo[column]}}</td>
+      }
+      }
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="footer">paginator</ng-template>
+</p-table>
+}
