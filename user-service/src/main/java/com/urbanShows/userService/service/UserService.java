@@ -21,6 +21,7 @@ import com.urbanShows.userService.dto.UserInfoDto;
 import com.urbanShows.userService.dto.UserInfoListDto;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSigninDto;
+import com.urbanShows.userService.dto.UserActivationDto;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.RolePriority;
@@ -196,6 +197,13 @@ public class UserService {
 			throw new UserNotFoundException("User doesnot exists in the system");
 		}
 		return existingUser;
+	}
+
+	public boolean suerActivation(UserActivationDto userActivationDto) {
+		// generate otp
+		// send otp to device
+		// return true;
+		return false;
 	}
 
 //	public UserInfo isPermitted(UserInfo currentUser, UserInfo targetUser) {

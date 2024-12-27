@@ -43,4 +43,8 @@ public class UserInfo {
 	
 	private Status status;
 	
+	private boolean isPhoneValidated;
+	
+	private boolean isEmailValidated;
+	
 }

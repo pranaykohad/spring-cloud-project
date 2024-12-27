@@ -8,6 +8,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +22,7 @@ import com.urbanShows.userService.dto.UserInfoDto;
 import com.urbanShows.userService.dto.UserInfoListDto;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSecuredDetailsRes;
+import com.urbanShows.userService.dto.UserActivationDto;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.exception.UnauthorizedException;
@@ -46,8 +49,8 @@ public class UserController {
 	}
 
 	@GetMapping("generate-otp")
-	public void generateOtp(Principal principal) {
-		systemUserService.generateOtpForSystemUser(principal.getName());
+	public void generateOtp(@RequestParam String userName) {
+		systemUserService.generateOtpForSystemUser(userName);
 	}
 
 //	@PatchMapping("update-profile-pic")
@@ -112,13 +115,20 @@ public class UserController {
 			throw new UnauthorizedException("Super Admin users cannot be deactivated");
 		}
 		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
-		return ResponseEntity.ok(systemUserService.udpateSecuredUserDetails(securedDetails, targetUser, principal.getName()));
+		return ResponseEntity
+				.ok(systemUserService.udpateSecuredUserDetails(securedDetails, targetUser, principal.getName()));
 	}
 
 	@GetMapping("user-list")
 	public ResponseEntity<UserInfoListDto> getUsersList(Principal principal) {
 		systemUserService.isUserActive(principal.getName());
 		return ResponseEntity.ok(systemUserService.getSystemUsersList());
+	}
+
+	@PostMapping("user-activation")
+	public ResponseEntity<Boolean> userValidation(@RequestBody UserActivationDto userActivationDto, Principal principal) {
+		systemUserService.isUserActive(principal.getName());
+		return ResponseEntity.ok(systemUserService.suerActivation(userActivationDto));
 	}
 
 }
