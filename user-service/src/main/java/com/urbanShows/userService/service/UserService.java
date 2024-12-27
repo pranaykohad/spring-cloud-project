@@ -145,19 +145,19 @@ public class UserService {
 		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
 	}
 
-	public boolean udpateBasicUserDetails(UserBasicDetails basicDetails, UserInfo systemUser) {
-		systemUser.setDisplayName(StringUtils.hasText(basicDetails.getDisplayName())
-				&& !systemUser.getDisplayName().equals(basicDetails.getDisplayName())
+	public boolean udpateBasicUserDetails(UserBasicDetails basicDetails, UserInfo targetUser) {
+		targetUser.setDisplayName(StringUtils.hasText(basicDetails.getDisplayName())
+				&& !targetUser.getDisplayName().equals(basicDetails.getDisplayName())
 						? basicDetails.getDisplayName().trim()
-						: systemUser.getDisplayName());
+						: targetUser.getDisplayName());
 
 		if (basicDetails.getProfilePicFile() != null) {
 			final String fileUrl = azureBlobStorageService.uploadSystemUserProfile(basicDetails.getProfilePicFile(),
-					systemUser);
-			uploadSystemUserProfilePicUrl(systemUser, fileUrl);
+					targetUser);
+			uploadSystemUserProfilePicUrl(targetUser, fileUrl);
 		}
 
-		systemUserRepo.save(systemUser);
+		systemUserRepo.save(targetUser);
 		return true;
 	}
 
