@@ -24,7 +24,7 @@
                 <div class="label-margin-right">Display name:</div>
                 <div class="d-flex flex-column">
                   <input type="text" pInputText pSize="normal" [(ngModel)]="newUserBasicDetails.displayName"
-                    (input)="clearBasicDetailsValidation()"/>
+                    (input)="clearBasicDetailsValidation()" />
                   <span class="error-cntr">{{userBasicDetailsError.displayName}}</span>
                 </div>
               </div>
@@ -64,7 +64,7 @@
           <div class="d-flex">
             <div class="d-flex align-items-center div-margin-buttom div-margin-right">
               <div class="label-margin-right">Password:</div>
-              <div class="d-flex">
+              <div class="d-flex align-items-center">
                 <div class="d-flex flex-column">
                   <input type="password" placeholder="new password" (paste)="$event.preventDefault()" pInputText
                     pSize="normal" [(ngModel)]="editSecuredDetails.password"
@@ -93,20 +93,30 @@
               </div>
             </div>
           </div>
-          <div class="d-flex align-items-center div-margin-buttom">
-            <div class="label-margin-right">Phone:</div>
-            <div class="d-flex flex-column">
-              <input type="text" pInputText pSize="normal" [(ngModel)]="editSecuredDetails.phone"
-                (input)="clearSecuredDetailsValidation('PHONE')" maxlength="10" />
-              <span class="error-cntr">{{newUserSecuredDetailsError.phone}}</span>
+          <div class="d-flex">
+            <div class="d-flex align-items-center div-margin-buttom div-margin-right">
+              <div class="label-margin-right">Phone:</div>
+              <div class="d-flex align-items-center">
+                <div class="d-flex flex-column" style="margin-right: 1rem;">
+                  <input type="text" pInputText pSize="normal" [(ngModel)]="editSecuredDetails.phone"
+                    (input)="clearSecuredDetailsValidation('PHONE')" [maxlength]="10" />
+                  <span class="error-cntr">{{newUserSecuredDetailsError.phone}}</span>
+                </div>
+                <p-button label="Send OTP to phone" icon="pi pi-phone" styleClass="p-button-sm p-button-secondary"
+                  [style]="{width: '200px'}" (click)="loadOtpForActivation('PHONE')"></p-button>
+              </div>
             </div>
           </div>
-          <div class="d-flex align-items-center div-margin-buttom">
+          <div class="d-flex align-items-center div-margin-buttom div-margin-right">
             <div class="label-margin-right">Email:</div>
-            <div class="d-flex flex-column">
-              <input type="text" pInputText pSize="normal" [(ngModel)]="editSecuredDetails.email"
-                (input)="clearSecuredDetailsValidation('EMAIL')" />
-              <span class="error-cntr">{{newUserSecuredDetailsError.email}}</span>
+            <div class="d-flex align-items-center">
+              <div class="d-flex flex-column" style="margin-right: 1rem;">
+                <input type="text" pInputText pSize="normal" [(ngModel)]="editSecuredDetails.email"
+                  (input)="clearSecuredDetailsValidation('EMAIL')" />
+                <span class="error-cntr">{{newUserSecuredDetailsError.email}}</span>
+              </div>
+              <p-button label="Send OTP to email" icon="pi pi-envelope" styleClass="p-button-sm p-button-secondary"
+                [style]="{width: '200px'}" (click)="loadOtpForActivation('MAIL')"></p-button>
             </div>
           </div>
           <div class="d-flex align-items-center div-margin-buttom">
@@ -114,7 +124,8 @@
             <div class="d-flex flex-column">
               <p-floatLabel>
                 <div class="d-flex flex-row">
-                  <p-inputSwitch [(ngModel)]="status" (onChange)="onStatusChenge($event.checked)" [disabled]="isSelfChangesBlocked"></p-inputSwitch>
+                  <p-inputSwitch [(ngModel)]="status" (onChange)="onStatusChenge($event.checked)"
+                    [disabled]="isSelfChangesBlocked || !isPhoneValidated || !isEmailValidated"></p-inputSwitch>
                   <div style="margin-left: 10px;">{{editSecuredDetails.status}}</div>
                 </div>
               </p-floatLabel>

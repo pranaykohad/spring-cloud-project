@@ -29,8 +29,8 @@ export class UserService {
     );
   }
 
-  generateOtp(): Observable<void> {
-    return this.http.get<void>(`${this.baseUrl}api/user/system/generate-otp`);
+  generateOtp(userName: string): Observable<void> {
+    return this.http.get<void>(`${this.baseUrl}api/user/system/generate-otp?userName=${userName}`);
   }
 
   updateBasicDetails(

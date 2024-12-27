@@ -71,8 +71,13 @@ export class ProfileComponent implements OnInit {
   enableSecuredUpdateBtn: boolean = false;
   status: boolean = false;
   isSelfChangesBlocked: boolean = true;
+  isPhoneValidated: boolean = false;
+  isEmailValidated: boolean = false;
+  userPhoneOtp: string = '';
+  userEmailOtp: string = '';
 
   userName!: string;
+  loggedInUser!: LoggedinUserDetails;
   userSecuredDetails!: UserSecuredDetailsRes;
   editSecuredDetails!: EditableUserSecuredDetailsRes;
   oldUserBasicDetails!: UserBasicDetails;
@@ -91,10 +96,10 @@ export class ProfileComponent implements OnInit {
 
   ngOnInit(): void {
     this.userName = this.activatedRoute.snapshot.params['userName'];
-    const loggedInUser: LoggedinUserDetails = this.localstorageService.getItem(
+    this.loggedInUser = this.localstorageService.getItem(
       LocalStorageKeys.LOGGED_IN_USER_DETAILS
     );
-    this.isSelfChangesBlocked = loggedInUser.userName === this.userName;
+    this.isSelfChangesBlocked = this.loggedInUser.userName === this.userName;
     this.getUserBasicDetails();
     this.getUserSecuredDetails();
   }
@@ -262,10 +267,7 @@ export class ProfileComponent implements OnInit {
     if (isSecuredDetailsValid) {
       this.clearSecuredDetailsValidation();
     }
-    this.editSecuredDetails.password =
-      this.userSecuredDetails.password !== this.editSecuredDetails.password
-        ? this.editSecuredDetails.password.trim()
-        : '';
+    this.editSecuredDetails.password = this.editSecuredDetails.password.trim();
     this.editSecuredDetails.confirmPassword =
       this.editSecuredDetails.confirmPassword.trim();
     this.editSecuredDetails.phone = this.editSecuredDetails.phone.trim();
@@ -273,14 +275,27 @@ export class ProfileComponent implements OnInit {
     return isSecuredDetailsValid;
   }
 
+  loadOtpForActivation(device: string): boolean {
+    this.otpContainer.clear();
+    this.otpComponent = this.otpContainer.createComponent(OtpComponent);
+    this.otpComponent.instance.visible = true;
+    this.otpComponent.instance.userName = this.userName;
+    this.otpComponent.instance.otpEmiter.subscribe((res) => {
+      this.userPhoneOtp = res;
+      this.messageService.enableLoader();
+    });
+    return false;
+  }
+
   private loadOtpCompoment() {
     this.otpContainer.clear();
     this.otpComponent = this.otpContainer.createComponent(OtpComponent);
     this.otpComponent.instance.visible = true;
+    this.otpComponent.instance.userName = this.loggedInUser.userName;
     this.otpComponent.instance.otpEmiter.subscribe((res) => {
       this.editSecuredDetails.otp = res;
       this.messageService.enableLoader();
-      const finalObject = {
+      let finalObject = {
         userName: this.editSecuredDetails.userName,
         otp: this.editSecuredDetails.otp,
         password: this.editSecuredDetails.password,
@@ -288,6 +303,10 @@ export class ProfileComponent implements OnInit {
         email: this.editSecuredDetails.email,
         status: this.editSecuredDetails.status,
       };
+      finalObject.password =
+        this.userSecuredDetails.password !== this.editSecuredDetails.password
+          ? this.editSecuredDetails.password.trim()
+          : '';
       this.userService.updateSecuredDetails(finalObject).subscribe({
         next: (res: Boolean) => {
           if (res) {
