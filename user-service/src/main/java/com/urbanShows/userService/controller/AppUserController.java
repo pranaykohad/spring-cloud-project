@@ -59,14 +59,14 @@ public class AppUserController {
 	public void generateOtp(@RequestParam String phone) {
 		appUserService.generateOtpForAppUser(phone);
 	}
-
-	@PatchMapping("update-profile-pic")
-	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
-	public ResponseEntity<Boolean> uploadAppUserProfilePic(@RequestParam MultipartFile file,
-			@RequestPart String phone, @RequestPart String otp) {
-		final AppUserInfo appUser = appUserService.authenticateAppUserByOtp(phone, otp);
-		boolean uploadAppUserProfile = azureBlobStorageService.uploadAppUserProfile(file, appUser);
-		return ResponseEntity.ok(uploadAppUserProfile);
-	}
+//
+//	@PatchMapping("update-profile-pic")
+//	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
+//	public ResponseEntity<Boolean> uploadAppUserProfilePic(@RequestParam MultipartFile file,
+//			@RequestPart String phone, @RequestPart String otp) {
+//		final AppUserInfo appUser = appUserService.authenticateAppUserByOtp(phone, otp);
+//		boolean uploadAppUserProfile = azureBlobStorageService.uploadAppUserProfile(file, appUser);
+//		return ResponseEntity.ok(uploadAppUserProfile);
+//	}
 
 }

@@ -127,7 +127,8 @@ public class UserService {
 		systemUserRepo.delete(mapper.dtoToEntity(systemUserDto));
 	}
 
-	public boolean udpateSecuredUserDetails(UserSecuredDetailsReq securedDetailsReq, UserInfo targetUser, String loggedInUserName) {
+	public boolean udpateSecuredUserDetails(UserSecuredDetailsReq securedDetailsReq, UserInfo targetUser,
+			String loggedInUserName) {
 		final GenericMapper<UserSecuredDetailsReq, UserInfoDto> mapper = new GenericMapper<>(modelMapper,
 				UserSecuredDetailsReq.class, UserInfoDto.class);
 		final UserInfoDto dtoToEntity = mapper.dtoToEntity(securedDetailsReq);
@@ -152,8 +153,7 @@ public class UserService {
 						: targetUser.getDisplayName());
 
 		if (basicDetails.getProfilePicFile() != null) {
-			final String fileUrl = azureBlobStorageService.uploadSystemUserProfile(basicDetails.getProfilePicFile(),
-					targetUser);
+			final String fileUrl = azureBlobStorageService.uploadUserProfile(basicDetails.getProfilePicFile());
 			uploadSystemUserProfilePicUrl(targetUser, fileUrl);
 		}
 
