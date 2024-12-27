@@ -53,6 +53,8 @@ export class AuthInterceptor implements HttpInterceptor {
         if (error.status === 401) {
           this.toastService.showErrorToast(error.error.error);
           this.router.navigate(['login']);
+        } else if (error.status === 503) {
+          this.toastService.showErrorToast(error.error.error);
         } else {
           this.toastService.showErrorToast(error.error.error);
         }
