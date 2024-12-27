@@ -109,7 +109,7 @@ export class ProfileComponent implements OnInit {
   }
 
   updateBasicDetails() {
-    if (this.validateBasicDetails()) {
+    if (this.validateBasicDetails() && this.enableBasicUpdateBtn) {
       this.messageService.enableLoader();
       this.userService
         .updateBasicDetails(this.newUserBasicDetails)
@@ -138,7 +138,7 @@ export class ProfileComponent implements OnInit {
   }
 
   updateSecuredDetails() {
-    if (this.validateSecuredDetails()) {
+    if (this.validateSecuredDetails() && this.enableSecuredUpdateBtn) {
       this.loadOtpCompoment();
     }
   }
@@ -161,7 +161,7 @@ export class ProfileComponent implements OnInit {
 
       this.newUserBasicDetails.profilePicFile = new File(
         [file],
-        `${this.oldUserBasicDetails.displayName}-profile-pic.${file.name
+        `${this.oldUserBasicDetails.userName}-profile-pic.${file.name
           .split('.')
           .pop()}`,
         {
@@ -304,7 +304,7 @@ export class ProfileComponent implements OnInit {
           this.messageService.disableLoader();
         },
       });
-      this.cancelSecuredDetailsUpdate();
+      this.enableSecuredUpdateBtn = false;
     });
   }
 

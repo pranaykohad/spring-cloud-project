@@ -1,11 +1,11 @@
 @if(userInfoListObject){
 <p-table id="datatable" [resizableColumns]="true" [paginator]="true" [rows]="userInfoListObject.columnConfig.rowsPerPage"
-  [showCurrentPageReport]="true" styleClass="p-datatable-gridlines" [columns]="userInfoListObject.columnConfig.columns"
+  [showCurrentPageReport]="true" styleClass="p-datatable-gridlines position-static" [columns]="userInfoListObject.columnConfig.columns"
   [value]="userInfoListObject.userInfoList" selectionMode="single" (onRowSelect)="onRowSelect($event)">
   <ng-template pTemplate="header" let-columns>
     <tr class="border-grey">
       @for (column of columns; track $index) {
-      <th pResizableColumn [pSortableColumn]="column">
+      <th pResizableColumn [pSortableColumn]="column" [class]="'position-static'">
         {{column | column}}
         <p-sortIcon [field]="column"></p-sortIcon>
       </th>
