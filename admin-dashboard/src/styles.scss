@@ -1,8 +1,7 @@
 @import "primeng/resources/themes/lara-light-blue/theme.css";
-@import "primeng/resources/primeng.css";
-@import "bootstrap/scss/bootstrap-grid";
-@import "bootstrap/dist/css/bootstrap.min.css";
+@import "primeng/resources/primeng.min.css";
 @import "primeicons/primeicons.css";
+@import "bootstrap/scss/bootstrap-grid";
 @import "ngx-toastr/toastr";
 
 $primary-color: orange;
@@ -179,7 +178,7 @@ input {
   background-color: #c5c5c5;
   padding: 10px;
   border-radius: 7px;
-  width: 202px;
+  width: 220px;
 }
 
 .clear-btn {
@@ -214,4 +213,13 @@ input {
   overflow: hidden;
   text-overflow: ellipsis;
   width: 100px;
+}
+
+.p-inputswitch.p-inputswitch-checked .p-inputswitch-slider {
+  background: #22c55e;
+}
+
+
+.p-inputswitch .p-inputswitch-slider {
+  background: #ef4444;
 }

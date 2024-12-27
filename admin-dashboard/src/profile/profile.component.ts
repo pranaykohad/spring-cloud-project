@@ -1,3 +1,4 @@
+import { LocalstorageService } from './../services/localstorage.service';
 import {
   Component,
   ComponentRef,
@@ -5,7 +6,10 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { MessageService } from '../behaviorSubject/message.service';
+import { LocalStorageKeys, Msg } from '../models/Enums';
+import { Status } from '../models/Status';
 import {
   UserBasicDetails,
   UserBasicDetailsError,
@@ -15,11 +19,10 @@ import {
 } from '../models/UserUpdateRequest';
 import { OtpComponent } from '../popups/otp/otp.component';
 import { ToastService } from '../services/toast.service';
-import { UserAuthService } from '../services/user-auth.service';
 import { UserService } from '../services/user.service';
 import { SharedModule } from '../shared/shared.module';
 import { EditableUserSecuredDetailsRes } from './../models/UserUpdateRequest';
-import { LocalstorageService } from './../services/localstorage.service';
+import { LoggedinUserDetails } from '../models/SystemUserResponse';
 
 @Component({
   selector: 'app-profile',
@@ -29,31 +32,34 @@ import { LocalstorageService } from './../services/localstorage.service';
   styleUrl: './profile.component.scss',
 })
 export class ProfileComponent implements OnInit {
-  oldUserBasicDetails!: UserBasicDetails;
-
+  statusList: Status[] = [
+    {
+      name: 'ACTIVE',
+      value: 'ACTIVE',
+    },
+    {
+      name: 'INACTIVE',
+      value: 'INACTIVE',
+    },
+  ];
   newUserBasicDetails: UserBasicDetails = {
     userName: '',
     profilePicUrl: '',
     displayName: '',
     profilePicFile: new File([], ''),
+    createdAt: '',
   };
-
-  userSecuredDetailsRes!: UserSecuredDetailsRes;
-
-  editableUserSecuredDetailsRes!: EditableUserSecuredDetailsRes;
-
   userSecuredDetailsReq: UserSecuredDetailsReq = {
     userName: '',
     password: '',
     phone: '',
     email: '',
     otp: '',
+    status: '',
   };
-
   userBasicDetailsError: UserBasicDetailsError = {
     displayName: '',
   };
-
   newUserSecuredDetailsError: UserSecuredDetailsError = {
     password: '',
     confirmPassword: '',
@@ -62,43 +68,68 @@ export class ProfileComponent implements OnInit {
   };
 
   enableBasicUpdateBtn: boolean = false;
-
   enableSecuredUpdateBtn: boolean = false;
+  status: boolean = false;
+  isSelfChangesBlocked: boolean = true;
+
+  userName!: string;
+  userSecuredDetails!: UserSecuredDetailsRes;
+  editSecuredDetails!: EditableUserSecuredDetailsRes;
+  oldUserBasicDetails!: UserBasicDetails;
+  otpComponent!: ComponentRef<OtpComponent>;
 
   @ViewChild('otpContainer', { read: ViewContainerRef, static: true })
   otpContainer!: ViewContainerRef;
 
-  otpComponent!: ComponentRef<OtpComponent>;
-
   constructor(
     private toastService: ToastService,
-    private systemUserAuthService: UserAuthService,
-    private localstorageService: LocalstorageService,
     private messageService: MessageService,
-    private userService: UserService
+    private userService: UserService,
+    private activatedRoute: ActivatedRoute,
+    private localstorageService: LocalstorageService
   ) {}
 
   ngOnInit(): void {
+    this.userName = this.activatedRoute.snapshot.params['userName'];
+    const loggedInUser: LoggedinUserDetails = this.localstorageService.getItem(
+      LocalStorageKeys.LOGGED_IN_USER_DETAILS
+    );
+    this.isSelfChangesBlocked = loggedInUser.userName === this.userName;
     this.getUserBasicDetails();
     this.getUserSecuredDetails();
   }
 
+  onStatusChenge(value: boolean) {
+    if (this.isSelfChangesBlocked) {
+      return;
+    }
+    this.status = value;
+    this.editSecuredDetails.status = value ? 'ACTIVE' : 'INACTIVE';
+    this.enableSecuredUpdateBtn = true;
+  }
+
   updateBasicDetails() {
     if (this.validateBasicDetails()) {
+      this.messageService.enableLoader();
       this.userService
-        .updateUserBasicDetails(this.newUserBasicDetails)
+        .updateBasicDetails(this.newUserBasicDetails)
         .subscribe((res: Boolean) => {
           if (res) {
+            this.messageService.disableLoader();
             this.toastService.showSuccessToast(
               'User basic details are updated successfully'
             );
-            this.messageService.sendMessage('UPDATE_LOGGEDIN_USER_DETAILS');
+            this.messageService.sendMessage({
+              msg: Msg.UPDATE_LOGGEDIN_USER_DETAILS,
+              value: null,
+            });
             this.enableBasicUpdateBtn = false;
             this.newUserBasicDetails = {
               userName: '',
               profilePicUrl: '',
               displayName: '',
               profilePicFile: new File([], ''),
+              createdAt: '',
             };
             this.getUserBasicDetails();
           }
@@ -190,31 +221,31 @@ export class ProfileComponent implements OnInit {
   }
 
   clearPasswordField() {
-    this.editableUserSecuredDetailsRes.password = '';
+    this.editSecuredDetails.password = '';
     this.newUserSecuredDetailsError.password = '';
     this.enableSecuredUpdateBtn = true;
   }
 
   clearConfirmPasswordField() {
-    this.editableUserSecuredDetailsRes.confirmPassword = '';
+    this.editSecuredDetails.confirmPassword = '';
     this.newUserSecuredDetailsError.confirmPassword = '';
     this.enableBasicUpdateBtn = true;
   }
 
   validateSecuredDetails(): boolean {
     let isSecuredDetailsValid = true;
-    if (!this.editableUserSecuredDetailsRes.password.length) {
+    if (!this.editSecuredDetails.password.length) {
       this.newUserSecuredDetailsError.password = 'Password cannot be blank!';
       isSecuredDetailsValid = false;
     }
-    if (!this.editableUserSecuredDetailsRes.confirmPassword.length) {
+    if (!this.editSecuredDetails.confirmPassword.length) {
       this.newUserSecuredDetailsError.confirmPassword =
         'Confirm password cannot be blank!';
       isSecuredDetailsValid = false;
     }
     if (
-      this.editableUserSecuredDetailsRes.password !==
-      this.editableUserSecuredDetailsRes.confirmPassword
+      this.editSecuredDetails.password !==
+      this.editSecuredDetails.confirmPassword
     ) {
       this.newUserSecuredDetailsError.confirmPassword =
         'Password and confirm password must be same';
@@ -231,14 +262,14 @@ export class ProfileComponent implements OnInit {
     if (isSecuredDetailsValid) {
       this.clearSecuredDetailsValidation();
     }
-    this.editableUserSecuredDetailsRes.password =
-      this.editableUserSecuredDetailsRes.password.trim();
-    this.editableUserSecuredDetailsRes.confirmPassword =
-      this.editableUserSecuredDetailsRes.confirmPassword.trim();
-    this.editableUserSecuredDetailsRes.phone =
-      this.editableUserSecuredDetailsRes.phone.trim();
-    this.editableUserSecuredDetailsRes.email =
-      this.editableUserSecuredDetailsRes.email.trim();
+    this.editSecuredDetails.password =
+      this.userSecuredDetails.password !== this.editSecuredDetails.password
+        ? this.editSecuredDetails.password.trim()
+        : '';
+    this.editSecuredDetails.confirmPassword =
+      this.editSecuredDetails.confirmPassword.trim();
+    this.editSecuredDetails.phone = this.editSecuredDetails.phone.trim();
+    this.editSecuredDetails.email = this.editSecuredDetails.email.trim();
     return isSecuredDetailsValid;
   }
 
@@ -247,35 +278,32 @@ export class ProfileComponent implements OnInit {
     this.otpComponent = this.otpContainer.createComponent(OtpComponent);
     this.otpComponent.instance.visible = true;
     this.otpComponent.instance.otpEmiter.subscribe((res) => {
-      this.editableUserSecuredDetailsRes.otp = res;
-      this.messageService.sendMessage('ENABLE_LOADER');
+      this.editSecuredDetails.otp = res;
+      this.messageService.enableLoader();
       const finalObject = {
-        userName: this.editableUserSecuredDetailsRes.userName,
-        otp: this.editableUserSecuredDetailsRes.otp,
-        password: this.editableUserSecuredDetailsRes.password,
-        phone: this.editableUserSecuredDetailsRes.phone,
-        email: this.editableUserSecuredDetailsRes.email,
+        userName: this.editSecuredDetails.userName,
+        otp: this.editSecuredDetails.otp,
+        password: this.editSecuredDetails.password,
+        phone: this.editSecuredDetails.phone,
+        email: this.editSecuredDetails.email,
+        status: this.editSecuredDetails.status,
       };
-      this.userService
-        .updateUserSecuredDetails(finalObject)
-        .subscribe({
-          next: (res: Boolean) => {
-            if (res) {
-              this.toastService.showSuccessToast(
-                'Secured details are updated successfully'
-              );
-              this.getUserSecuredDetails();
-              this.otpComponent.instance.visible = false;
-            }
-          },
-          error: (err: string) => {
-            this.toastService.showErrorToast('otp is invalid or expired');
-            this.messageService.sendMessage('DISABLE_LOADER');
-          },
-          complete: () => {
-            this.messageService.sendMessage('DISABLE_LOADER');
-          },
-        });
+      this.userService.updateSecuredDetails(finalObject).subscribe({
+        next: (res: Boolean) => {
+          if (res) {
+            this.toastService.showSuccessToast(
+              'Secured details are updated successfully'
+            );
+            this.getUserSecuredDetails();
+            this.otpComponent.instance.visible = false;
+            this.messageService.disableLoader();
+          }
+        },
+        error: (err: string) => {
+          this.otpComponent.instance.visible = false;
+          this.messageService.disableLoader();
+        },
+      });
       this.cancelSecuredDetailsUpdate();
     });
   }
@@ -296,7 +324,7 @@ export class ProfileComponent implements OnInit {
 
   private getUserBasicDetails() {
     this.userService
-      .getUserBasicDetails()
+      .getUserBasicDetails(this.userName)
       .subscribe((res: UserBasicDetails) => {
         this.oldUserBasicDetails = res;
         this.newUserBasicDetails = this.oldUserBasicDetails;
@@ -305,26 +333,28 @@ export class ProfileComponent implements OnInit {
 
   private getUserSecuredDetails() {
     this.userService
-      .getUserSecuredDetails()
+      .getUserSecuredDetails(this.userName)
       .subscribe((res: UserSecuredDetailsRes) => {
-        this.userSecuredDetailsRes = res;
-        this.editableUserSecuredDetailsRes = {
+        this.userSecuredDetails = res;
+        this.editSecuredDetails = {
           userName: res.userName,
           password: res.password,
           confirmPassword: res.password,
           phone: res.phone,
           email: res.email,
+          status: res.status,
           otp: '',
         };
+        this.status = res.status === 'ACTIVE';
       });
   }
 
   private isValidPhoneNumber(): boolean {
-    return /^[0-9]{10}$/.test(this.editableUserSecuredDetailsRes.phone);
+    return /^[0-9]{10}$/.test(this.editSecuredDetails.phone);
   }
 
   private isValidEmail(): boolean {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return emailRegex.test(this.editableUserSecuredDetailsRes.email);
+    return emailRegex.test(this.editSecuredDetails.email);
   }
 }

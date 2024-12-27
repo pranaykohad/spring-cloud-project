@@ -45,6 +45,21 @@
     transition: background-color 0.3s ease;
   }
 
+  .custom-disable-button {
+    margin-left: 20px;
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #0284c7;
+    opacity: 0.5;
+    border: none;
+    border-radius: 4px;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    pointer-events: none;
+  }
+
   .custom-button:hover {
     background-color: #0056b3;
   }
@@ -56,6 +71,11 @@
   .error-cntr {
     font-size: small;
     color: red;
+  }
+
+  .label-label-margin-right {
+    width: 90px;
+    margin-right: 30px;
   }
 
 }

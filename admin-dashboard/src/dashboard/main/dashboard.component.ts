@@ -8,6 +8,8 @@ import { UserAuthService } from '../../services/user-auth.service';
 import { ToastService } from '../../services/toast.service';
 import { SharedModule } from '../../shared/shared.module';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { InternalMsg } from '../../models/InternalMsg';
+import { Msg } from '../../models/Enums';
 
 @Component({
   selector: 'app-dashboard',
@@ -34,11 +36,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getLoggedinUserDetails();
-    this.subscription = this.messageService.currentMessage$.subscribe((msg) => {
-      if (msg === 'UPDATE_LOGGEDIN_USER_DETAILS') {
-        this.getLoggedinUserDetails();
+    this.subscription = this.messageService.currentMessage$.subscribe(
+      (msg: InternalMsg) => {
+        if (msg.msg === Msg.UPDATE_LOGGEDIN_USER_DETAILS) {
+          this.getLoggedinUserDetails();
+        }
       }
-    });
+    );
   }
 
   private getLoggedinUserDetails() {

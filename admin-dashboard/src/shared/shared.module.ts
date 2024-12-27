@@ -34,6 +34,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { TagModule } from 'primeng/tag';
 import { ColumnPipe } from '../pipes/column.pipe';
 import { RolePipe } from '../pipes/role.pipe';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @NgModule({
   declarations: [],
@@ -73,7 +74,8 @@ import { RolePipe } from '../pipes/role.pipe';
     ProgressBarModule,
     TagModule,
     ColumnPipe,
-    RolePipe
+    RolePipe,
+    InputSwitchModule
   ],
   exports: [
     CommonModule,
@@ -111,7 +113,8 @@ import { RolePipe } from '../pipes/role.pipe';
     ProgressBarModule,
     TagModule,
     ColumnPipe,
-    RolePipe
+    RolePipe,
+    InputSwitchModule
   ],
 })
 export class SharedModule {}

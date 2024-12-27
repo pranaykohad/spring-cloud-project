@@ -1,15 +1,33 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs/internal/BehaviorSubject';
+import { InternalMsg } from '../models/InternalMsg';
+import { Msg } from '../models/Enums';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MessageService {
+  private messageSource: BehaviorSubject<InternalMsg> =
+    new BehaviorSubject<InternalMsg>({ msg: Msg.INIT_MSG, value: '' });
 
-  messageSource = new BehaviorSubject<string>('');
-  currentMessage$ = this.messageSource.asObservable();
+  public readonly currentMessage$ = this.messageSource.asObservable();
 
-  sendMessage(message: string) {
-    this.messageSource.next(message);
+  sendMessage(msg: InternalMsg) {
+    this.messageSource.next(msg);
   }
+
+  enableLoader(){
+    this.sendMessage({
+      msg: Msg.ENABLE_LOADER,
+      value: null,
+    });
+  }
+
+  disableLoader(){
+    this.sendMessage({
+      msg: Msg.DISABLE_LOADER,
+      value: null,
+    });
+  }
+
 }

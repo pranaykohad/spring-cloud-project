@@ -173,7 +173,11 @@ export class NavbarComponent implements OnInit {
   ngOnInit(): void {}
 
   openProfile() {
-    this.router.navigate(['profile']);
+    const loggedinUserDetails: LoggedinUserDetails =
+      this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
+    if (loggedinUserDetails.userName !== null) {
+      this.router.navigate(['profile', loggedinUserDetails.userName]);
+    }
   }
 
   navigateToHome() {
@@ -192,9 +196,14 @@ export class NavbarComponent implements OnInit {
         .userLogout(loggedinUserDetails.jwt)
         .subscribe((res: boolean) => {
           if (res) {
-            const inMemoryUserName = this.localstorageService.getItem(LocalStorageKeys.INMEMORY_USERNAME);
+            const inMemoryUserName = this.localstorageService.getItem(
+              LocalStorageKeys.INMEMORY_USERNAME
+            );
             this.localstorageService.clear();
-            this.localstorageService.setItem(LocalStorageKeys.INMEMORY_USERNAME, inMemoryUserName);
+            this.localstorageService.setItem(
+              LocalStorageKeys.INMEMORY_USERNAME,
+              inMemoryUserName
+            );
             this.router.navigate(['login']);
           }
         });

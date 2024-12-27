@@ -24,8 +24,8 @@ export class OtpComponent implements OnInit, OnDestroy {
   otpEmiter: EventEmitter<string> = new EventEmitter<string>();
 
   currentTimerValue: number = 0;
-  otpTimeout: number = 60;
-  warningTimeout: number = 50;
+  otpTimeout: number = 10;
+  warningTimeout: number = 8;
   otpArray!: number[];
   enableResendBtn: boolean = false;
   enableProgressBar: boolean = false;
@@ -60,15 +60,20 @@ export class OtpComponent implements OnInit, OnDestroy {
   }
 
   resendOtp() {
+    this.clearOtp();
     this.clearAndSendOtp();
+  }
+
+  clearOtp(){
+    this.otpArray = [];
   }
 
   private clearAndSendOtp() {
     this.enableProgressBar = true;
     // this.userService.generateOtp().subscribe(); // do not gnerate new otp while testing
-    this.otpArray = [];
-
+    this.clearOtp();
     this.timeInterval = setInterval(() => {
+      console.log('interval');
       if (this.currentTimerValue < this.otpTimeout) {
         this.currentTimerValue = this.currentTimerValue + 1;
       } else {

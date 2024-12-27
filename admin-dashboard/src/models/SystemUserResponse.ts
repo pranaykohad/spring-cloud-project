@@ -3,7 +3,7 @@ export interface LoggedinUserDetails {
   jwt: string;
   displayName: string;
   profilePicUrl: string;
-  role: string[];
+  roles: string[];
   userName: string;
   phone: string;
 }

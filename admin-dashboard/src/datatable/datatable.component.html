@@ -1,7 +1,7 @@
 @if(userInfoListObject){
-<p-table [paginator]="false" [rows]="userInfoListObject.columnConfig.rowsPerPage" [showCurrentPageReport]="true"
-  [styleClass]="'border-grey'" id="datatable" [columns]="userInfoListObject.columnConfig.columns"
-  [value]="userInfoListObject.userInfoList">
+<p-table id="datatable" [paginator]="true" [rows]="userInfoListObject.columnConfig.rowsPerPage"
+  [showCurrentPageReport]="true" styleClass="p-datatable-gridlines" [columns]="userInfoListObject.columnConfig.columns"
+  [value]="userInfoListObject.userInfoList" selectionMode="single" (onRowSelect)="onRowSelect($event)">
   <ng-template pTemplate="header" let-columns>
     <tr class="border-grey">
       @for (column of columns; track $index) {
@@ -10,7 +10,7 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-userInfo let-columns="columns">
-    <tr class="border-grey">
+    <tr class="border-grey" [pSelectableRow]="userInfo">
       @for (column of columns; track $index) {
       @if (column === "password") {
       <td>
@@ -42,6 +42,6 @@
       }
     </tr>
   </ng-template>
-  <ng-template pTemplate="footer">paginator</ng-template>
+  <!-- <ng-template pTemplate="footer">paginator</ng-template> -->
 </p-table>
 }

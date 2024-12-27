@@ -17,9 +17,15 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
-  getUserBasicDetails(): Observable<UserBasicDetails> {
+  getUserBasicDetails(userName: string): Observable<UserBasicDetails> {
     return this.http.get<UserBasicDetails>(
-      `${this.baseUrl}api/user/system/basic-details`
+      `${this.baseUrl}api/user/system/basic-details?userName=${userName}`
+    );
+  }
+
+  getUserSecuredDetails(userName: string): Observable<UserSecuredDetailsRes> {
+    return this.http.get<UserSecuredDetailsRes>(
+      `${this.baseUrl}api/user/system/secured-details?userName=${userName}`
     );
   }
 
@@ -27,25 +33,20 @@ export class UserService {
     return this.http.get<void>(`${this.baseUrl}api/user/system/generate-otp`);
   }
 
-  updateUserBasicDetails(
+  updateBasicDetails(
     userBasicDetails: UserBasicDetails
   ): Observable<Boolean> {
     const formData = new FormData();
     formData.append('profilePicFile', userBasicDetails.profilePicFile);
     formData.append('displayName', userBasicDetails.displayName);
+    formData.append('userName', userBasicDetails.userName);
     return this.http.patch<Boolean>(
       `${this.baseUrl}api/user/system/update-basic-details`,
       formData
     );
   }
 
-  getUserSecuredDetails(): Observable<UserSecuredDetailsRes> {
-    return this.http.get<UserSecuredDetailsRes>(
-      `${this.baseUrl}api/user/system/secured-details`
-    );
-  }
-
-  updateUserSecuredDetails(
+  updateSecuredDetails(
     UserBasicDetails: UserSecuredDetailsReq
   ): Observable<Boolean> {
     return this.http.patch<Boolean>(

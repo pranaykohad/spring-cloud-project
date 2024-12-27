@@ -1,115 +1,137 @@
 <div id="profile" class="m-3">
-  <p-tabView>
-    <p-tabPanel header="Basic Details">
-      @if (newUserBasicDetails && newUserBasicDetails.userName) {
-      <div>
-        <div class="d-flex">
-          <div class="col-4">
-            <div class="d-flex align-items-center div-margin-buttom">
-              <div class="label-margin-right">Username:</div>
-              <div>
-                <div class="disable-div">{{newUserBasicDetails.userName}}</div>
-              </div>
-            </div>
-            <div class="d-flex align-items-center div-margin-buttom">
-              <div class="label-margin-right" style="margin-bottom: 20px;">Diaplay name:</div>
-              <div class="d-flex flex-column">
-                <input type="text" pInputText pSize="normal" [(ngModel)]="newUserBasicDetails.displayName"
-                  (input)="clearBasicDetailsValidation()" />
-                <span class="error-cntr">{{userBasicDetailsError.displayName}}</span>
-              </div>
-            </div>
-          </div>
-          <div class="col-8">
-            <div class="d-flex div-margin-buttom">
-              <div class="label-margin-right">Profile picture:</div>
-              <div>
-                @if (newUserBasicDetails.profilePicUrl) {
-                <img src="{{newUserBasicDetails.profilePicUrl}}" class="user-profile-img" alt="profile" />
-                } @else {
-                <div class="user-profile-img d-flex justify-content-center align-items-center">No image available</div>
-                }
-              </div>
-              <div class="custom-file-upload" class="d-flex align-items-start">
-                <label for="profilePic" class="custom-button">Choose File</label>
-                <input type="file" readonly #profilePic id="profilePic" name="file" accept="image/*"
-                  (change)="onUpload($event)">
-                </div>
-            </div>
-          </div>
-        </div>
-        <div class="d-flex">
-          <p-button label="Update Basic Details" [raised]="true" severity="info"
-            [style]="{borderRadius: '7px', marginRight: '15px'}" [disabled]="!enableBasicUpdateBtn"
-            (click)="updateBasicDetails()" />
-          <p-button label="Cancel Update" [raised]="true" severity="secondary" [style]="{borderRadius: '7px'}"
-            [disabled]="!enableBasicUpdateBtn" (click)="cancelBasicDetailsUpdate(profilePic.value)" />
+  <p-card header="Profile section" [style]="{passingTop: '0px'}">
+    <div class="d-flex m-2">
+      <div class="d-flex align-items-center" style="margin-right: 60px;">
+        <div class="label-label-margin-right">Username:</div>
+        <div>
+          <div class="disable-div">{{newUserBasicDetails.userName}}</div>
         </div>
       </div>
-      }
-    </p-tabPanel>
-    <p-tabPanel header="Secured Details">
-      @if (editableUserSecuredDetailsRes && editableUserSecuredDetailsRes.userName) {
-      <div>
-        <div class="d-flex">
-          <div class="d-flex align-items-center div-margin-buttom div-margin-right">
-            <div class="label-margin-right">Password:</div>
-            <div class="d-flex">
-              <div class="d-flex flex-column">
-                <input type="password" placeholder="new password" (paste)="$event.preventDefault()" pInputText
-                  pSize="normal" [(ngModel)]="editableUserSecuredDetailsRes.password"
-                  (input)="clearSecuredDetailsValidation('PASSWORD')" />
-                <span class="error-cntr">{{newUserSecuredDetailsError.password}}</span>
+      <div class="d-flex align-items-center div-margin-buttom">
+        <div class="label-label-margin-right">Created At:</div>
+        <div>
+          <div class="disable-div">{{newUserBasicDetails.createdAt | date: 'medium'}}</div>
+        </div>
+      </div>
+    </div>
+    <p-tabView>
+      <p-tabPanel header="Basic Details">
+        @if (newUserBasicDetails && newUserBasicDetails.userName) {
+        <div>
+          <div class="d-flex">
+            <div class="col-4">
+              <div class="d-flex align-items-center div-margin-buttom">
+                <div class="label-margin-right">Display name:</div>
+                <div class="d-flex flex-column">
+                  <input type="text" pInputText pSize="normal" [(ngModel)]="newUserBasicDetails.displayName"
+                    (input)="clearBasicDetailsValidation()"/>
+                  <span class="error-cntr">{{userBasicDetailsError.displayName}}</span>
+                </div>
               </div>
-              <div>
-                <p-button icon="pi pi-times" aria-label="clear" [styleClass]="'clear-btn'" title="clear password"
-                  (click)="clearPasswordField()" />
+            </div>
+            <div class="col-8">
+              <div class="d-flex div-margin-buttom">
+                <div class="label-margin-right">Profile picture:</div>
+                <div>
+                  @if (newUserBasicDetails.profilePicUrl) {
+                  <img src="{{newUserBasicDetails.profilePicUrl}}" class="user-profile-img" alt="profile" />
+                  } @else {
+                  <div class="user-profile-img d-flex justify-content-center align-items-center">No image available
+                  </div>
+                  }
+                </div>
+                <div class="custom-file-upload" class="d-flex align-items-start">
+                  <label for="profilePic" [class]="'custom-button'">Choose File</label>
+                  <input type="file" readonly #profilePic id="profilePic" name="file" accept="image/*"
+                    (change)="onUpload($event)">
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex">
+            <p-button label="Update Basic Details" [raised]="true" severity="info"
+              [style]="{borderRadius: '7px', marginRight: '15px'}" [disabled]="!enableBasicUpdateBtn"
+              (click)="updateBasicDetails()" />
+            <p-button label="Cancel Update" [raised]="true" severity="secondary" [style]="{borderRadius: '7px'}"
+              [disabled]="!enableBasicUpdateBtn" (click)="cancelBasicDetailsUpdate(profilePic.value)" />
+          </div>
+        </div>
+        }
+      </p-tabPanel>
+      <p-tabPanel header="Secured Details">
+        @if (editSecuredDetails && editSecuredDetails.userName) {
+        <div>
+          <div class="d-flex">
+            <div class="d-flex align-items-center div-margin-buttom div-margin-right">
+              <div class="label-margin-right">Password:</div>
+              <div class="d-flex">
+                <div class="d-flex flex-column">
+                  <input type="password" placeholder="new password" (paste)="$event.preventDefault()" pInputText
+                    pSize="normal" [(ngModel)]="editSecuredDetails.password"
+                    (input)="clearSecuredDetailsValidation('PASSWORD')" />
+                  <span class="error-cntr">{{newUserSecuredDetailsError.password}}</span>
+                </div>
+                <div>
+                  <p-button icon="pi pi-times" aria-label="clear" [styleClass]="'clear-btn'" title="clear password"
+                    (click)="clearPasswordField()" />
+                </div>
+              </div>
+            </div>
+            <div class="d-flex align-items-center div-margin-buttom">
+              <div class="label-margin-right-cnf-pass">Confirm Password:</div>
+              <div class="d-flex">
+                <div class="d-flex flex-column">
+                  <input type="text" placeholder="new confirm password" (paste)="$event.preventDefault()" pInputText
+                    pSize="normal" [(ngModel)]="editSecuredDetails.confirmPassword"
+                    (input)="clearSecuredDetailsValidation('CONFIRMPASSWORD')" />
+                  <span class="error-cntr">{{newUserSecuredDetailsError.confirmPassword}}</span>
+                </div>
+                <div>
+                  <p-button icon="pi pi-times" aria-label="clear" [styleClass]="'clear-btn'" title="clear password"
+                    (click)="clearConfirmPasswordField()" />
+                </div>
               </div>
             </div>
           </div>
           <div class="d-flex align-items-center div-margin-buttom">
-            <div class="label-margin-right-cnf-pass">Confirm Password:</div>
-            <div class="d-flex">
-              <div class="d-flex flex-column">
-                <input type="text" placeholder="new confirm password" (paste)="$event.preventDefault()" pInputText
-                  pSize="normal" [(ngModel)]="editableUserSecuredDetailsRes.confirmPassword"
-                  (input)="clearSecuredDetailsValidation('CONFIRMPASSWORD')" />
-                <span class="error-cntr">{{newUserSecuredDetailsError.confirmPassword}}</span>
-              </div>
-              <div>
-                <p-button icon="pi pi-times" aria-label="clear" [styleClass]="'clear-btn'" title="clear password"
-                  (click)="clearConfirmPasswordField()" />
-              </div>
+            <div class="label-margin-right">Phone:</div>
+            <div class="d-flex flex-column">
+              <input type="text" pInputText pSize="normal" [(ngModel)]="editSecuredDetails.phone"
+                (input)="clearSecuredDetailsValidation('PHONE')" maxlength="10" />
+              <span class="error-cntr">{{newUserSecuredDetailsError.phone}}</span>
+            </div>
+          </div>
+          <div class="d-flex align-items-center div-margin-buttom">
+            <div class="label-margin-right">Email:</div>
+            <div class="d-flex flex-column">
+              <input type="text" pInputText pSize="normal" [(ngModel)]="editSecuredDetails.email"
+                (input)="clearSecuredDetailsValidation('EMAIL')" />
+              <span class="error-cntr">{{newUserSecuredDetailsError.email}}</span>
+            </div>
+          </div>
+          <div class="d-flex align-items-center div-margin-buttom">
+            <div class="label-margin-right">Status:</div>
+            <div class="d-flex flex-column">
+              <p-floatLabel>
+                <div class="d-flex flex-row">
+                  <p-inputSwitch [(ngModel)]="status" (onChange)="onStatusChenge($event.checked)" [disabled]="isSelfChangesBlocked"></p-inputSwitch>
+                  <div style="margin-left: 10px;">{{editSecuredDetails.status}}</div>
+                </div>
+              </p-floatLabel>
             </div>
           </div>
         </div>
-        <div class="d-flex align-items-center div-margin-buttom">
-          <div class="label-margin-right">Phone:</div>
-          <div class="d-flex flex-column">
-            <input type="text" pInputText pSize="normal" [(ngModel)]="editableUserSecuredDetailsRes.phone"
-              (input)="clearSecuredDetailsValidation('PHONE')" maxlength="10" />
-            <span class="error-cntr">{{newUserSecuredDetailsError.phone}}</span>
-          </div>
+        }
+        <div class="d-flex">
+          <p-button label="Update Secured Details" [raised]="true" severity="info"
+            [style]="{borderRadius: '7px', marginRight: '15px'}" [disabled]="!enableSecuredUpdateBtn"
+            (click)="updateSecuredDetails()" />
+          <p-button label="Cancel Update" [raised]="true" severity="secondary" [style]="{borderRadius: '7px'}"
+            [disabled]="!enableSecuredUpdateBtn" (click)="cancelSecuredDetailsUpdate()" />
         </div>
-        <div class="d-flex align-items-center div-margin-buttom">
-          <div class="label-margin-right">Email:</div>
-          <div class="d-flex flex-column">
-            <input type="text" pInputText pSize="normal" [(ngModel)]="editableUserSecuredDetailsRes.email"
-              (input)="clearSecuredDetailsValidation('EMAIL')" />
-            <span class="error-cntr">{{newUserSecuredDetailsError.email}}</span>
-          </div>
-        </div>
-      </div>
-      }
-      <div class="d-flex">
-        <p-button label="Update Secured Details" [raised]="true" severity="info"
-          [style]="{borderRadius: '7px', marginRight: '15px'}" [disabled]="!enableSecuredUpdateBtn"
-          (click)="updateSecuredDetails()" />
-        <p-button label="Cancel Update" [raised]="true" severity="secondary" [style]="{borderRadius: '7px'}"
-          [disabled]="!enableSecuredUpdateBtn" (click)="cancelSecuredDetailsUpdate()" />
-      </div>
-    </p-tabPanel>
-  </p-tabView>
+      </p-tabPanel>
+    </p-tabView>
+  </p-card>
 </div>
 
 <ng-container #otpContainer></ng-container>

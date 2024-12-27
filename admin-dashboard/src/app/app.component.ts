@@ -3,6 +3,8 @@ import { RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { MessageService } from '../behaviorSubject/message.service';
 import { LoaderComponent } from '../loader/loader.component';
+import { Msg } from '../models/Enums';
+import { InternalMsg } from '../models/InternalMsg';
 
 @Component({
   selector: 'app-root',
@@ -18,20 +20,21 @@ export class AppComponent implements OnInit, OnDestroy {
 
   constructor(private messageService: MessageService) {}
 
-  ngOnDestroy(): void {
-    this.enableLoaderSubs.unsubscribe();
-    this.disableLoaderSubs.unsubscribe();
-  }
-
   ngOnInit(): void {
     this.enableLoaderSubs = this.messageService.currentMessage$.subscribe(
-      (msg) => {
-        if (msg === 'ENABLE_LOADER') {
+      (msg: InternalMsg) => {
+        if (msg.msg === Msg.ENABLE_LOADER) {
           this.enableLoader = true;
-        } else if (msg === 'DISABLE_LOADER') {
+        } else if (msg.msg === Msg.DISABLE_LOADER) {
           this.enableLoader = false;
         }
       }
     );
   }
+
+  ngOnDestroy(): void {
+    this.enableLoaderSubs.unsubscribe();
+    this.disableLoaderSubs.unsubscribe();
+  }
+
 }

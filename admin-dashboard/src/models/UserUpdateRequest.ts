@@ -3,6 +3,7 @@ export interface UserBasicDetails {
   profilePicUrl: string;
   displayName: string;
   profilePicFile: File;
+  createdAt: string;
 }
 
 export interface UserBasicDetailsError {
@@ -14,6 +15,7 @@ export interface UserSecuredDetailsReq {
   password: string;
   phone: string;
   email: string;
+  status: string;
   otp: string;
 }
 
@@ -22,6 +24,7 @@ export interface UserSecuredDetailsRes {
   password: string;
   phone: string;
   email: string;
+  status: string;
 }
 
 export interface EditableUserSecuredDetailsRes {
@@ -30,6 +33,7 @@ export interface EditableUserSecuredDetailsRes {
   confirmPassword: string;
   phone: string;
   email: string;
+  status: string;
   otp: string;
 }
 

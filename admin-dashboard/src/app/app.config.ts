@@ -19,6 +19,7 @@ import {
 import { provideToastr } from 'ngx-toastr';
 import { routes } from './app.routes';
 import { AuthInterceptor } from '../interceptor/auth.interceptor';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,5 +34,6 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(BrowserAnimationsModule),
     provideAnimations(),
     provideToastr(),
+    provideAnimationsAsync(),
   ],
 };
