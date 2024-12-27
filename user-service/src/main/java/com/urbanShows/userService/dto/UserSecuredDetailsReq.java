@@ -1,6 +1,6 @@
 package com.urbanShows.userService.dto;
 
-import com.urbanShows.userService.entity.Status;
+import com.urbanShows.userService.enums.Status;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

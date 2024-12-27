@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.urbanShows.userService.dto.AppUserInfoDto;
 import com.urbanShows.userService.dto.AppUserSigninReqDto;
 import com.urbanShows.userService.entity.AppUserInfo;
-import com.urbanShows.userService.entity.Role;
+import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.exception.AccessDeniedException;
 import com.urbanShows.userService.exception.UserAlreadyExistsException;
 import com.urbanShows.userService.exception.UserNotFoundException;

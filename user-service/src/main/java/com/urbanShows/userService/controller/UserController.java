@@ -20,8 +20,8 @@ import com.urbanShows.userService.dto.UserInfoDto;
 import com.urbanShows.userService.dto.UserInfoListDto;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSecuredDetailsRes;
-import com.urbanShows.userService.entity.Role;
 import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.UserService;
@@ -108,7 +108,7 @@ public class UserController {
 				securedDetails.getOtp());
 		final UserInfo targetUser = systemUserService.getExistingSystemUser(securedDetails.getUserName());
 		if (targetUser.getRoles().contains(Role.SUPER_ADMIN_USER)
-				&& securedDetails.getStatus().equals(com.urbanShows.userService.entity.Status.INACTIVE)) {
+				&& securedDetails.getStatus().equals(com.urbanShows.userService.enums.Status.INACTIVE)) {
 			throw new UnauthorizedException("Super Admin users cannot be deactivated");
 		}
 		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));

@@ -13,8 +13,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.urbanShows.userService.entity.AppUserInfo;
-import com.urbanShows.userService.entity.Role;
 import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.repository.AppUserInfoRepository;
 import com.urbanShows.userService.repository.UserInfoRepository;
 import com.urbanShows.userService.util.Helper;

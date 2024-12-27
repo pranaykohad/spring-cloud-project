@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.urbanShows.userService.entity.Role;
-import com.urbanShows.userService.entity.RolePriority;
+import com.urbanShows.userService.enums.Role;
+import com.urbanShows.userService.enums.RolePriority;
 import com.urbanShows.userService.exception.UnauthorizedException;
 
 public class RolesUtil {

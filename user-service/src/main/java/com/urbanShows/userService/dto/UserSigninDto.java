@@ -2,7 +2,7 @@ package com.urbanShows.userService.dto;
 
 import java.util.List;
 
-import com.urbanShows.userService.entity.Role;
+import com.urbanShows.userService.enums.Role;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;

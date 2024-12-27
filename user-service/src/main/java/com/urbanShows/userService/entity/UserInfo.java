@@ -3,6 +3,9 @@ package com.urbanShows.userService.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.urbanShows.userService.enums.Role;
+import com.urbanShows.userService.enums.Status;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
