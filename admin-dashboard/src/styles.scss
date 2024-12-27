@@ -223,3 +223,12 @@ input {
 .p-inputswitch .p-inputswitch-slider {
   background: #ef4444;
 }
+
+.p-highlight {
+  color: black;
+  font-size: 1.1rem;
+}
+
+.p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {
+  color: black;
+}

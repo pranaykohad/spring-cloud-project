@@ -33,4 +33,6 @@ export class DatatableComponent {
       this.router.navigate(['profile', event.data.userName]);
     }
   }
+
+  customSort(event: any) {}
 }
