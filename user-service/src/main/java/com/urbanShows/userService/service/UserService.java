@@ -3,6 +3,9 @@ package com.urbanShows.userService.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +22,7 @@ import com.urbanShows.userService.dto.UserInfoListDto;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSigninDto;
 import com.urbanShows.userService.entity.Role;
+import com.urbanShows.userService.entity.RolePriority;
 import com.urbanShows.userService.entity.Status;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.exception.AccessDeniedException;
@@ -101,18 +105,18 @@ public class UserService {
 	public UserInfoListDto getSystemUsersList() {
 		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class,
 				UserInfo.class);
-		
+
 		final long count = systemUserRepo.count();
 		final ColumnConfig columnConfig = new ColumnConfig();
 		columnConfig.setColumns(ColumnConfigList.USER_COlUMNS);
 		columnConfig.setRowsPerPage(10);
 		columnConfig.setTotalRows(count);
-		
+
 		final List<UserInfo> all = systemUserRepo.findAll();
 		final UserInfoListDto userInfoListDto = new UserInfoListDto();
 		userInfoListDto.setUserInfoList(mapper.entityToDto(all));
 		userInfoListDto.setColumnConfig(columnConfig);
-		
+
 		return userInfoListDto;
 	}
 
@@ -123,11 +127,11 @@ public class UserService {
 		systemUserRepo.delete(mapper.dtoToEntity(systemUserDto));
 	}
 
-	public boolean udpateSecuredUserDetails(UserSecuredDetailsReq securedDetails, UserInfo existingSystemUser) {
+	public boolean udpateSecuredUserDetails(UserSecuredDetailsReq securedDetailsReq, UserInfo targetUser, String loggedInUserName) {
 		final GenericMapper<UserSecuredDetailsReq, UserInfoDto> mapper = new GenericMapper<>(modelMapper,
 				UserSecuredDetailsReq.class, UserInfoDto.class);
-		UserInfoDto dtoToEntity = mapper.dtoToEntity(securedDetails);
-		updateSecuredUserDetails(dtoToEntity, existingSystemUser);
+		final UserInfoDto dtoToEntity = mapper.dtoToEntity(securedDetailsReq);
+		updateSecuredUserDetails(dtoToEntity, targetUser, loggedInUserName);
 		return true;
 	}
 
@@ -157,20 +161,24 @@ public class UserService {
 		return true;
 	}
 
-	private void updateSecuredUserDetails(UserInfoDto targetUserDto, UserInfo systemUser) {
-		if (!targetUserDto.getPassword().isEmpty()
-				&& !passwordEncoder.matches(targetUserDto.getPassword(), systemUser.getPassword())) {
-			systemUser.setPassword(passwordEncoder.encode(targetUserDto.getPassword()));
+	private void updateSecuredUserDetails(UserInfoDto newUserInfo, UserInfo targetUserInfo, String loggedInUserName) {
+		if (StringUtils.hasText(newUserInfo.getPassword())) {
+			targetUserInfo.setPassword(passwordEncoder.encode(newUserInfo.getPassword()));
 		}
-		systemUser
-				.setPhone(!targetUserDto.getPhone().isEmpty() && !systemUser.getPhone().equals(targetUserDto.getPhone())
-						? targetUserDto.getPhone()
-						: systemUser.getPhone());
-		systemUser
-				.setEmail(!targetUserDto.getEmail().isEmpty() && !systemUser.getEmail().equals(targetUserDto.getEmail())
-						? targetUserDto.getEmail()
-						: systemUser.getEmail());
-		systemUserRepo.save(systemUser);
+		targetUserInfo.setPhone(
+				StringUtils.hasText(newUserInfo.getPhone()) && !targetUserInfo.getPhone().equals(newUserInfo.getPhone())
+						? newUserInfo.getPhone()
+						: targetUserInfo.getPhone());
+		targetUserInfo.setEmail(
+				StringUtils.hasText(newUserInfo.getEmail()) && !targetUserInfo.getEmail().equals(newUserInfo.getEmail())
+						? newUserInfo.getEmail()
+						: targetUserInfo.getEmail());
+		if (!loggedInUserName.equals(targetUserInfo.getUserName())) {
+			targetUserInfo
+					.setStatus(!newUserInfo.getStatus().equals(targetUserInfo.getStatus()) ? newUserInfo.getStatus()
+							: targetUserInfo.getStatus());
+		}
+		systemUserRepo.save(targetUserInfo);
 	}
 
 	public UserInfo isUserActive(String userName) {
@@ -182,12 +190,17 @@ public class UserService {
 		}
 	}
 
-	private UserInfo getExistingSystemUser(String userName) {
+	public UserInfo getExistingSystemUser(String userName) {
 		final UserInfo existingUser = systemUserRepo.findByUserName(userName);
 		if (existingUser == null) {
 			throw new UserNotFoundException("User doesnot exists in the system");
 		}
 		return existingUser;
 	}
+
+//	public UserInfo isPermitted(UserInfo currentUser, UserInfo targetUser) {
+//		final Role role = currentUser.getRoles().get(0);
+//		return true;
+//	}
 
 }

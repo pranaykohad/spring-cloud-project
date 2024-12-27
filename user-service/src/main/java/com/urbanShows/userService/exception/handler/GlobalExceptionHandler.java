@@ -17,6 +17,7 @@ import com.urbanShows.userService.exception.FileSizeExceedsException;
 import com.urbanShows.userService.exception.GenericException;
 import com.urbanShows.userService.exception.IncorrectOtpException;
 import com.urbanShows.userService.exception.JwtParseException;
+import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.exception.UserAlreadyExistsException;
 import com.urbanShows.userService.exception.UserInactiveException;
 import com.urbanShows.userService.exception.UserNotFoundException;
@@ -36,6 +37,12 @@ public class GlobalExceptionHandler {
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	public ResponseEntity<Map<String, String>> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
 		return new ResponseEntity<>(buildErrorMap(ex), HttpStatus.FORBIDDEN);
+	}
+
+	@ExceptionHandler(UnauthorizedException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseEntity<Map<String, String>> handleUnauthorizedException(UnauthorizedException ex) {
+		return new ResponseEntity<>(buildErrorMap(ex), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@ExceptionHandler(UserInactiveException.class)

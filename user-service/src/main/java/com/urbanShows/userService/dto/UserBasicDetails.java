@@ -1,5 +1,7 @@
 package com.urbanShows.userService.dto;
 
+import java.time.LocalDateTime;
+
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
@@ -18,5 +20,7 @@ public class UserBasicDetails {
 	private String profilePicUrl;
 
 	private MultipartFile profilePicFile;
+	
+	private LocalDateTime createdAt; 
 
 }

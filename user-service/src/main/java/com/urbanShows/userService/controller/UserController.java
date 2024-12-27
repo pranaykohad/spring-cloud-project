@@ -1,7 +1,6 @@
 package com.urbanShows.userService.controller;
 
 import java.security.Principal;
-import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +20,12 @@ import com.urbanShows.userService.dto.UserInfoDto;
 import com.urbanShows.userService.dto.UserInfoListDto;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSecuredDetailsRes;
+import com.urbanShows.userService.entity.Role;
 import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.UserService;
+import com.urbanShows.userService.util.RolesUtil;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -36,16 +38,6 @@ public class UserController {
 
 	private final UserService systemUserService;
 	private final ModelMapper modelMapper;
-
-	@PatchMapping("update-basic-details")
-	public ResponseEntity<Boolean> udpateBacisUserDetails(@RequestParam(required = false) MultipartFile profilePicFile,
-			@RequestParam(required = false) String displayName, Principal principal) {
-		final UserInfo existingUserDetails = systemUserService.isUserActive(principal.getName());
-		final UserBasicDetails userBasicDetails = new UserBasicDetails();
-		userBasicDetails.setDisplayName(displayName);
-		userBasicDetails.setProfilePicFile(profilePicFile);
-		return ResponseEntity.ok(systemUserService.udpateBasicUserDetails(userBasicDetails, existingUserDetails));
-	}
 
 	@DeleteMapping("remove")
 	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody UserInfoDto systemUser) {
@@ -76,16 +68,33 @@ public class UserController {
 	}
 
 	@GetMapping("basic-details")
-	public ResponseEntity<UserBasicDetails> getUserBasicDetailsByUsername(Principal principal) {
-		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
+	public ResponseEntity<UserBasicDetails> getUserBasicDetailsByUsername(@RequestParam String userName,
+			Principal principal) {
+		systemUserService.isUserActive(principal.getName());
+		final UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
 		final GenericMapper<UserBasicDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				UserBasicDetails.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
+	@PatchMapping("update-basic-details")
+	public ResponseEntity<Boolean> udpateBacisUserDetails(@RequestParam String userName,
+			@RequestParam(required = false) MultipartFile profilePicFile,
+			@RequestParam(required = false) String displayName, Principal principal) {
+		final UserInfo currentUser = systemUserService.isUserActive(principal.getName());
+		final UserInfo targetUser = systemUserService.getExistingSystemUser(userName);
+		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
+		final UserBasicDetails userBasicDetails = new UserBasicDetails();
+		userBasicDetails.setDisplayName(displayName);
+		userBasicDetails.setProfilePicFile(profilePicFile);
+		return ResponseEntity.ok(systemUserService.udpateBasicUserDetails(userBasicDetails, targetUser));
+	}
+
 	@GetMapping("secured-details")
-	public ResponseEntity<UserSecuredDetailsRes> getUserSecuredDetailsByUsername(Principal principal) {
-		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
+	public ResponseEntity<UserSecuredDetailsRes> getUserSecuredDetailsByUsername(@RequestParam String userName,
+			Principal principal) {
+		systemUserService.isUserActive(principal.getName());
+		final UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
 		final GenericMapper<UserSecuredDetailsRes, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				UserSecuredDetailsRes.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
@@ -94,9 +103,16 @@ public class UserController {
 	@PatchMapping("update-secured-details")
 	public ResponseEntity<Boolean> udpateSecuredUserDetails(@Valid @RequestBody UserSecuredDetailsReq securedDetails,
 			Principal principal) {
-		final UserInfo existingUserDetails = systemUserService.authenticateSystemUserByOtp(principal.getName(),
+		systemUserService.isUserActive(principal.getName());
+		final UserInfo currentUser = systemUserService.authenticateSystemUserByOtp(principal.getName(),
 				securedDetails.getOtp());
-		return ResponseEntity.ok(systemUserService.udpateSecuredUserDetails(securedDetails, existingUserDetails));
+		final UserInfo targetUser = systemUserService.getExistingSystemUser(securedDetails.getUserName());
+		if (targetUser.getRoles().contains(Role.SUPER_ADMIN_USER)
+				&& securedDetails.getStatus().equals(com.urbanShows.userService.entity.Status.INACTIVE)) {
+			throw new UnauthorizedException("Super Admin users cannot be deactivated");
+		}
+		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
+		return ResponseEntity.ok(systemUserService.udpateSecuredUserDetails(securedDetails, targetUser, principal.getName()));
 	}
 
 	@GetMapping("user-list")

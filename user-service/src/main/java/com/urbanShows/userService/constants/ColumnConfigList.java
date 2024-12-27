@@ -10,6 +10,6 @@ public class ColumnConfigList {
 	}
 
 	public static final List<String> USER_COlUMNS = new ArrayList<>(Arrays.asList("userName", "displayName", "password",
-			"phone", "roles", "profilePicUrl", "status", "createdAt"));
+			"phone", "email", "roles", "profilePicUrl", "status", "createdAt"));
 
 }
