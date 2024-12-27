@@ -1,4 +1,4 @@
-package com.urbanShows.userService.entity;
+package com.urbanShows.userService.enums;
 
 public enum Status {
 	ACTIVE,
