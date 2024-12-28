@@ -28,5 +28,9 @@ public class UserSecuredDetailsReq {
 	private String email;
 	
 	private Status status;
+	
+	private Boolean phoneValidated;
+	
+	private Boolean emailValidated;
 
 }

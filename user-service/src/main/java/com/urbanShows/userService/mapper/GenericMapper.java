@@ -18,7 +18,7 @@ public class GenericMapper<D, E> {
 	private Class<E> entityClass;
 
 
-	public E dtoToEntity(D dto) {
+	public E dtoToEntity(D dto) { 
 		return mapper.map(dto, entityClass);
 	}
 

@@ -30,11 +30,16 @@ public class OtpService {
 		sendOtpToPhone(existingAppUser.getPhone(), existingAppUser.getOtp());
 	}
 
-	public void createOtpForSystemUser(UserInfo systemUser) {
-		systemUser.setOtp(AuthTokenAndPasswordUtil.generateAuthToken());
-		systemUser.setOtpTimeStamp(LocalDateTime.now());
-		userRepo.save(systemUser);
-		sendOtpToPhone(systemUser.getPhone(), systemUser.getOtp());
+	public void createAndSendOtp(UserInfo userInfo, String device) {
+		userInfo.setOtp(AuthTokenAndPasswordUtil.generateAuthToken());
+		userInfo.setOtpTimeStamp(LocalDateTime.now());
+		userRepo.save(userInfo);
+		if (device.equals("EMAIL")) {
+			sendOtpToPhone(userInfo.getEmail(), userInfo.getOtp());
+		} else {
+			sendOtpToPhone(userInfo.getPhone(), userInfo.getOtp());
+		}
+
 	}
 
 	private void sendOtpToPhone(String phone, String otp) {

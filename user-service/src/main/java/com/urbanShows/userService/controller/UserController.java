@@ -8,7 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +21,6 @@ import com.urbanShows.userService.dto.UserInfoDto;
 import com.urbanShows.userService.dto.UserInfoListDto;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSecuredDetailsRes;
-import com.urbanShows.userService.dto.UserActivationDto;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.exception.UnauthorizedException;
@@ -49,8 +47,8 @@ public class UserController {
 	}
 
 	@GetMapping("generate-otp")
-	public void generateOtp(@RequestParam String userName) {
-		systemUserService.generateOtpForSystemUser(userName);
+	public void generateOtpForSystemUser(@RequestParam String userName, @RequestParam String device) {
+		systemUserService.generateOtpForSystemUser(userName, device);
 	}
 
 //	@PatchMapping("update-profile-pic")
@@ -125,10 +123,11 @@ public class UserController {
 		return ResponseEntity.ok(systemUserService.getSystemUsersList());
 	}
 
-	@PostMapping("user-activation")
-	public ResponseEntity<Boolean> userValidation(@RequestBody UserActivationDto userActivationDto, Principal principal) {
+	@GetMapping("user-activation")
+	public ResponseEntity<Boolean> userActivation(@RequestParam String userName, @RequestParam String otp,
+			Principal principal) {
 		systemUserService.isUserActive(principal.getName());
-		return ResponseEntity.ok(systemUserService.suerActivation(userActivationDto));
+		return ResponseEntity.ok(systemUserService.userActivation(userName, otp));
 	}
 
 }

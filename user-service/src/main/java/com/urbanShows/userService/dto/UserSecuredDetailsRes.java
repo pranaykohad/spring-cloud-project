@@ -27,5 +27,9 @@ public class UserSecuredDetailsRes {
 	private String email;
 	
 	private Status status;
+	
+	private boolean phoneValidated;
+	
+	private boolean emailValidated;
 
 }

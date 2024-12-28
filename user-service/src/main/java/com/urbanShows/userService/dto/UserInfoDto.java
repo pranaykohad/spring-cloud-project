@@ -42,9 +42,9 @@ public class UserInfoDto {
 	
 	private Status status;
 	
-	private boolean isPhoneValidated;
+	private boolean phoneValidated;
 	
-	private boolean isEmailValidated;
+	private boolean emailValidated;
 	
 	@JsonIgnore
 	private String otp;

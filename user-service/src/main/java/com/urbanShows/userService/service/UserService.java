@@ -3,9 +3,6 @@ package com.urbanShows.userService.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,10 +18,8 @@ import com.urbanShows.userService.dto.UserInfoDto;
 import com.urbanShows.userService.dto.UserInfoListDto;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSigninDto;
-import com.urbanShows.userService.dto.UserActivationDto;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.enums.Role;
-import com.urbanShows.userService.enums.RolePriority;
 import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.exception.AccessDeniedException;
 import com.urbanShows.userService.exception.IncorrectOtpException;
@@ -137,9 +132,9 @@ public class UserService {
 		return true;
 	}
 
-	public void generateOtpForSystemUser(String userName) {
+	public void generateOtpForSystemUser(String userName, String device) {
 		final UserInfo systemUser = getExistingSystemUser(userName);
-		otpService.createOtpForSystemUser(systemUser);
+		otpService.createAndSendOtp(systemUser, device);
 	}
 
 	public void sendOtpToPhone(String phone, String otp) {
@@ -163,21 +158,29 @@ public class UserService {
 	}
 
 	private void updateSecuredUserDetails(UserInfoDto newUserInfo, UserInfo targetUserInfo, String loggedInUserName) {
-		if (StringUtils.hasText(newUserInfo.getPassword())) {
-			targetUserInfo.setPassword(passwordEncoder.encode(newUserInfo.getPassword()));
-		}
-		targetUserInfo.setPhone(
-				StringUtils.hasText(newUserInfo.getPhone()) && !targetUserInfo.getPhone().equals(newUserInfo.getPhone())
-						? newUserInfo.getPhone()
-						: targetUserInfo.getPhone());
-		targetUserInfo.setEmail(
-				StringUtils.hasText(newUserInfo.getEmail()) && !targetUserInfo.getEmail().equals(newUserInfo.getEmail())
-						? newUserInfo.getEmail()
-						: targetUserInfo.getEmail());
 		if (!loggedInUserName.equals(targetUserInfo.getUserName())) {
 			targetUserInfo
 					.setStatus(!newUserInfo.getStatus().equals(targetUserInfo.getStatus()) ? newUserInfo.getStatus()
 							: targetUserInfo.getStatus());
+		}
+		if (StringUtils.hasText(newUserInfo.getPassword())) {
+			targetUserInfo.setPassword(passwordEncoder.encode(newUserInfo.getPassword()));
+		}
+		if (newUserInfo.isPhoneValidated()) {
+			targetUserInfo.setPhoneValidated(true);
+		}
+		if (newUserInfo.isEmailValidated()) {
+			targetUserInfo.setEmailValidated(true);
+		}
+		if (StringUtils.hasText(newUserInfo.getPhone()) && !targetUserInfo.getPhone().equals(newUserInfo.getPhone())) {
+			targetUserInfo.setPhone(newUserInfo.getPhone());
+			targetUserInfo.setPhoneValidated(false);
+			targetUserInfo.setStatus(Status.INACTIVE);
+		}
+		if (StringUtils.hasText(newUserInfo.getEmail()) && !targetUserInfo.getEmail().equals(newUserInfo.getEmail())) {
+			targetUserInfo.setEmail(newUserInfo.getEmail());
+			targetUserInfo.setEmailValidated(false);
+			targetUserInfo.setStatus(Status.INACTIVE);
 		}
 		systemUserRepo.save(targetUserInfo);
 	}
@@ -199,11 +202,9 @@ public class UserService {
 		return existingUser;
 	}
 
-	public boolean suerActivation(UserActivationDto userActivationDto) {
-		// generate otp
-		// send otp to device
-		// return true;
-		return false;
+	public boolean userActivation(String userName, String otp) {
+		final UserInfo userInfo = this.authenticateSystemUserByOtp(userName, otp);
+		return userInfo != null;
 	}
 
 //	public UserInfo isPermitted(UserInfo currentUser, UserInfo targetUser) {
