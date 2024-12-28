@@ -29,13 +29,19 @@ export class UserService {
     );
   }
 
-  generateOtp(userName: string): Observable<void> {
-    return this.http.get<void>(`${this.baseUrl}api/user/system/generate-otp?userName=${userName}`);
+  generateOtp(userName: string, device: string): Observable<void> {
+    return this.http.get<void>(
+      `${this.baseUrl}api/user/system/generate-otp?userName=${userName}&device=${device}`
+    );
   }
 
-  updateBasicDetails(
-    userBasicDetails: UserBasicDetails
-  ): Observable<Boolean> {
+  userActivation(userName: string, otp: string): Observable<void> {
+    return this.http.get<void>(
+      `${this.baseUrl}api/user/system/user-activation?userName=${userName}&otp=${otp}`
+    );
+  }
+
+  updateBasicDetails(userBasicDetails: UserBasicDetails): Observable<Boolean> {
     const formData = new FormData();
     formData.append('profilePicFile', userBasicDetails.profilePicFile);
     formData.append('displayName', userBasicDetails.displayName);

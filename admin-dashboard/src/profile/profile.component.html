@@ -49,7 +49,7 @@
             </div>
           </div>
           <div class="d-flex">
-            <p-button label="Update Basic Details" [raised]="true" severity="info"
+            <p-button label="Save Basic Details" [raised]="true" severity="info"
               [style]="{borderRadius: '7px', marginRight: '15px'}" [disabled]="!enableBasicUpdateBtn"
               (click)="updateBasicDetails()" />
             <p-button label="Cancel Update" [raised]="true" severity="secondary" [style]="{borderRadius: '7px'}"
@@ -62,7 +62,7 @@
         @if (editSecuredDetails && editSecuredDetails.userName) {
         <div>
           <div class="d-flex">
-            <div class="d-flex align-items-center div-margin-buttom div-margin-right">
+            <div class="d-flex align-items-center div-margin-buttom div-margin-right col-4">
               <div class="label-margin-right">Password:</div>
               <div class="d-flex align-items-center">
                 <div class="d-flex flex-column">
@@ -94,29 +94,47 @@
             </div>
           </div>
           <div class="d-flex">
-            <div class="d-flex align-items-center div-margin-buttom div-margin-right">
+            <div class="d-flex align-items-center div-margin-buttom div-margin-right col-4">
               <div class="label-margin-right">Phone:</div>
               <div class="d-flex align-items-center">
-                <div class="d-flex flex-column" style="margin-right: 1rem;">
+                <div class="d-flex flex-column">
                   <input type="text" pInputText pSize="normal" [(ngModel)]="editSecuredDetails.phone"
                     (input)="clearSecuredDetailsValidation('PHONE')" [maxlength]="10" />
                   <span class="error-cntr">{{newUserSecuredDetailsError.phone}}</span>
                 </div>
-                <p-button label="Send OTP to phone" icon="pi pi-phone" styleClass="p-button-sm p-button-secondary"
-                  [style]="{width: '200px'}" (click)="loadOtpForActivation('PHONE')"></p-button>
+                <p-button label="Send OTP to phone" icon="pi pi-phone" styleClass="p-button-sm p-button-secondary" class="otp-btn-left-mar"
+                  [style]="{width: '200px'}" (click)="loadOtpForActivation('PHONE')"
+                  [disabled]="editSecuredDetails.phoneValidated"></p-button>
+              </div>
+            </div>
+            <div class="d-flex align-items-center div-margin-buttom">
+              <div class="label-margin-right-cnf-pass">Phone validation status:</div>
+              <div>
+                <i
+                  [ngClass]="userSecuredDetails.phoneValidated ? 'pi pi-check-square active-check': 'pi pi-times inactive-check'"></i>
               </div>
             </div>
           </div>
-          <div class="d-flex align-items-center div-margin-buttom div-margin-right">
-            <div class="label-margin-right">Email:</div>
+          <div class="d-flex">
+            <div class="d-flex align-items-center div-margin-buttom div-margin-right col-4">
+              <div class="label-margin-right">Email:</div>
             <div class="d-flex align-items-center">
-              <div class="d-flex flex-column" style="margin-right: 1rem;">
+              <div class="d-flex flex-column">
                 <input type="text" pInputText pSize="normal" [(ngModel)]="editSecuredDetails.email"
                   (input)="clearSecuredDetailsValidation('EMAIL')" />
                 <span class="error-cntr">{{newUserSecuredDetailsError.email}}</span>
               </div>
-              <p-button label="Send OTP to email" icon="pi pi-envelope" styleClass="p-button-sm p-button-secondary"
-                [style]="{width: '200px'}" (click)="loadOtpForActivation('MAIL')"></p-button>
+              <p-button label="Send OTP to email" icon="pi pi-envelope" styleClass="p-button-sm p-button-secondary" class="otp-btn-left-mar"
+                [style]="{width: '200px'}" (click)="loadOtpForActivation('EMAIL')"
+                [disabled]="editSecuredDetails.emailValidated"></p-button>
+            </div>
+            </div>
+            <div class="d-flex align-items-center div-margin-buttom">
+              <div class="label-margin-right-cnf-pass">Email validation status:</div>
+              <div>
+                <i
+                [ngClass]="userSecuredDetails.emailValidated ? 'pi pi-check-square active-check': 'pi pi-times inactive-check'"></i>
+              </div>
             </div>
           </div>
           <div class="d-flex align-items-center div-margin-buttom">
@@ -125,7 +143,7 @@
               <p-floatLabel>
                 <div class="d-flex flex-row">
                   <p-inputSwitch [(ngModel)]="status" (onChange)="onStatusChenge($event.checked)"
-                    [disabled]="isSelfChangesBlocked || !isPhoneValidated || !isEmailValidated"></p-inputSwitch>
+                    [disabled]="isSelfChangesBlocked || !editSecuredDetails.phoneValidated || !editSecuredDetails.emailValidated"></p-inputSwitch>
                   <div style="margin-left: 10px;">{{editSecuredDetails.status}}</div>
                 </div>
               </p-floatLabel>
@@ -134,7 +152,7 @@
         </div>
         }
         <div class="d-flex">
-          <p-button label="Update Secured Details" [raised]="true" severity="info"
+          <p-button label="Save Secured Details" [raised]="true" severity="info"
             [style]="{borderRadius: '7px', marginRight: '15px'}" [disabled]="!enableSecuredUpdateBtn"
             (click)="updateSecuredDetails()" />
           <p-button label="Cancel Update" [raised]="true" severity="secondary" [style]="{borderRadius: '7px'}"

@@ -56,6 +56,8 @@ export class ProfileComponent implements OnInit {
     email: '',
     otp: '',
     status: '',
+    phoneValidated: false,
+    emailValidated: false
   };
   userBasicDetailsError: UserBasicDetailsError = {
     displayName: '',
@@ -71,8 +73,6 @@ export class ProfileComponent implements OnInit {
   enableSecuredUpdateBtn: boolean = false;
   status: boolean = false;
   isSelfChangesBlocked: boolean = true;
-  isPhoneValidated: boolean = false;
-  isEmailValidated: boolean = false;
   userPhoneOtp: string = '';
   userEmailOtp: string = '';
 
@@ -275,16 +275,33 @@ export class ProfileComponent implements OnInit {
     return isSecuredDetailsValid;
   }
 
-  loadOtpForActivation(device: string): boolean {
+  loadOtpForActivation(device: string) {
+    if (
+      (device === 'EMAIL' && this.editSecuredDetails.emailValidated) ||
+      (device === 'PHONE' && this.editSecuredDetails.phoneValidated)
+    ) {
+      return;
+    }
     this.otpContainer.clear();
     this.otpComponent = this.otpContainer.createComponent(OtpComponent);
     this.otpComponent.instance.visible = true;
     this.otpComponent.instance.userName = this.userName;
-    this.otpComponent.instance.otpEmiter.subscribe((res) => {
-      this.userPhoneOtp = res;
+    this.otpComponent.instance.device = device;
+    this.otpComponent.instance.otpEmiter.subscribe((otp) => {
       this.messageService.enableLoader();
+      this.userService.userActivation(this.userName, otp).subscribe((res) => {
+        if (device === 'EMAIL') {
+          this.editSecuredDetails.emailValidated = true;
+          this.toastService.showSuccessToast("Opt is send on client's email");
+        } else {
+          this.editSecuredDetails.phoneValidated = true;
+          this.toastService.showSuccessToast("Opt is send on client's phone");
+        }
+        this.enableSecuredUpdateBtn = true;
+        this.otpComponent.instance.visible = false;
+        this.messageService.disableLoader();
+      });
     });
-    return false;
   }
 
   private loadOtpCompoment() {
@@ -292,6 +309,7 @@ export class ProfileComponent implements OnInit {
     this.otpComponent = this.otpContainer.createComponent(OtpComponent);
     this.otpComponent.instance.visible = true;
     this.otpComponent.instance.userName = this.loggedInUser.userName;
+    this.otpComponent.instance.device = 'PHONE';
     this.otpComponent.instance.otpEmiter.subscribe((res) => {
       this.editSecuredDetails.otp = res;
       this.messageService.enableLoader();
@@ -302,6 +320,8 @@ export class ProfileComponent implements OnInit {
         phone: this.editSecuredDetails.phone,
         email: this.editSecuredDetails.email,
         status: this.editSecuredDetails.status,
+        phoneValidated: this.editSecuredDetails.phoneValidated,
+        emailValidated: this.editSecuredDetails.emailValidated,
       };
       finalObject.password =
         this.userSecuredDetails.password !== this.editSecuredDetails.password
@@ -363,7 +383,10 @@ export class ProfileComponent implements OnInit {
           email: res.email,
           status: res.status,
           otp: '',
+          phoneValidated: res.phoneValidated,
+          emailValidated: res.emailValidated,
         };
+        console.log(this.editSecuredDetails);
         this.status = res.status === 'ACTIVE';
       });
   }

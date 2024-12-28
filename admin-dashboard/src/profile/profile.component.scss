@@ -8,7 +8,7 @@
   }
   .label-margin-right-cnf-pass {
     margin-right: 10px;
-    width: 150px;
+    width: 200px;
     margin-left: 50px;
   }
   .label-margin-right-phone-otp {
@@ -83,4 +83,17 @@
     margin-right: 30px;
   }
 
+  .inactive-check {
+    color: red;
+    font-size: 1.5rem;
+    margin-left: 10px;
+  }
+  .active-check {
+    color: green;
+    font-size: 1.5rem;
+    margin-left: 10px;
+  }
+  .otp-btn-left-mar {
+    margin-left: 10px;
+  }
 }

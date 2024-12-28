@@ -17,6 +17,8 @@ export interface UserSecuredDetailsReq {
   email: string;
   status: string;
   otp: string;
+  emailValidated: boolean;
+  phoneValidated: boolean;
 }
 
 export interface UserSecuredDetailsRes {
@@ -25,6 +27,8 @@ export interface UserSecuredDetailsRes {
   phone: string;
   email: string;
   status: string;
+  emailValidated: boolean;
+  phoneValidated: boolean;
 }
 
 export interface EditableUserSecuredDetailsRes {
@@ -35,6 +39,8 @@ export interface EditableUserSecuredDetailsRes {
   email: string;
   status: string;
   otp: string;
+  emailValidated: boolean;
+  phoneValidated: boolean;
 }
 
 export interface UserSecuredDetailsError {
