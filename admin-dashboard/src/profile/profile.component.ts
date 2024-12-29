@@ -57,7 +57,7 @@ export class ProfileComponent implements OnInit {
     otp: '',
     status: '',
     phoneValidated: false,
-    emailValidated: false
+    emailValidated: false,
   };
   userBasicDetailsError: UserBasicDetailsError = {
     displayName: '',
@@ -347,17 +347,23 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  cancelBasicDetailsUpdate(value: string) {
+  cancelBasicDetailsUpdate() {
     this.getUserBasicDetails();
     this.newUserBasicDetails.profilePicUrl = '';
     this.newUserBasicDetails.profilePicFile = new File([], '');
-    value = '';
     this.enableBasicUpdateBtn = false;
   }
 
   cancelSecuredDetailsUpdate() {
+    this.cancelBasicDetailsUpdate()
+    this.cancelSecuredDetailsUpdate()
+    this.enableSecuredUpdateBtn = false;
+  }
+
+  syncDetails() {
+    this.getUserBasicDetails();
     this.getUserSecuredDetails();
-    this.clearSecuredDetailsValidation();
+    this.enableBasicUpdateBtn = false;
     this.enableSecuredUpdateBtn = false;
   }
 

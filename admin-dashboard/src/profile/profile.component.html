@@ -12,6 +12,8 @@
         <div>
           <div class="disable-div">{{newUserBasicDetails.createdAt | date: 'medium'}}</div>
         </div>
+        <button pTooltip="Sync Details" pButton type="button" icon="pi pi-sync"
+          class="p-button-success p-button-outlined sync-btn" (click)="syncDetails()"></button>
       </div>
     </div>
     <p-tabView>
@@ -53,7 +55,7 @@
               [style]="{borderRadius: '7px', marginRight: '15px'}" [disabled]="!enableBasicUpdateBtn"
               (click)="updateBasicDetails()" />
             <p-button label="Cancel Update" [raised]="true" severity="secondary" [style]="{borderRadius: '7px'}"
-              [disabled]="!enableBasicUpdateBtn" (click)="cancelBasicDetailsUpdate(profilePic.value)" />
+              [disabled]="!enableBasicUpdateBtn" (click)="cancelBasicDetailsUpdate()" />
           </div>
         </div>
         }
@@ -102,8 +104,8 @@
                     (input)="clearSecuredDetailsValidation('PHONE')" [maxlength]="10" />
                   <span class="error-cntr">{{newUserSecuredDetailsError.phone}}</span>
                 </div>
-                <p-button label="Send OTP to phone" icon="pi pi-phone" styleClass="p-button-sm p-button-secondary" class="otp-btn-left-mar"
-                  [style]="{width: '200px'}" (click)="loadOtpForActivation('PHONE')"
+                <p-button label="Send OTP to phone" icon="pi pi-phone" styleClass="p-button-sm p-button-secondary"
+                  class="otp-btn-left-mar" [style]="{width: '200px'}" (click)="loadOtpForActivation('PHONE')"
                   [disabled]="editSecuredDetails.phoneValidated"></p-button>
               </div>
             </div>
@@ -118,22 +120,22 @@
           <div class="d-flex">
             <div class="d-flex align-items-center div-margin-buttom div-margin-right col-4">
               <div class="label-margin-right">Email:</div>
-            <div class="d-flex align-items-center">
-              <div class="d-flex flex-column">
-                <input type="text" pInputText pSize="normal" [(ngModel)]="editSecuredDetails.email"
-                  (input)="clearSecuredDetailsValidation('EMAIL')" />
-                <span class="error-cntr">{{newUserSecuredDetailsError.email}}</span>
+              <div class="d-flex align-items-center">
+                <div class="d-flex flex-column">
+                  <input type="text" pInputText pSize="normal" [(ngModel)]="editSecuredDetails.email"
+                    (input)="clearSecuredDetailsValidation('EMAIL')" />
+                  <span class="error-cntr">{{newUserSecuredDetailsError.email}}</span>
+                </div>
+                <p-button label="Send OTP to email" icon="pi pi-envelope" styleClass="p-button-sm p-button-secondary"
+                  class="otp-btn-left-mar" [style]="{width: '200px'}" (click)="loadOtpForActivation('EMAIL')"
+                  [disabled]="editSecuredDetails.emailValidated"></p-button>
               </div>
-              <p-button label="Send OTP to email" icon="pi pi-envelope" styleClass="p-button-sm p-button-secondary" class="otp-btn-left-mar"
-                [style]="{width: '200px'}" (click)="loadOtpForActivation('EMAIL')"
-                [disabled]="editSecuredDetails.emailValidated"></p-button>
-            </div>
             </div>
             <div class="d-flex align-items-center div-margin-buttom">
               <div class="label-margin-right-cnf-pass">Email validation status:</div>
               <div>
                 <i
-                [ngClass]="userSecuredDetails.emailValidated ? 'pi pi-check-square active-check': 'pi pi-times inactive-check'"></i>
+                  [ngClass]="userSecuredDetails.emailValidated ? 'pi pi-check-square active-check': 'pi pi-times inactive-check'"></i>
               </div>
             </div>
           </div>
