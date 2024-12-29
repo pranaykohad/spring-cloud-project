@@ -3,6 +3,7 @@ package com.urbanShows.userService.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,7 @@ import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.exception.AccessDeniedException;
 import com.urbanShows.userService.exception.IncorrectOtpException;
+import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.exception.UserAlreadyExistsException;
 import com.urbanShows.userService.exception.UserInactiveException;
 import com.urbanShows.userService.exception.UserNotFoundException;
@@ -77,6 +79,12 @@ public class UserService {
 	}
 
 	public Boolean addSystemUser(UserSigninDto systemUserSigninDto) {
+		if(systemUserSigninDto.getRoles().contains(Role.SUPER_ADMIN_USER)) {
+			final List<UserInfo> usersByRoles = systemUserRepo.findByRoles(systemUserSigninDto.getRoles());
+			if(!usersByRoles.isEmpty()) {
+				throw new UnauthorizedException("You are not authorized to perform this operation");
+			}
+		}
 		if (systemUserRepo.existsById(systemUserSigninDto.getUserName())) {
 			throw new UserAlreadyExistsException("User already exists in the system");
 		}
@@ -91,7 +99,11 @@ public class UserService {
 		systemUser.setPhone(systemUserSigninDto.getPhone().trim());
 		systemUser.setStatus(Status.INACTIVE);
 		roleList.stream().filter(i -> i.equals(Role.SUPER_ADMIN_USER))
-				.forEach(i -> systemUser.setStatus(Status.ACTIVE));
+				.forEach(i -> {
+					systemUser.setStatus(Status.ACTIVE);
+					systemUser.setPhoneValidated(true);
+					systemUser.setEmailValidated(true);
+				});
 		systemUser.setCreatedAt(LocalDateTime.now());
 		systemUserRepo.save(systemUser);
 		log.info("System User {} is register in the system ", systemUserSigninDto.getUserName());

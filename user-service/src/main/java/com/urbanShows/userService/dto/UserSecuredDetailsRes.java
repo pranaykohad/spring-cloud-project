@@ -1,6 +1,8 @@
 package com.urbanShows.userService.dto;
 
+import java.util.List;
 
+import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.Status;
 
 import jakarta.validation.constraints.Email;
@@ -25,11 +27,13 @@ public class UserSecuredDetailsRes {
 
 	@Email(message = "This email is not valid")
 	private String email;
-	
+
 	private Status status;
-	
+
+	private List<Role> roles;
+
 	private boolean phoneValidated;
-	
+
 	private boolean emailValidated;
 
 }

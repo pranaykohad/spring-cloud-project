@@ -20,5 +20,7 @@ public class LoggedinUserDetails {
 	private String jwt;
 	
 	private String profilePicUrl;
+	
+	private String userName;
 
 }

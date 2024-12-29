@@ -1,6 +1,7 @@
 package com.urbanShows.userService.controller;
 
 import java.security.Principal;
+import java.util.Map;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("api/user/system")
 @AllArgsConstructor
-@PreAuthorize("hasAnyAuthority('ROLE_SYSTEM_USER', 'ROLE_SUPER_ADMIN_USER')")
+@PreAuthorize("hasAnyAuthority('ROLE_SYSTEM_USER', 'ROLE_SUPER_ADMIN_USER', 'ROLE_ORGANIZER_USER')")
 public class UserController {
 
 	private final UserService systemUserService;

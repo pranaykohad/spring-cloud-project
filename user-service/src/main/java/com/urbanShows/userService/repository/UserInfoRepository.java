@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.enums.Role;
 
 import io.micrometer.observation.annotation.Observed;
 
@@ -17,7 +18,7 @@ import io.micrometer.observation.annotation.Observed;
 public interface UserInfoRepository extends JpaRepository<UserInfo, String> {
 
 	UserInfo findByUserName(String userName);
-	
+
 	UserInfo findByUserNameAndPassword(String userName, String password);
 
 	void deleteByUserName(String userName);
@@ -26,5 +27,7 @@ public interface UserInfoRepository extends JpaRepository<UserInfo, String> {
 
 	@Query("SELECT a FROM UserInfo a WHERE a.otpTimeStamp < :otpTimeStamp")
 	List<UserInfo> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
+
+	List<UserInfo> findByRoles(List<Role> list);
 
 }
