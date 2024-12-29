@@ -1,12 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { Msg } from '../../models/Enums';
+import { LocalStorageKeys, Msg } from '../../models/Enums';
 import { InternalMsg } from '../../models/InternalMsg';
-import { LoggedinUserDetails } from '../../models/LoggedinUserDetails';
+import { LoggedInUserDetails } from '../../models/LoggedinUserDetails';
 import { NavbarComponent } from '../../navbar/navbar.component';
 import { UserAuthService } from '../../services/user-auth.service';
 import { SharedModule } from '../../shared/shared.module';
 import { MessageService } from './../../behaviorSubject/message.service';
+import { LocalstorageService } from '../../services/localstorage.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,17 +17,14 @@ import { MessageService } from './../../behaviorSubject/message.service';
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  loggedinUserDetails!: LoggedinUserDetails;
+  loggedInUserDetails!: LoggedInUserDetails;
   private subscription: Subscription = new Subscription();
 
   constructor(
     private systemUserAuthService: UserAuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private localstorageService: LocalstorageService
   ) {}
-
-  ngOnDestroy(): void {
-    this.subscription.unsubscribe();
-  }
 
   ngOnInit(): void {
     this.getLoggedinUserDetails();
@@ -39,10 +37,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
   }
 
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
+
   private getLoggedinUserDetails() {
     this.systemUserAuthService.getLoggedinUserDetails().subscribe({
-      next: (res: LoggedinUserDetails) => {
-        this.loggedinUserDetails = res;
+      next: (res: LoggedInUserDetails) => {
+        this.loggedInUserDetails = res;
       },
     });
   }

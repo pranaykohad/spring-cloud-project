@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { MegaMenuItem, MenuItem } from 'primeng/api';
 import { LocalStorageKeys } from '../models/Enums';
-import { LoggedinUserDetails } from '../models/LoggedinUserDetails';
+import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 import { UserAuthService } from '../services/user-auth.service';
 import { SharedModule } from '../shared/shared.module';
 import { LocalstorageService } from './../services/localstorage.service';
@@ -16,8 +16,79 @@ import { LocalstorageService } from './../services/localstorage.service';
 })
 export class NavbarComponent {
   @Input()
-  loggedinUserDetails!: LoggedinUserDetails;
+  set loggedInUserDetails(value: LoggedInUserDetails) {
+    this._loggedInUserDetails = value;
+    if (value) {
+      this.loggedInUserRoles = new Set(value.roles);
+      this.setMegaPanel();
+    }
+  }
+
+  private setMegaPanel() {
+    this.navbarModel = [
+      {
+        label: 'User',
+        icon: 'pi pi-users',
+        items: [
+          [
+            {
+              label: 'User Section',
+              items: [
+                {
+                  label: 'User List',
+                  visible: this.isSectionVisible('user-list'),
+                  command: () => {
+                    this.openUserSection();
+                  },
+                },
+                {
+                  label: 'Add Security Person',
+                  visible: this.isSectionVisible('add-security'),
+                  command: () => {
+                    this.openUserSection();
+                  },
+                },
+              ],
+            },
+          ],
+        ],
+      },
+      {
+        label: 'Events',
+        icon: 'pi pi-calendar-plus',
+        items: [
+          [
+            {
+              label: 'Event Section',
+              items: [
+                {
+                  label: 'Event',
+                  command: () => {
+                    this.openEventSection();
+                  },
+                },
+              ],
+            },
+          ],
+        ],
+      },
+    ];
+  }
+
+  get loggedInUserDetails(): LoggedInUserDetails {
+    if (this._loggedInUserDetails) {
+      this.loggedInUserRoles = new Set(this._loggedInUserDetails.roles);
+    }
+    return this._loggedInUserDetails;
+  }
+
+  loggedInUserRoles: Set<String> = new Set<String>();
+
   urbanShowsLogo!: string;
+  navbarModel!: MegaMenuItem[];
+
+  private _loggedInUserDetails!: LoggedInUserDetails;
+
   model: MenuItem[] = [
     {
       id: 'profile',
@@ -47,82 +118,41 @@ export class NavbarComponent {
     },
   ];
 
-  navbarModel: MegaMenuItem[] = [
-    {
-      label: 'User',
-      icon: 'pi pi-users',
-      items: [
-        [
-          {
-            label: 'User Section',
-            items: [
-              {
-                label: 'User',
-                command: () => {
-                  this.openUserSection();
-                },
-              },
-            ],
-          },
-        ],
-      ],
-    },
-    {
-      label: 'Events',
-      icon: 'pi pi-calendar-plus',
-      items: [
-        [
-          {
-            label: 'Event Section',
-            items: [
-              {
-                label: 'Event',
-                command: () => {
-                  this.openEventSection();
-                },
-              },
-            ],
-          },
-        ],
-      ],
-    },
-    {
-      label: 'Settings',
-      icon: 'pi pi-fw pi-cog',
-      items: [
-        [
-          {
-            label: 'Setting 1',
-            items: [{ label: 'Setting 1.1' }, { label: 'Setting 1.2' }],
-          },
-          {
-            label: 'Setting 2',
-            items: [{ label: 'Setting 2.1' }, { label: 'Setting 2.2' }],
-          },
-          {
-            label: 'Setting 3',
-            items: [{ label: 'Setting 3.1' }, { label: 'Setting 3.2' }],
-          },
-        ],
-        [
-          {
-            label: 'Technology 4',
-            items: [{ label: 'Setting 4.1' }, { label: 'Setting 4.2' }],
-          },
-        ],
-      ],
-    },
-  ];
-
   constructor(
     private systemUserAuthService: UserAuthService,
     private localstorageService: LocalstorageService,
     private router: Router
   ) {}
 
+  private isSectionVisible(section: string): boolean {
+    let isVisible: boolean = false;
+    switch (section) {
+      case 'user-list':
+        return this.isInAllowedRole([
+          'SYSTEM_USER',
+          'ADMIN_USER',
+          'SUPPORT_USER',
+          'SUPER_ADMIN_USER',
+        ]);
+      case 'add-security':
+        return this.isInAllowedRole([
+          'SYSTEM_USER',
+          'ADMIN_USER',
+          'SUPPORT_USER',
+          'SUPER_ADMIN_USER',
+          'ORGANIZER_USER',
+        ]);
+    }
+    return isVisible;
+  }
+
+  private isInAllowedRole(allowedRoles: string[]): boolean {
+    return allowedRoles.some((i) => this.loggedInUserRoles.has(i));
+  }
+
   openProfile() {
-    if (this.loggedinUserDetails.userName !== null) {
-      this.router.navigate(['profile', this.loggedinUserDetails.userName]);
+    if (this.loggedInUserDetails.userName !== null) {
+      this.router.navigate(['profile', this.loggedInUserDetails.userName]);
     }
   }
 
@@ -143,7 +173,7 @@ export class NavbarComponent {
   }
 
   logout() {
-    const loggedinUserDetails: LoggedinUserDetails =
+    const loggedinUserDetails: LoggedInUserDetails =
       this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
     if (loggedinUserDetails !== null) {
       this.systemUserAuthService

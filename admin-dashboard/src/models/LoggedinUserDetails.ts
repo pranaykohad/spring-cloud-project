@@ -1,5 +1,4 @@
-
-export interface LoggedinUserDetails {
+export interface LoggedInUserDetails {
   jwt: string;
   displayName: string;
   profilePicUrl: string;

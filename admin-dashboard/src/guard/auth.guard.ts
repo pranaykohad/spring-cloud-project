@@ -7,20 +7,31 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 import { LocalStorageKeys } from '../models/Enums';
-import { LoggedinUserDetails } from '../models/LoggedinUserDetails';
+import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-
-  constructor(private router: Router, private localstorageService: LocalstorageService) {}
+  constructor(
+    private router: Router,
+    private localstorageService: LocalstorageService
+  ) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    if (this.isAuthenticated()) {
+    const loggedInUserDetails: LoggedInUserDetails =
+      this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
+    if (
+      this.isAuthenticated(loggedInUserDetails) &&
+      this.isAuthorized(
+        route.data['roles'],
+        loggedInUserDetails.roles,
+        state.url
+      )
+    ) {
       return true;
     } else {
       this.router.navigate(['login']);
@@ -28,9 +39,22 @@ export class AuthGuard implements CanActivate {
     }
   }
 
-  isAuthenticated(): boolean {
-    const loggedInUserDetails: LoggedinUserDetails = this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
-    return loggedInUserDetails ? this.isTokenValid(loggedInUserDetails.jwt) : false;
+  private isAuthenticated(loggedInUserDetails: LoggedInUserDetails): boolean {
+    return loggedInUserDetails
+      ? this.isTokenValid(loggedInUserDetails.jwt)
+      : false;
+  }
+
+  private isAuthorized(
+    allowedRoles: string[],
+    userRoles: string[],
+    url: string
+  ) {
+    const userRolesSet = new Set(userRoles);
+    if (url === '/' && userRolesSet.has('ORGANIZER_USER')) {
+      this.router.navigate(['event']);
+    }
+    return allowedRoles.some((r) => userRolesSet.has(r));
   }
 
   private isTokenValid(token: string): boolean {
@@ -42,6 +66,4 @@ export class AuthGuard implements CanActivate {
       return false;
     }
   }
-
-
 }

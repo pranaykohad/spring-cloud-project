@@ -6,7 +6,7 @@ import { LocalstorageService } from '../../services/localstorage.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { LocalStorageKeys, ToastType } from '../../models/Enums';
-import { LoggedinUserDetails } from '../../models/LoggedinUserDetails';
+import { LoggedInUserDetails } from '../../models/LoggedinUserDetails';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
     password: '',
   };
   rememberMe: boolean = false;
-  loggedinUserDetails!: LoggedinUserDetails;
+  loggedinUserDetails!: LoggedInUserDetails;
   enableLoginButton: boolean = false;
 
   constructor(
@@ -54,7 +54,7 @@ export class LoginComponent implements OnInit {
       this.systemUserLoginRequest.password.trim();
     this.systemUserAuthService
       .userLogin(this.systemUserLoginRequest)
-      .subscribe((res: LoggedinUserDetails) => {
+      .subscribe((res: LoggedInUserDetails) => {
         this.loggedinUserDetails = res;
         this.localstorageService.setItem(
           LocalStorageKeys.LOGGED_IN_USER_DETAILS,

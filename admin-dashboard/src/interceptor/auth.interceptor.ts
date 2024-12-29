@@ -10,7 +10,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { LocalstorageService } from '../services/localstorage.service';
 import { Router } from '@angular/router';
 import { LocalStorageKeys } from '../models/Enums';
-import { LoggedinUserDetails } from '../models/LoggedinUserDetails';
+import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 import { ToastService } from '../services/toast.service';
 import { MessageService } from '../behaviorSubject/message.service';
 
@@ -33,7 +33,7 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const isExcluded = this.excludedUrls.some((url) => req.url.includes(url));
-    const loggedInUserDetails: LoggedinUserDetails =
+    const loggedInUserDetails: LoggedInUserDetails =
       this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
 
     if (!isExcluded && loggedInUserDetails?.jwt) {

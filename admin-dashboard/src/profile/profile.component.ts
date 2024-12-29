@@ -23,7 +23,7 @@ import { ToastService } from '../services/toast.service';
 import { UserService } from '../services/user.service';
 import { SharedModule } from '../shared/shared.module';
 import { EditableUserSecuredDetailsRes } from './../models/UserUpdateRequest';
-import { LoggedinUserDetails } from '../models/LoggedinUserDetails';
+import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 
 @Component({
   selector: 'app-profile',
@@ -78,7 +78,7 @@ export class ProfileComponent implements OnInit {
   userEmailOtp: string = '';
 
   userName!: string;
-  loggedInUser!: LoggedinUserDetails;
+  loggedInUser!: LoggedInUserDetails;
   userSecuredDetails!: UserSecuredDetailsRes;
   editSecuredDetails!: EditableUserSecuredDetailsRes;
   oldUserBasicDetails!: UserBasicDetails;

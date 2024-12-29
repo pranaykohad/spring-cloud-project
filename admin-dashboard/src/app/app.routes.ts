@@ -1,4 +1,3 @@
-import { ProfileComponent } from './../profile/profile.component';
 import { Routes } from '@angular/router';
 import { AuthGuard } from '../guard/auth.guard';
 
@@ -14,6 +13,15 @@ export const routes: Routes = [
             (m) => m.DashboardComponent
           ),
         canActivate: [AuthGuard],
+        data: {
+          roles: [
+            'SYSTEM_USER',
+            'ADMIN_USER',
+            'SUPPORT_USER',
+            'SUPER_ADMIN_USER',
+            'ORGANIZER_USER'
+          ],
+        },
         children: [
           {
             path: '',
@@ -21,6 +29,16 @@ export const routes: Routes = [
               import('../dashboard/main/main/main.component').then(
                 (m) => m.MainComponent
               ),
+            canActivate: [AuthGuard],
+            data: {
+              roles: [
+                'SYSTEM_USER',
+                'ADMIN_USER',
+                'SUPPORT_USER',
+                'SUPER_ADMIN_USER',
+                'ORGANIZER_USER'
+              ],
+            },
           },
           {
             path: 'profile/:userName',

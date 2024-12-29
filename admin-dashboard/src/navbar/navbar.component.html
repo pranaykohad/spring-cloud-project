@@ -7,8 +7,8 @@
   </div>
   <div class="col-2 d-flex justify-content-end self-align-end">
     <div>
-      @if (loggedinUserDetails && loggedinUserDetails!.profilePicUrl) {
-      <img src="{{loggedinUserDetails.profilePicUrl}}" class="user-profile-img" alt="profile" />
+      @if (loggedInUserDetails && loggedInUserDetails!.profilePicUrl) {
+      <img src="{{loggedInUserDetails.profilePicUrl}}" class="user-profile-img" alt="profile" />
       } @else {
       <span class="user-profile-img">no img</span>
       }
@@ -17,9 +17,9 @@
       style="margin-right: 15px;">
       <span (click)="menu.toggle($event)" class="d-flex flex-column align-items-start pointer-cursor">
         <div>
-          {{loggedinUserDetails && loggedinUserDetails.displayName}}
+          {{loggedInUserDetails && loggedInUserDetails.displayName}}
         </div>
-        <div style="font-size: small" class="align-self-end">{{loggedinUserDetails && loggedinUserDetails.roles}}
+        <div style="font-size: small" class="align-self-end">{{loggedInUserDetails && loggedInUserDetails.roles}}
         </div>
       </span>
       <p-menu #menu [model]="model" [popup]="true" [styleClass]="'d-flex'" id="user-menu" autoZIndex="true"

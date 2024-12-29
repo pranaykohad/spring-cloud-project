@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment';
 import { SystemUserLoginRequest } from '../models/SystemUserLoginRequest';
-import { LoggedinUserDetails } from '../models/LoggedinUserDetails';
+import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 import { SystemUserSigninRequest } from '../models/SystemUserSigninRequest';
 import {
   UserBasicDetails,
@@ -24,16 +24,16 @@ export class UserAuthService {
     );
   }
 
-  getLoggedinUserDetails(): Observable<LoggedinUserDetails> {
-    return this.http.get<LoggedinUserDetails>(
+  getLoggedinUserDetails(): Observable<LoggedInUserDetails> {
+    return this.http.get<LoggedInUserDetails>(
       `${this.baseUrl}api/user/system/details`
     );
   }
 
   userLogin(
     systemUserLoginDto: SystemUserLoginRequest
-  ): Observable<LoggedinUserDetails> {
-    return this.http.post<LoggedinUserDetails>(
+  ): Observable<LoggedInUserDetails> {
+    return this.http.post<LoggedInUserDetails>(
       `${this.baseUrl}api/user/system/auth/login`,
       systemUserLoginDto
     );
