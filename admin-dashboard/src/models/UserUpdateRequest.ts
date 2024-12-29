@@ -27,6 +27,7 @@ export interface UserSecuredDetailsRes {
   phone: string;
   email: string;
   status: string;
+  roles: string[];
   emailValidated: boolean;
   phoneValidated: boolean;
 }
