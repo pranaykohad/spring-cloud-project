@@ -25,6 +25,7 @@ export class MainComponent implements OnInit {
     const userName = this.route.snapshot.queryParams['userName'];
     if (userName) {
       this.router.navigate(['profile', userName]);
+      return;
     }
     this.getUserInfoList();
   }
