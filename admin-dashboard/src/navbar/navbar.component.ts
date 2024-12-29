@@ -38,14 +38,14 @@ export class NavbarComponent {
                   label: 'User List',
                   visible: this.isSectionVisible('user-list'),
                   command: () => {
-                    this.openUserSection();
+                    this.openSection('');
                   },
                 },
                 {
                   label: 'Add Security Person',
                   visible: this.isSectionVisible('add-security'),
                   command: () => {
-                    this.openUserSection();
+                    this.openSection('add-security');
                   },
                 },
               ],
@@ -64,7 +64,7 @@ export class NavbarComponent {
                 {
                   label: 'Event',
                   command: () => {
-                    this.openEventSection();
+                    this.openSection('event');
                   },
                 },
               ],
@@ -95,7 +95,7 @@ export class NavbarComponent {
       label: 'Profile',
       icon: 'pi pi-user',
       command: () => {
-        this.openProfile();
+        this.openSection('profile');
       },
     },
     {
@@ -104,7 +104,7 @@ export class NavbarComponent {
       icon: 'pi pi-cog',
       textAlign: 'center',
       command: () => {
-        this.openSetting();
+        this.openSection('setting');
       },
     },
     {
@@ -123,6 +123,41 @@ export class NavbarComponent {
     private localstorageService: LocalstorageService,
     private router: Router
   ) {}
+
+  openSection(section: string){
+    switch (section) {
+      case 'profile':
+        this.openProfile();
+        break;
+      case 'logout':
+        this.openSection('logout');
+        break;
+      default:
+        this.router.navigate([section]);
+    }
+  }
+
+  logout() {
+    const loggedinUserDetails: LoggedInUserDetails =
+      this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
+    if (loggedinUserDetails !== null) {
+      this.systemUserAuthService
+        .userLogout(loggedinUserDetails.jwt)
+        .subscribe((res: boolean) => {
+          if (res) {
+            const inMemoryUserName = this.localstorageService.getItem(
+              LocalStorageKeys.INMEMORY_USERNAME
+            );
+            this.localstorageService.clear();
+            this.localstorageService.setItem(
+              LocalStorageKeys.INMEMORY_USERNAME,
+              inMemoryUserName
+            );
+            this.router.navigate(['login']);
+          }
+        });
+    }
+  }
 
   private isSectionVisible(section: string): boolean {
     let isVisible: boolean = false;
@@ -150,47 +185,10 @@ export class NavbarComponent {
     return allowedRoles.some((i) => this.loggedInUserRoles.has(i));
   }
 
-  openProfile() {
+  private openProfile() {
     if (this.loggedInUserDetails.userName !== null) {
       this.router.navigate(['profile', this.loggedInUserDetails.userName]);
     }
   }
 
-  navigateToHome() {
-    this.router.navigate(['']);
-  }
-
-  openSetting() {
-    this.router.navigate(['setting']);
-  }
-
-  openUserSection() {
-    this.router.navigate(['']);
-  }
-
-  openEventSection() {
-    this.router.navigate(['event']);
-  }
-
-  logout() {
-    const loggedinUserDetails: LoggedInUserDetails =
-      this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
-    if (loggedinUserDetails !== null) {
-      this.systemUserAuthService
-        .userLogout(loggedinUserDetails.jwt)
-        .subscribe((res: boolean) => {
-          if (res) {
-            const inMemoryUserName = this.localstorageService.getItem(
-              LocalStorageKeys.INMEMORY_USERNAME
-            );
-            this.localstorageService.clear();
-            this.localstorageService.setItem(
-              LocalStorageKeys.INMEMORY_USERNAME,
-              inMemoryUserName
-            );
-            this.router.navigate(['login']);
-          }
-        });
-    }
-  }
 }

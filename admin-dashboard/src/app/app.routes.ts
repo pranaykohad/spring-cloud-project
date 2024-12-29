@@ -61,6 +61,13 @@ export const routes: Routes = [
                 (m) => m.EventComponent
               ),
           },
+          {
+            path: 'add-security',
+            loadComponent: () =>
+              import('../add-security-person/add-security-person.component').then(
+                (m) => m.AddSecurityPersonComponent
+              ),
+          },
         ],
       },
       {
