@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { MegaMenuItem, MenuItem } from 'primeng/api';
 import { LocalStorageKeys } from '../models/Enums';
-import { LoggedinUserDetails } from '../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../models/LoggedinUserDetails';
 import { UserAuthService } from '../services/user-auth.service';
 import { SharedModule } from '../shared/shared.module';
 import { LocalstorageService } from './../services/localstorage.service';
@@ -14,7 +14,7 @@ import { LocalstorageService } from './../services/localstorage.service';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
   @Input()
   loggedinUserDetails!: LoggedinUserDetails;
   urbanShowsLogo!: string;
@@ -120,15 +120,9 @@ export class NavbarComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {}
-
   openProfile() {
-    const loggedinUserDetails: LoggedinUserDetails =
-      this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
-    if (loggedinUserDetails.userName !== null) {
-      this.router.navigate([''], {
-        queryParams: { userName: loggedinUserDetails.userName },
-      });
+    if (this.loggedinUserDetails.userName !== null) {
+      this.router.navigate(['profile', this.loggedinUserDetails.userName]);
     }
   }
 

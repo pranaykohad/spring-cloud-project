@@ -6,7 +6,7 @@ import { LocalstorageService } from '../../services/localstorage.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { LocalStorageKeys, ToastType } from '../../models/Enums';
-import { LoggedinUserDetails } from '../../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../../models/LoggedinUserDetails';
 
 @Component({
   selector: 'app-login',

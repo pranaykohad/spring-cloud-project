@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment';
 import { SystemUserLoginRequest } from '../models/SystemUserLoginRequest';
-import { LoggedinUserDetails } from '../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../models/LoggedinUserDetails';
 import { SystemUserSigninRequest } from '../models/SystemUserSigninRequest';
 import {
   UserBasicDetails,

@@ -7,7 +7,7 @@ import {
   RouterStateSnapshot,
 } from '@angular/router';
 import { LocalStorageKeys } from '../models/Enums';
-import { LoggedinUserDetails } from '../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../models/LoggedinUserDetails';
 
 @Injectable({
   providedIn: 'root',

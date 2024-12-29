@@ -1,3 +1,4 @@
+import { Subscription } from 'rxjs/internal/Subscription';
 import { LocalstorageService } from './../services/localstorage.service';
 import {
   Component,
@@ -22,7 +23,7 @@ import { ToastService } from '../services/toast.service';
 import { UserService } from '../services/user.service';
 import { SharedModule } from '../shared/shared.module';
 import { EditableUserSecuredDetailsRes } from './../models/UserUpdateRequest';
-import { LoggedinUserDetails } from '../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../models/LoggedinUserDetails';
 
 @Component({
   selector: 'app-profile',
@@ -355,8 +356,8 @@ export class ProfileComponent implements OnInit {
   }
 
   cancelSecuredDetailsUpdate() {
-    this.cancelBasicDetailsUpdate()
-    this.cancelSecuredDetailsUpdate()
+    this.cancelBasicDetailsUpdate();
+    this.cancelSecuredDetailsUpdate();
     this.enableSecuredUpdateBtn = false;
   }
 
@@ -392,7 +393,6 @@ export class ProfileComponent implements OnInit {
           phoneValidated: res.phoneValidated,
           emailValidated: res.emailValidated,
         };
-        console.log(this.editSecuredDetails);
         this.status = res.status === 'ACTIVE';
       });
   }

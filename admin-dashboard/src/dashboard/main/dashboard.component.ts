@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { Msg } from '../../models/Enums';
 import { InternalMsg } from '../../models/InternalMsg';
-import { LoggedinUserDetails } from '../../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../../models/LoggedinUserDetails';
 import { NavbarComponent } from '../../navbar/navbar.component';
 import { UserAuthService } from '../../services/user-auth.service';
 import { SharedModule } from '../../shared/shared.module';

@@ -10,7 +10,7 @@ import { catchError, Observable, throwError } from 'rxjs';
 import { LocalstorageService } from '../services/localstorage.service';
 import { Router } from '@angular/router';
 import { LocalStorageKeys } from '../models/Enums';
-import { LoggedinUserDetails } from '../models/SystemUserResponse';
+import { LoggedinUserDetails } from '../models/LoggedinUserDetails';
 import { ToastService } from '../services/toast.service';
 import { MessageService } from '../behaviorSubject/message.service';
 

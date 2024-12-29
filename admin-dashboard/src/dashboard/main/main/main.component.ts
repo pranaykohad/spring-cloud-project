@@ -22,11 +22,6 @@ export class MainComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const userName = this.route.snapshot.queryParams['userName'];
-    if (userName) {
-      this.router.navigate(['profile', userName]);
-      return;
-    }
     this.getUserInfoList();
   }
 
