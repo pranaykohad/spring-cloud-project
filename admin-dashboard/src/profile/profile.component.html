@@ -143,7 +143,7 @@
               <p-floatLabel>
                 <div class="d-flex flex-row">
                   <p-inputSwitch [(ngModel)]="status" (onChange)="onStatusChenge($event.checked)"
-                    [disabled]="isSelfChangesBlocked || !editSecuredDetails.phoneValidated || !editSecuredDetails.emailValidated"></p-inputSwitch>
+                    [disabled]="blockSelfChanges || !editSecuredDetails.phoneValidated || !editSecuredDetails.emailValidated"></p-inputSwitch>
                   <div style="margin-left: 10px;">{{editSecuredDetails.status}}</div>
                 </div>
               </p-floatLabel>

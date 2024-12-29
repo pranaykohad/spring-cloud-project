@@ -74,9 +74,14 @@ export class NavbarComponent implements OnInit {
         [
           {
             label: 'Event Section',
-            items: [{ label: 'Event', command: () => {
-              this.openEventSection();
-            }, }],
+            items: [
+              {
+                label: 'Event',
+                command: () => {
+                  this.openEventSection();
+                },
+              },
+            ],
           },
         ],
       ],
@@ -121,7 +126,9 @@ export class NavbarComponent implements OnInit {
     const loggedinUserDetails: LoggedinUserDetails =
       this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
     if (loggedinUserDetails.userName !== null) {
-      this.router.navigate(['profile', loggedinUserDetails.userName]);
+      this.router.navigate([''], {
+        queryParams: { userName: loggedinUserDetails.userName },
+      });
     }
   }
 
@@ -137,7 +144,7 @@ export class NavbarComponent implements OnInit {
     this.router.navigate(['']);
   }
 
-  openEventSection(){
+  openEventSection() {
     this.router.navigate(['event']);
   }
 

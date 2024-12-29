@@ -72,7 +72,7 @@ export class ProfileComponent implements OnInit {
   enableBasicUpdateBtn: boolean = false;
   enableSecuredUpdateBtn: boolean = false;
   status: boolean = false;
-  isSelfChangesBlocked: boolean = true;
+  blockSelfChanges: boolean = true;
   userPhoneOtp: string = '';
   userEmailOtp: string = '';
 
@@ -99,13 +99,13 @@ export class ProfileComponent implements OnInit {
     this.loggedInUser = this.localstorageService.getItem(
       LocalStorageKeys.LOGGED_IN_USER_DETAILS
     );
-    this.isSelfChangesBlocked = this.loggedInUser.userName === this.userName;
+    this.blockSelfChanges = this.loggedInUser.userName === this.userName;
     this.getUserBasicDetails();
     this.getUserSecuredDetails();
   }
 
   onStatusChenge(value: boolean) {
-    if (this.isSelfChangesBlocked) {
+    if (this.blockSelfChanges) {
       return;
     }
     this.status = value;

@@ -3,6 +3,7 @@ import { DatatableComponent } from '../../../datatable/datatable.component';
 import { UserInfoListObject } from '../../../models/UserInfo';
 import { SharedModule } from '../../../shared/shared.module';
 import { UserService } from './../../../services/user.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-main',
@@ -14,9 +15,17 @@ import { UserService } from './../../../services/user.service';
 export class MainComponent implements OnInit {
   userInfoListObject!: UserInfoListObject;
 
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
+    const userName = this.route.snapshot.queryParams['userName'];
+    if (userName) {
+      this.router.navigate(['profile', userName]);
+    }
     this.getUserInfoList();
   }
 

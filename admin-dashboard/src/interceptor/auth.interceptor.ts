@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { LocalStorageKeys } from '../models/Enums';
 import { LoggedinUserDetails } from '../models/SystemUserResponse';
 import { ToastService } from '../services/toast.service';
+import { MessageService } from '../behaviorSubject/message.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -23,7 +24,8 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(
     private localstorageService: LocalstorageService,
     private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private messageService: MessageService
   ) {}
 
   intercept(
@@ -50,6 +52,7 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     return next.handle(clonedReq).pipe(
       catchError((error) => {
+        this.messageService.disableLoader();
         if (error.status === 401) {
           this.toastService.showErrorToast(error.error.error);
           this.router.navigate(['login']);
