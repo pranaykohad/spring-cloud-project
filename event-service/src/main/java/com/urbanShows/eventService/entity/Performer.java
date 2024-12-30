@@ -24,5 +24,5 @@ public class Performer {
 
 	private String description;
 
-	private EventMedia performerPhotoUrl;
+//	private EventMedia performerPhotoUrl;
 }

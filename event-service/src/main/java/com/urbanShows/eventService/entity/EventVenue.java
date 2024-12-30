@@ -29,10 +29,10 @@ public class EventVenue {
 
 	private boolean isSingleDayEvent;
 
-	private Address venueAddress;
-
-	private List<EventSlot> eventSlot;
-
-	private List<EventSeatType> eventSeatType;
+//	private Address venueAddress;
+//
+//	private List<EventSlot> eventSlot;
+//
+//	private List<EventSeatType> eventSeatType;
 
 }

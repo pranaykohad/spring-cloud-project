@@ -11,19 +11,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity(name = "EVENT_ATTRIBUTE")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class EventAttribute {
-
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-	
-	private List<Language> languages;
-	
-	private List<Genre> genres;
-
-}
+//@Entity(name = "EVENT_ATTRIBUTE")
+//@Data
+//@Builder
+//@NoArgsConstructor
+//@AllArgsConstructor
+//public class EventAttribute {
+//
+//	@Id
+//	@GeneratedValue(strategy = GenerationType.IDENTITY)
+//	private long id;
+//	
+//	private List<Language> languages;
+//	
+//	private List<Genre> genres;
+//
+//}

@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-public class InternalAPIClient {
+public class InternalAPIClientConfig {
 
 	private final ObservationRegistry observationRegistry;
 
