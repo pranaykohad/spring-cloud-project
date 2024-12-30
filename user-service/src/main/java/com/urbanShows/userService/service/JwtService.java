@@ -41,11 +41,6 @@ public class JwtService {
 		return extractClaim(token, Claims::getExpiration);
 	}
 
-	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-		final Claims claims = extractAllClaims(token);
-		return claimsResolver.apply(claims);
-	}
-
 	public Boolean validateTokenForUserName(String token, String userName) {
 		final UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
 		boolean isTokenValidate = false;
@@ -74,6 +69,11 @@ public class JwtService {
 	@Transactional
 	public String generateTokenForAppUser(String phone) {
 		return createAndSaveToken(phone);
+	}
+	
+	private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+		final Claims claims = extractAllClaims(token);
+		return claimsResolver.apply(claims);
 	}
 
 	private Claims extractAllClaims(String token) {
