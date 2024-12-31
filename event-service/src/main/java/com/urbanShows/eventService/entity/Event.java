@@ -3,8 +3,6 @@ package com.urbanShows.eventService.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.urbanShows.eventService.dto.UserInfoDto;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
