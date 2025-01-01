@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,8 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class EventController {
 
-	private final EventService eventService;
-	
 	private final Environment environment;
 	
 	@GetMapping("active-profile")
@@ -36,6 +35,7 @@ public class EventController {
 	} 
 	
 	@GetMapping("test")
+	@PreAuthorize("hasAnyAuthority('ROLE_SUPER_ADMIN_USER', 'ROLE_APP_USER')")
 	public ResponseEntity<String> test() {
 		log.info("NAME TRACE: {}", "event service called");
 		return ResponseEntity.ok("Pranay Kohad is my name and I am software engineer");

@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.urbanShows.eventService.enums.Role;
 import com.urbanShows.eventService.enums.Status;
+import com.urbanShows.eventService.security.enums.Role;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
