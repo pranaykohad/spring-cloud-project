@@ -1,5 +1,7 @@
 package com.urbanShows.userService.controller;
 
+import java.security.Principal;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.urbanShows.userService.dto.AppUserInfoDto;
 import com.urbanShows.userService.dto.AppUserLoginReqDto;
 import com.urbanShows.userService.dto.AppUserSigninReqDto;
+import com.urbanShows.userService.dto.UserInternalInfo;
 import com.urbanShows.userService.dto.UserResponseDto;
 import com.urbanShows.userService.entity.AppUserInfo;
 import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.AppUserService;
 import com.urbanShows.userService.service.JwtService;
@@ -52,6 +56,17 @@ public class AppUserAuthController {
 	public ResponseEntity<Boolean> logout(@RequestParam String token) {
 		jwtService.invalidateToken(token);
 		return ResponseEntity.ok(true);
+	}
+	
+	@GetMapping("loggedin-app-user-info")
+	public ResponseEntity<UserInternalInfo> getLoggedinAppUserInfo(Principal principal) {
+		if(principal != null) {
+			final GenericMapper<UserInternalInfo, AppUserInfo> mapper = new GenericMapper<>(modelMapper,
+					UserInternalInfo.class, AppUserInfo.class);
+			final AppUserInfo userActive = appUserService.getExistingAppUser(principal.getName());
+			return ResponseEntity.ok(mapper.entityToDto(userActive));
+		}
+		throw new UnauthorizedException("Unauthorized access");
 	}
 
 }

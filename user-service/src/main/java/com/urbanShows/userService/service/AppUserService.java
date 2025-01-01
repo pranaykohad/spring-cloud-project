@@ -10,9 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.urbanShows.userService.dto.AppUserInfoDto;
 import com.urbanShows.userService.dto.AppUserSigninReqDto;
 import com.urbanShows.userService.entity.AppUserInfo;
+import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.enums.Role;
+import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.exception.AccessDeniedException;
 import com.urbanShows.userService.exception.UserAlreadyExistsException;
+import com.urbanShows.userService.exception.UserInactiveException;
 import com.urbanShows.userService.exception.UserNotFoundException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.repository.AppUserInfoRepository;
@@ -73,11 +76,12 @@ public class AppUserService {
 	}
 
 	public AppUserInfoDto udpate(AppUserInfo appUser, AppUserInfoDto newAppUserDto) {
-		appUser.setDisplayName(newAppUserDto.getDisplayName() != null &&
-				!appUser.getDisplayName().equals(newAppUserDto.getDisplayName()) ? newAppUserDto.getDisplayName()
+		appUser.setDisplayName(newAppUserDto.getDisplayName() != null
+				&& !appUser.getDisplayName().equals(newAppUserDto.getDisplayName()) ? newAppUserDto.getDisplayName()
 						: appUser.getDisplayName());
-		appUser.setEmail(newAppUserDto.getEmail() != null &&
-				!appUser.getEmail().equals(newAppUserDto.getEmail()) ? newAppUserDto.getEmail() : appUser.getEmail());
+		appUser.setEmail(newAppUserDto.getEmail() != null && !appUser.getEmail().equals(newAppUserDto.getEmail())
+				? newAppUserDto.getEmail()
+				: appUser.getEmail());
 		final AppUserInfo save = appUserInfoRepo.save(appUser);
 		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
 				AppUserInfo.class);

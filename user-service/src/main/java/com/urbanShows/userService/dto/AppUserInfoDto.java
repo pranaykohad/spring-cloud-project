@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.urbanShows.userService.enums.Role;
+import com.urbanShows.userService.enums.Status;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -34,10 +35,12 @@ public class AppUserInfoDto {
 
 	private String profilePicUrl;
 	
+	private Status status;
+	
 	@JsonIgnore
 	private String otp;
 	
 	@JsonIgnore
 	private LocalDateTime otpTimeStamp;
-
+	
 }

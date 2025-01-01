@@ -15,8 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.urbanShows.userService.dto.UserInfoDto;
+import com.urbanShows.userService.dto.UserInternalInfo;
 import com.urbanShows.userService.dto.UserLoginDto;
 import com.urbanShows.userService.dto.UserResponseDto;
+import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSigninDto;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.exception.AccessDeniedException;
@@ -73,10 +76,13 @@ public class UserAuthController {
 		return ResponseEntity.ok(true);
 	}
 	
-	@GetMapping("loggedin-user-info")
-	public ResponseEntity<UserInfo> getLoggedinUserInfo(Principal principal) {
+	@GetMapping("loggedin-system-user-info")
+	public ResponseEntity<UserInternalInfo> getLoggedinSystemUserInfo(Principal principal) {
 		if(principal != null) {
-			return ResponseEntity.ok(systemUserService.isUserActive(principal.getName()));
+			final GenericMapper<UserInternalInfo, UserInfo> mapper = new GenericMapper<>(modelMapper,
+					UserInternalInfo.class, UserInfo.class);
+			final UserInfo userActive = systemUserService.isUserActive(principal.getName());
+			return ResponseEntity.ok(mapper.entityToDto(userActive));
 		}
 		throw new UnauthorizedException("Unauthorized access");
 	}

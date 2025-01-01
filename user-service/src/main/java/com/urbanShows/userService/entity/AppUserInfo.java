@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.urbanShows.userService.enums.Role;
+import com.urbanShows.userService.enums.Status;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -31,6 +32,8 @@ public class AppUserInfo {
 	private List<Role> roles;
 
 	private String profilePicUrl;
+	
+	private Status status;
 	
 	private String otp;
 	
