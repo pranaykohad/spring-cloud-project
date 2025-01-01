@@ -30,7 +30,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 		if (Helper.isPhonenumber(id)) {
-			String authHeader = httpServletRequest.getHeader("Authorization");
+			final String authHeader = httpServletRequest.getHeader("Authorization");
 			String token = null;
 			if (authHeader != null && authHeader.startsWith("Bearer ")) {
 				token = authHeader.substring(7);
@@ -42,7 +42,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			}
 			throw new UsernameNotFoundException("User not found with phone: " + id);
 		} else {
-			String authHeader = httpServletRequest.getHeader("Authorization");
+			final String authHeader = httpServletRequest.getHeader("Authorization");
 			String token = null;
 			if (authHeader != null && authHeader.startsWith("Bearer ")) {
 				token = authHeader.substring(7);
@@ -52,7 +52,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 					return buildUser(userInfo.getUserName(), userInfo.getPassword(), userInfo.getRoles());
 				}
 			}
-
 			throw new UsernameNotFoundException("User not found with username: " + id);
 		}
 	}

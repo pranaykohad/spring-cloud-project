@@ -68,5 +68,4 @@ public class Helper {
 		return Jwts.parser().setSigningKey(getSignKey()).build().parseClaimsJws(token).getBody();
 	}
 	
-	
 }

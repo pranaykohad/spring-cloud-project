@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -12,12 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.urbanShows.eventService.security.authService.AuthService;
-import com.urbanShows.eventService.security.exception.JwtParseException;
 import com.urbanShows.eventService.security.service.UserDetailsServiceImpl;
 import com.urbanShows.eventService.security.util.Helper;
 
-import io.jsonwebtoken.security.SignatureException;
-import jakarta.persistence.Tuple;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
