@@ -52,12 +52,6 @@ public class AppUserAuthController {
 		return ResponseEntity.ok(apppUserResponseDto);
 	}
 
-	@GetMapping("logout")
-	public ResponseEntity<Boolean> logout(@RequestParam String token) {
-		jwtService.invalidateToken(token);
-		return ResponseEntity.ok(true);
-	}
-	
 	@GetMapping("loggedin-app-user-info")
 	public ResponseEntity<UserInternalInfo> getLoggedinAppUserInfo(Principal principal) {
 		if(principal != null) {

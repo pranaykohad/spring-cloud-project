@@ -7,19 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.urbanShows.userService.dto.UserInfoDto;
 import com.urbanShows.userService.dto.UserInternalInfo;
 import com.urbanShows.userService.dto.UserLoginDto;
 import com.urbanShows.userService.dto.UserResponseDto;
-import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSigninDto;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.exception.AccessDeniedException;
@@ -27,9 +23,7 @@ import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.UserService;
-import com.urbanShows.userService.util.Helper;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -70,15 +64,9 @@ public class UserAuthController {
 		}
 	}
 
-	@GetMapping("logout")
-	public ResponseEntity<Boolean> logout(@RequestParam String token) {
-		jwtService.invalidateToken(token);
-		return ResponseEntity.ok(true);
-	}
-	
 	@GetMapping("loggedin-system-user-info")
 	public ResponseEntity<UserInternalInfo> getLoggedinSystemUserInfo(Principal principal) {
-		if(principal != null) {
+		if (principal != null) {
 			final GenericMapper<UserInternalInfo, UserInfo> mapper = new GenericMapper<>(modelMapper,
 					UserInternalInfo.class, UserInfo.class);
 			final UserInfo userActive = systemUserService.isUserActive(principal.getName());
@@ -86,14 +74,5 @@ public class UserAuthController {
 		}
 		throw new UnauthorizedException("Unauthorized access");
 	}
-	
-	@GetMapping("validate-token")
-	public ResponseEntity<Boolean> findByToken(Principal principal, HttpServletRequest request) {
-		if(principal != null) {
-			return ResponseEntity.ok(jwtService.validateTokenForUserName(Helper.extractUserNameAndToken(request).getRight()
-					, principal.getName()));
-		}
-		throw new UnauthorizedException("Unauthorized access");
-	}
-	
+
 }

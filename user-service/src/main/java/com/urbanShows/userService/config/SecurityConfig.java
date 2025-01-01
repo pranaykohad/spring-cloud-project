@@ -40,7 +40,7 @@ public class SecurityConfig {
 				.authorizeRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 						.requestMatchers("/actuator/**", "user/swagger-ui/**", "user/api-docs/**",
 								"api/user/system/auth/**", "api/user/app/auth/**", "api/user/kafka/**",
-								"api/user/app-info/**")
+								"api/user/app-info/**", "api/user/common/**")
 						.permitAll().anyRequest().authenticated())
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
