@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +20,13 @@ import com.urbanShows.userService.dto.UserResponseDto;
 import com.urbanShows.userService.dto.UserSigninDto;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.exception.AccessDeniedException;
+import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.UserService;
+import com.urbanShows.userService.util.Helper;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -68,11 +72,22 @@ public class UserAuthController {
 		jwtService.invalidateToken(token);
 		return ResponseEntity.ok(true);
 	}
-
-	@GetMapping("validate-jwt")
-	public ResponseEntity<Boolean> validateJwt(@RequestParam String token, Principal principal) {
-		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
-		return ResponseEntity.ok(jwtService.validateTokenForUserName(token, existingUser.getUserName()));
+	
+	@GetMapping("loggedin-user-info")
+	public ResponseEntity<UserInfo> getLoggedinUserInfo(Principal principal) {
+		if(principal != null) {
+			return ResponseEntity.ok(systemUserService.isUserActive(principal.getName()));
+		}
+		throw new UnauthorizedException("Unauthorized access");
+	}
+	
+	@GetMapping("validate-token")
+	public ResponseEntity<Boolean> findByToken(Principal principal, HttpServletRequest request) {
+		if(principal != null) {
+			return ResponseEntity.ok(jwtService.validateTokenForUserName(Helper.extractUserNameAndToken(request).getRight()
+					, principal.getName()));
+		}
+		throw new UnauthorizedException("Unauthorized access");
 	}
 	
 }
