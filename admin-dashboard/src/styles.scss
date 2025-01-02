@@ -219,7 +219,6 @@ input {
   background: #22c55e;
 }
 
-
 .p-inputswitch .p-inputswitch-slider {
   background: #ef4444;
 }
@@ -240,4 +239,30 @@ input {
 .success-btn {
   background-color: green;
   border: 1px solid green;
+}
+
+.p-submenu-header {
+  display: none;
+}
+
+#nav-bar-menu {
+  background-color: #ff9980;
+}
+
+// #nav-bar-menu:hover {
+//   background-color: #ffc2b3;
+// }
+
+// background-color: #ffc2b3
+.p-menuitem-active {
+  background-color: #ff9980;
+}
+
+.p-megamenu .p-menuitem > .p-menuitem-content {
+  border-radius: 0;
+}
+
+.p-megamenu-panel {
+  border-radius: 0;
+  border: 1px solid lightgrey;
 }

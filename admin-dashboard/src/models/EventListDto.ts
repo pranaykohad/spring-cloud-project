@@ -10,8 +10,8 @@ export interface Event {
   eventDescription: string;
   createdOn: string;
   bookingOpenFrom: string;
-  bookingOpenTill: string;
-  openBooking: string;
+  bookingOpenAt: string;
+  bookingOpen: string;
   userMinAge: number;
   organizer: string;
   eventType: EventType;

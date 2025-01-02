@@ -32,7 +32,7 @@ export class NavbarComponent {
         items: [
           [
             {
-              label: 'User Section',
+              // label: 'User Section',
               items: [
                 {
                   label: 'User List',
@@ -59,7 +59,7 @@ export class NavbarComponent {
         items: [
           [
             {
-              label: 'Event Section',
+              // label: 'Event Section',
               items: [
                 {
                   label: 'Event List',
