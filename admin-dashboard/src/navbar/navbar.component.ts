@@ -62,9 +62,9 @@ export class NavbarComponent {
               label: 'Event Section',
               items: [
                 {
-                  label: 'Event',
+                  label: 'Event List',
                   command: () => {
-                    this.openSection('event');
+                    this.openSection('event-list');
                   },
                 },
               ],

@@ -22,9 +22,9 @@ export class EventDatatableComponent {
     eventNameEmitter = new EventEmitter<string>();
 
     onRowSelect(event: TableRowSelectEvent) {
-      // if (event.data) {
-      //   this.router.navigate(['profile', event.data.userName]);
-      // }
+      if (event.data) {
+        this.router.navigate(['event-details', event.data.id]);
+      }
     }
 
     customSort(event: any) {}

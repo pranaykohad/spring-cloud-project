@@ -55,10 +55,17 @@ export const routes: Routes = [
               ),
           },
           {
-            path: 'event',
+            path: 'event-list',
             loadComponent: () =>
               import('../event/event.component').then(
                 (m) => m.EventComponent
+              ),
+          },
+          {
+            path: 'event-details/:eventId',
+            loadComponent: () =>
+              import('../event/event-details/event-details.component').then(
+                (m) => m.EventDetailsComponent
               ),
           },
           {
