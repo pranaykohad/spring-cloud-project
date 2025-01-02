@@ -233,7 +233,11 @@ input {
   color: black;
 }
 
-
 .position-static {
   position: static;
+}
+
+.success-btn {
+  background-color: green;
+  border: 1px solid green;
 }

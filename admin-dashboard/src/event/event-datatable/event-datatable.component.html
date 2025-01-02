@@ -1,0 +1,50 @@
+@if(eventListDto){
+  <p-table id="event-datatable" [resizableColumns]="true" [paginator]="true" [rows]="eventListDto.columnConfig.rowsPerPage"
+    [showCurrentPageReport]="true" styleClass="p-datatable-gridlines position-static" [columns]="eventListDto.columnConfig.columns"
+    [value]="eventListDto.eventList" selectionMode="single" (onRowSelect)="onRowSelect($event)">
+    <ng-template pTemplate="header" let-columns>
+      <tr class="border-grey">
+        @for (column of columns; track $index) {
+        <th pResizableColumn [pSortableColumn]="column" [class]="'position-static'">
+          {{column | column}}
+          <p-sortIcon [field]="column"></p-sortIcon>
+        </th>
+        }
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-userInfo let-columns="columns">
+      <tr class="border-grey" [pSelectableRow]="userInfo">
+        @for (column of columns; track $index) {
+        @if (column === "password") {
+        <td>
+          <div [class]="'ellipsis'">{{userInfo[column]}}</div>
+        </td>
+        } @else if(column === "profilePicUrl") {
+        <td style="padding: 5px">
+          @if(userInfo.profilePicUrl){
+          <img src="{{userInfo.profilePicUrl}}" class="user-profile-img" />
+          } @else {
+        <td class="no-img">no image</td>
+        }
+        </td>
+        } @else if (column === "status") {
+        <td>
+          <p-tag [value]="userInfo[column]" [severity]="userInfo[column] === 'ACTIVE' ? 'success' : 'danger'" />
+        </td>
+        } @else if (column === "createdAt") {
+        <td>
+          {{userInfo[column] | date: 'medium'}}
+        </td>
+        } @else if (column === "roles") {
+        <td>
+          {{userInfo[column] | role}}
+        </td>
+        } @else {
+        <td>{{userInfo[column]}}</td>
+        }
+        }
+      </tr>
+    </ng-template>
+    <!-- <ng-template pTemplate="footer">paginator</ng-template> -->
+  </p-table>
+  }

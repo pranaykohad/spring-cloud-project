@@ -1,24 +1,17 @@
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
-import { SharedModule } from '../shared/shared.module';
-import { UserInfo, UserInfoListObject } from '../models/UserInfo';
 import { TableRowSelectEvent } from 'primeng/table';
+import { UserInfoListObject } from '../../models/UserInfoListObject';
+import { SharedModule } from '../../shared/shared.module';
 
 @Component({
-  selector: 'app-datatable',
+  selector: 'app-user-datatable',
   standalone: true,
   imports: [SharedModule],
-  templateUrl: './datatable.component.html',
-  styleUrl: './datatable.component.scss',
+  templateUrl: './user-datatable.component.html',
+  styleUrl: './user-datatable.component.scss',
 })
-export class DatatableComponent {
+export class UserDatatableComponent {
   constructor(private router: Router) {}
 
   first: number = 0;
@@ -33,6 +26,12 @@ export class DatatableComponent {
       this.router.navigate(['profile', event.data.userName]);
     }
   }
+
+  //TODO:
+  // custom sorting
+  // custom filter
+  // custom search
+  // global search
 
   customSort(event: any) {}
 }

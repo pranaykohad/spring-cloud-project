@@ -19,7 +19,7 @@
           <div class="disable-div">{{newUserBasicDetails.createdAt | date: 'medium'}}</div>
         </div>
         <button pTooltip="Sync Details" pButton type="button" icon="pi pi-sync"
-          class="p-button-success p-button-outlined sync-btn" (click)="syncDetails()"></button>
+          class="p-button-outlined sync-btn" (click)="syncDetails()"></button>
       </div>
     </div>
     <p-tabView>
@@ -110,7 +110,7 @@
                     (input)="clearSecuredDetailsValidation('PHONE')" [maxlength]="10" />
                   <span class="error-cntr">{{newUserSecuredDetailsError.phone}}</span>
                 </div>
-                <p-button label="Send OTP to phone" icon="pi pi-phone" styleClass="p-button-sm p-button-secondary"
+                <p-button label="Send OTP to phone" icon="pi pi-phone" styleClass="p-button-sm success-btn"
                   class="otp-btn-left-mar" [style]="{width: '200px'}" (click)="loadOtpForActivation('PHONE')"
                   [disabled]="editSecuredDetails.phoneValidated"></p-button>
               </div>
@@ -132,7 +132,7 @@
                     (input)="clearSecuredDetailsValidation('EMAIL')" />
                   <span class="error-cntr">{{newUserSecuredDetailsError.email}}</span>
                 </div>
-                <p-button label="Send OTP to email" icon="pi pi-envelope" styleClass="p-button-sm p-button-secondary"
+                <p-button label="Send OTP to email" icon="pi pi-envelope" styleClass="p-button-sm success-btn"
                   class="otp-btn-left-mar" [style]="{width: '200px'}" (click)="loadOtpForActivation('EMAIL')"
                   [disabled]="editSecuredDetails.emailValidated"></p-button>
               </div>

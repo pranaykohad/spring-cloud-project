@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment';
-import { UserInfoListObject } from '../models/UserInfo';
+import { UserInfoListObject } from '../models/UserInfoListObject';
 import {
   UserBasicDetails,
   UserSecuredDetailsReq,
@@ -13,6 +13,7 @@ import {
   providedIn: 'root',
 })
 export class UserService {
+
   private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}

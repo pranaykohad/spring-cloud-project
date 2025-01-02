@@ -124,7 +124,7 @@ export class NavbarComponent {
     private router: Router
   ) {}
 
-  openSection(section: string){
+  openSection(section: string) {
     switch (section) {
       case 'profile':
         this.openProfile();
@@ -138,25 +138,19 @@ export class NavbarComponent {
   }
 
   logout() {
-    const loggedinUserDetails: LoggedInUserDetails =
-      this.localstorageService.getItem(LocalStorageKeys.LOGGED_IN_USER_DETAILS);
-    if (loggedinUserDetails !== null) {
-      this.systemUserAuthService
-        .userLogout(loggedinUserDetails.jwt)
-        .subscribe((res: boolean) => {
-          if (res) {
-            const inMemoryUserName = this.localstorageService.getItem(
-              LocalStorageKeys.INMEMORY_USERNAME
-            );
-            this.localstorageService.clear();
-            this.localstorageService.setItem(
-              LocalStorageKeys.INMEMORY_USERNAME,
-              inMemoryUserName
-            );
-            this.router.navigate(['login']);
-          }
-        });
-    }
+    this.systemUserAuthService.userLogout().subscribe((res: boolean) => {
+      if (res) {
+        const inMemoryUserName = this.localstorageService.getItem(
+          LocalStorageKeys.INMEMORY_USERNAME
+        );
+        this.localstorageService.clear();
+        this.localstorageService.setItem(
+          LocalStorageKeys.INMEMORY_USERNAME,
+          inMemoryUserName
+        );
+        this.router.navigate(['login']);
+      }
+    });
   }
 
   private isSectionVisible(section: string): boolean {
@@ -190,5 +184,4 @@ export class NavbarComponent {
       this.router.navigate(['profile', this.loggedInUserDetails.userName]);
     }
   }
-
 }

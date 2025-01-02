@@ -1,13 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { LocalStorageKeys, Msg } from '../../models/Enums';
+import { Msg } from '../../models/Enums';
 import { InternalMsg } from '../../models/InternalMsg';
 import { LoggedInUserDetails } from '../../models/LoggedinUserDetails';
 import { NavbarComponent } from '../../navbar/navbar.component';
 import { UserAuthService } from '../../services/user-auth.service';
 import { SharedModule } from '../../shared/shared.module';
 import { MessageService } from './../../behaviorSubject/message.service';
-import { LocalstorageService } from '../../services/localstorage.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -22,8 +21,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   constructor(
     private systemUserAuthService: UserAuthService,
-    private messageService: MessageService,
-    private localstorageService: LocalstorageService
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {

@@ -46,9 +46,9 @@ export class UserAuthService {
     );
   }
 
-  userLogout(token: string): Observable<boolean> {
+  userLogout(): Observable<boolean> {
     return this.http.get<boolean>(
-      `${this.baseUrl}api/user/system/auth/logout?token=${token}`
+      `${this.baseUrl}api/user/common/logout`
     );
   }
 }

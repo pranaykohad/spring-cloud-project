@@ -1,5 +1,5 @@
 @if(userInfoListObject){
-<p-table id="datatable" [resizableColumns]="true" [paginator]="true" [rows]="userInfoListObject.columnConfig.rowsPerPage"
+<p-table id="user-datatable" [resizableColumns]="true" [paginator]="true" [rows]="userInfoListObject.columnConfig.rowsPerPage"
   [showCurrentPageReport]="true" styleClass="p-datatable-gridlines position-static" [columns]="userInfoListObject.columnConfig.columns"
   [value]="userInfoListObject.userInfoList" selectionMode="single" (onRowSelect)="onRowSelect($event)">
   <ng-template pTemplate="header" let-columns>

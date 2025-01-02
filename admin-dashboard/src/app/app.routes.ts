@@ -26,8 +26,8 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('../dashboard/main/main/main.component').then(
-                (m) => m.MainComponent
+              import('../user/user.component').then(
+                (m) => m.UserComponent
               ),
             canActivate: [AuthGuard],
             data: {
@@ -57,7 +57,7 @@ export const routes: Routes = [
           {
             path: 'event',
             loadComponent: () =>
-              import('../event/event/event.component').then(
+              import('../event/event.component').then(
                 (m) => m.EventComponent
               ),
           },
