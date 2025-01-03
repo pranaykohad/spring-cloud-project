@@ -1,5 +1,5 @@
 @if(userInfoListObject){
-<p-table id="user-datatable" [resizableColumns]="true" [paginator]="true" [rows]="userInfoListObject.columnConfig.rowsPerPage"
+<p-table id="user-datatable" [resizableColumns]="true" [paginator]="true" [rows]="userInfoListObject.recordsPerPage"
   [showCurrentPageReport]="true" styleClass="p-datatable-gridlines position-static" [columns]="userInfoListObject.columnConfig.columns"
   [value]="userInfoListObject.userInfoList" selectionMode="single" (onRowSelect)="onRowSelect($event)">
   <ng-template pTemplate="header" let-columns>
@@ -29,7 +29,7 @@
       </td>
       } @else if (column === "status") {
       <td>
-        <p-tag [value]="userInfo[column]" [severity]="userInfo[column] === 'ACTIVE' ? 'success' : 'danger'" />
+        <p-tag [value]="userInfo[column]" [severity]="userInfo[column] === 'ACTIVE' ? 'success' : 'danger'" [style]="{width: '120px'}"/>
       </td>
       } @else if (column === "createdAt") {
       <td>

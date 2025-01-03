@@ -1,7 +1,7 @@
-@if(eventListDto){
-<p-table id="event-datatable" [resizableColumns]="true" [paginator]="true"
-  [rows]="eventListDto.columnConfig.rowsPerPage" [showCurrentPageReport]="true"
-  styleClass="p-datatable-gridlines position-static" [columns]="eventListDto.columnConfig.columns"
+@if(eventListDto && eventListDto.eventList.length){
+<p-table id="event-datatable" [resizableColumns]="true" [paginator]="false"
+  [rows]="eventListDto.eventPage.recordsPerPage" [showCurrentPageReport]="true"
+  styleClass="p-datatable-gridlines position-static d-flex flex-column" [columns]="eventListDto.columnConfig.columns"
   [value]="eventListDto.eventList" selectionMode="single" (onRowSelect)="onRowSelect($event)">
   <ng-template pTemplate="header" let-columns>
     <tr class="border-grey">
@@ -19,9 +19,10 @@
       @if (isDateColumn(column)) {
       <td>{{eventInfo[column] | date: 'medium'}}</td>
       } @else if(column === "bookingOpen"){
-        <td>
-          <p-tag [value]="eventInfo[column] ? 'OPEN' : 'CLOSE' " [severity]="eventInfo[column] ? 'success' : 'danger'" />
-        </td>
+      <td>
+        <p-tag [value]="eventInfo[column] ? 'OPEN' : 'CLOSE' " [severity]="eventInfo[column] ? 'success' : 'danger'"
+          [style]="{width: '120px'}" />
+      </td>
       }@else {
       <td>{{eventInfo[column]}}</td>
       }
@@ -29,4 +30,7 @@
     </tr>
   </ng-template>
 </p-table>
+<app-paginator [eventListDto]="eventListDto" (pageEmitter)="pageEmitter.emit($event)"></app-paginator>
+} @else {
+  <div class="d-flex justify-content-center">No data found</div>
 }

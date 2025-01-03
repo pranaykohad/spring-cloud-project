@@ -1,10 +1,5 @@
 <div id="event" class="m-3">
   <p-card header="Event list">
-    <div>
-      <div>search and filters</div>
-      <div>
-        <app-event-datatable [eventListDto]="eventListDto"></app-event-datatable>
-      </div>
-    </div>
+    <app-event-datatable [eventListDto]="eventListDto" (pageEmitter)="pageEmitHandler($event)"></app-event-datatable>
   </p-card>
 </div>

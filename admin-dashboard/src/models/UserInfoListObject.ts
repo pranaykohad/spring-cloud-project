@@ -12,11 +12,12 @@ export interface UserInfo {
 
 export interface ColumnConfig {
   columns: string[];
-  totalRows: number;
-  rowsPerPage: number;
 }
 
 export interface UserInfoListObject {
   columnConfig: ColumnConfig;
   userInfoList: UserInfo[];
+  totalRecords: number;
+  totalPages: number;
+  recordsPerPage: number;
 }

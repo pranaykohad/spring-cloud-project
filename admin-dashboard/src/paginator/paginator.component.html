@@ -1,0 +1,32 @@
+<div class="d-flex justify-content-center align-items-center m-2">
+  <div class="d-flex align-items-center col-4">
+    <div [style]="{marginRight: '20px'}">
+      Total records: {{eventListDto.eventPage.totalRecords}}
+    </div>
+  </div>
+  <div class="d-flex col-8 align-items-center">
+    <div>Showing {{eventListDto.eventPage.rowStartIndex}} to {{eventListDto.eventPage.rowEndIndex}} of
+      {{eventListDto.eventPage.filteredRecords}} entries</div>
+    <div class="d-flex align-items-center justify-content-center">
+      <div class="d-flex">
+        <button pButton type="button" icon="pi pi-angle-double-left"
+          class="p-button-rounded p-button-text nav-btn d-flex"></button>
+        <button pButton type="button" icon="pi pi-angle-left"
+          class="p-button-rounded p-button-text nav-btn d-flex justify-content-center"></button>
+      </div>
+      <div class="d-flex align-items-center">
+        @for (pageNumber of eventListDto.eventPage.displayPagesIndex; track $index) {
+        <button pButton pRipple type="button" #pageNumber class="p-button-text nav-btn d-flex justify-content-center"
+          [class]="pageNumber === this.eventListDto.eventPage.currentPage ? 'nav-btn-active' : ''"
+          (click)="pageEmitter.emit(pageNumber)">{{pageNumber + 1}}</button>
+        }
+      </div>
+      <div class="d-flex">
+        <button pButton type="button" icon="pi pi-angle-right"
+          class="p-button-rounded p-button-text nav-btn d-flex justify-content-center"></button>
+        <button pButton type="button" icon="pi pi-angle-double-right"
+          class="p-button-rounded p-button-text nav-btn d-flex justify-content-center"></button>
+      </div>
+    </div>
+  </div>
+</div>

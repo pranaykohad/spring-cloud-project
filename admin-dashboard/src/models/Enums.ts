@@ -16,3 +16,12 @@ export enum Msg {
   DISABLE_LOADER,
   UPDATE_LOGGEDIN_USER_DETAILS
 }
+
+export enum SearchOperator {
+	EQUALS, LIKE, GT, GTE, LT, LTE, RANGE
+}
+
+export enum SortOrder {
+	ASC,
+	DESC
+}

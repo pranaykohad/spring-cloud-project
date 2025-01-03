@@ -1,3 +1,4 @@
+import { EventPage } from './EventPage';
 import { ColumnConfig } from './UserInfoListObject';
 
 export interface EventType {
@@ -20,4 +21,5 @@ export interface Event {
 export interface EventListDto {
   columnConfig: ColumnConfig;
   eventList: Event[];
+  eventPage: EventPage;
 }
