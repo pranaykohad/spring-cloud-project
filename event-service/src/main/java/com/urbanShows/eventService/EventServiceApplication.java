@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import com.urbanShows.eventService.testingData.InsertEventDataSample;
+
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,11 +17,13 @@ import lombok.extern.slf4j.Slf4j;
 @EnableJpaRepositories("com.urbanShows.eventService.repository")
 @Slf4j
 public class EventServiceApplication {
-	
-	private final Environment environment;
 
-	EventServiceApplication(Environment environment) {
+	private final Environment environment;
+	private final InsertEventDataSample insertEventDataSample;
+
+	EventServiceApplication(Environment environment, InsertEventDataSample insertEventDataSample) {
 		this.environment = environment;
+		this.insertEventDataSample = insertEventDataSample;
 	}
 
 	@Value("${server.port}")
@@ -27,21 +31,21 @@ public class EventServiceApplication {
 
 	@Value("${springdoc.swagger-ui.path}")
 	private String swaggerPath;
-	
+
 	@Value("${user.service.url}")
 	private String userServiceUrl;
-	
+
 	@Value("${spring.kafka.consumer.bootstrap-servers}")
 	private String kafkaConsumerServer;
-	
+
 	public static void main(String[] args) {
 		SpringApplication.run(EventServiceApplication.class, args);
 	}
 
 	@PostConstruct
 	public void postConstruct() {
-		log.info("Event Service is started on port: {}, swagger URL: {}" , port , swaggerPath);
-		log.info("User Service URL: {}, Kafka Consumer URL: {}" , userServiceUrl , kafkaConsumerServer);
+		log.info("Event Service is started on port: {}, swagger URL: {}", port, swaggerPath);
+		log.info("User Service URL: {}, Kafka Consumer URL: {}", userServiceUrl, kafkaConsumerServer);
 		final String[] activeProfiles = environment.getActiveProfiles();
 		if (activeProfiles.length == 0) {
 			log.info("No active profile is set.");
@@ -51,6 +55,13 @@ public class EventServiceApplication {
 				log.info(profile);
 			}
 		}
+		addInitialData();
+	}
+
+	private void addInitialData() {
+//		insertEventDataSample.insertEventTypeSampleDate();
+//		insertEventDataSample.insertEventSampleDate();
+		
 	}
 
 }

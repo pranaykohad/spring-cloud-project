@@ -1,15 +1,18 @@
 package com.urbanShows.eventService.entity;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity(name = "EVENT_TYPE")
 @Data
@@ -19,12 +22,14 @@ import lombok.NoArgsConstructor;
 public class EventType {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
-
 	private String eventTypeName;
 
-	@OneToOne
-    @JoinColumn(name = "event_id", nullable = false)
-	private Event event;
+//	@OneToOne(mappedBy = "eventType")
+//	@ToString.Exclude
+//	private Event event;
+	
+//	@OneToMany(mappedBy = "eventType", cascade = CascadeType.ALL, orphanRemoval = true)
+//	@OneToMany
+//    private List<Event> events;
+
 }

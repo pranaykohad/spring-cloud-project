@@ -47,14 +47,25 @@ public class AuthService {
 	public boolean validateToken(String jwt) {
 		try {
 			final ResponseEntity<Boolean> isValidate = restTemplate.exchange(
-					(userServiceUrl + "/api/user/system/auth/validate-token"), HttpMethod.GET, buildHeaderEntity(jwt),
+					(userServiceUrl + "/api/user/common/validate-token"), HttpMethod.GET, buildHeaderEntity(jwt),
 					Boolean.class);
 			return isValidate.getBody();
 		} catch (Exception e) {
 			throw new ConnectionException("Error in user service, please try later");
 		}
 	}
-
+	
+	public boolean checkIsUserActive(String jwt) {
+		try {
+			final ResponseEntity<Boolean> isValidate = restTemplate.exchange(
+					(userServiceUrl + "/api/user/common/is-user-active"), HttpMethod.GET, buildHeaderEntity(jwt),
+					Boolean.class);
+			return isValidate.getBody();
+		} catch (Exception e) {
+			throw new ConnectionException("Error in user service, please try later");
+		}
+	}
+	
 	private HttpEntity<String> buildHeaderEntity(String jwt) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer " + jwt);

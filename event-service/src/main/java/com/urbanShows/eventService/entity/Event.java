@@ -1,16 +1,13 @@
 package com.urbanShows.eventService.entity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -33,17 +30,18 @@ public class Event {
 
 	private LocalDateTime createdOn;
 
-	private LocalDateTime bookingOpenFrom;
+	private LocalDateTime bookingOpenAt;
 
-	private LocalDateTime bookingOpenTill;
+	private LocalDateTime bookingCloseAt;
 
-	private boolean openBooking;
+	private boolean bookingOpen;
 
 	private int userMinAge;
 
 	private String organizer;
 
-	@OneToOne(mappedBy = "event", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@ManyToOne
+	@JoinColumn(name = "event_type_id")
 	private EventType eventType;
 //	
 //	private List<EventMedia> eventPhotos;
