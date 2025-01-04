@@ -12,7 +12,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import com.urbanShows.eventService.config.EventSpecification;
 import com.urbanShows.eventService.constant.TableConfig;
 import com.urbanShows.eventService.dto.ColumnConfigDto;
 import com.urbanShows.eventService.dto.EventDto;
@@ -73,15 +72,6 @@ public class EventService {
 		final int rowStartIndex = currentPage * TableConfig.PAGE_SIZE;
 		eventPage.setRowStartIndex(rowStartIndex + 1);
 		eventPage.setRowEndIndex(rowStartIndex + currentRecordSize);
-//		final List<Integer> list = new ArrayList<>();
-//		int lastPageIndex = eventPage.getTotalPages() - 1;
-//		int startPageIndex = 0;
-//		if (eventPage.getCurrentPage() <= 3) {
-//			lastPageIndex = eventPage.getCurrentPage() + 2;
-//		}
-//		for (int i = startPageIndex; i <= lastPageIndex; i++) {
-//			list.add(i);
-//		}
 		eventPage
 				.setDisplayPagesIndex(generateDisplayPagesIndex(eventPage.getTotalPages(), eventPage.getCurrentPage()));
 
