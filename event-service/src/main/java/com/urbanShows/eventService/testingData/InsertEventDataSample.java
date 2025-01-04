@@ -57,7 +57,6 @@ public class InsertEventDataSample {
 			Optional<EventType> eventType = eventTypeRepository.findById(eventTypeId);
 			eventType.ifPresent(event::setEventType);
 
-			System.out.println(event);
 			eventRepository.save(event);
 		});
 	}
