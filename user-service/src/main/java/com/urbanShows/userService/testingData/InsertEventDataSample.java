@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.IntStream;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.urbanShows.userService.entity.UserInfo;
@@ -17,6 +18,8 @@ import lombok.AllArgsConstructor;
 @Component
 @AllArgsConstructor
 public class InsertEventDataSample {
+	
+	private final PasswordEncoder passwordEncoder;
 
 	private final String[] userNames = { "Aarav", "Vivaan", "Aditya", "Vihaan", "Arjun", "Sai", "Aryan", "Kabir",
 			"Krishna", "Atharv", "Ananya", "Aanya", "Saanvi", "Diya", "Riya", "Ishita", "Anika", "Meera", "Aditi",
@@ -43,7 +46,7 @@ public class InsertEventDataSample {
 			final UserInfo userInfo = new UserInfo();
 
 			userInfo.setUserName(userNames[i % userNames.length] + " #" + i);
-			userInfo.setPassword(userNames[i % userNames.length] + " #" + i);
+			userInfo.setPassword(passwordEncoder.encode(userNames[i % userNames.length] + " #" + i));
 			userInfo.setEmail(userNames[i % userNames.length] + "@gmail.com");
 			userInfo.setPhone(phoneNumbers[i % phoneNumbers.length]);
 			userInfo.setDisplayName(userNames[i % userNames.length] + " #" + i);

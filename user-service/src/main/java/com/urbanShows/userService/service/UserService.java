@@ -2,26 +2,33 @@ package com.urbanShows.userService.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.urbanShows.userService.azure.AzureBlobStorageService;
-import com.urbanShows.userService.config.TableConfig;
-import com.urbanShows.userService.constants.ColumnConfigList;
-import com.urbanShows.userService.dto.ColumnConfig;
+import com.urbanShows.userService.constants.TableConfig;
+import com.urbanShows.userService.dto.ColumnConfigDto;
+import com.urbanShows.userService.dto.SearchRequest;
 import com.urbanShows.userService.dto.UserBasicDetails;
 import com.urbanShows.userService.dto.UserInfoDto;
-import com.urbanShows.userService.dto.UserInfoListDto;
+import com.urbanShows.userService.dto.UserInfoRespone;
+import com.urbanShows.userService.dto.UserPage;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSigninDto;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.enums.Role;
+import com.urbanShows.userService.enums.SortOrder;
 import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.exception.AccessDeniedException;
 import com.urbanShows.userService.exception.IncorrectOtpException;
@@ -43,7 +50,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserService {
 
-	private final UserInfoRepository systemUserRepo;
+	private final UserInfoRepository userInfoRepository;
 	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
 	private final MessageProducer messageProducer;
@@ -54,11 +61,11 @@ public class UserService {
 		final UserInfo appUser = new UserInfo();
 		appUser.setUserName(systemUserDto.getUserName());
 		appUser.setProfilePicUrl(profilePicUrl);
-		systemUserRepo.save(appUser);
+		userInfoRepository.save(appUser);
 	}
 
 	public UserInfo authenticateSystemUserByOtp(String userName, String otp) {
-		final UserInfo systemUser = systemUserRepo.findByUserNameAndOtp(userName, otp);
+		final UserInfo systemUser = userInfoRepository.findByUserNameAndOtp(userName, otp);
 		if (systemUser == null) {
 			throw new IncorrectOtpException("OTP is not correct or expired");
 		}
@@ -66,7 +73,7 @@ public class UserService {
 	}
 
 	public UserInfo authenticateSystemUserByPassword(String userName, String password) {
-		final UserInfo systemUser = systemUserRepo.findByUserNameAndPassword(userName,
+		final UserInfo systemUser = userInfoRepository.findByUserNameAndPassword(userName,
 				passwordEncoder.encode(password.trim()));
 		if (systemUser == null) {
 			throw new AccessDeniedException("Username or password is not correct");
@@ -76,17 +83,17 @@ public class UserService {
 
 	public void uploadSystemUserProfilePicUrl(UserInfo systemUser, String profilePicUrl) {
 		systemUser.setProfilePicUrl(profilePicUrl);
-		systemUserRepo.save(systemUser);
+		userInfoRepository.save(systemUser);
 	}
 
 	public Boolean addSystemUser(UserSigninDto systemUserSigninDto) {
 		if (systemUserSigninDto.getRoles().contains(Role.SUPER_ADMIN_USER)) {
-			final List<UserInfo> usersByRoles = systemUserRepo.findByRoles(systemUserSigninDto.getRoles());
+			final List<UserInfo> usersByRoles = userInfoRepository.findByRoles(systemUserSigninDto.getRoles());
 			if (!usersByRoles.isEmpty()) {
 				throw new UnauthorizedException("You are not authorized to perform this operation");
 			}
 		}
-		if (systemUserRepo.existsById(systemUserSigninDto.getUserName())) {
+		if (userInfoRepository.existsById(systemUserSigninDto.getUserName())) {
 			throw new UserAlreadyExistsException("User already exists in the system");
 		}
 		final UserInfo systemUser = new UserInfo();
@@ -105,34 +112,23 @@ public class UserService {
 			systemUser.setEmailValidated(true);
 		});
 		systemUser.setCreatedAt(LocalDateTime.now());
-		systemUserRepo.save(systemUser);
+		userInfoRepository.save(systemUser);
 		log.info("System User {} is register in the system ", systemUserSigninDto.getUserName());
 		return true;
 	}
 
-	public UserInfoListDto getSystemUsersList() {
-		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class,
-				UserInfo.class);
-
-		final int count = (int) systemUserRepo.count();
-		final ColumnConfig columnConfig = new ColumnConfig();
-		columnConfig.setColumns(ColumnConfigList.USER_COlUMNS);
-
-		final List<UserInfo> all = systemUserRepo.findAll();
-		final UserInfoListDto userInfoListDto = new UserInfoListDto();
-		userInfoListDto.setUserInfoList(mapper.entityToDto(all));
-		userInfoListDto.setColumnConfig(columnConfig);
-		userInfoListDto.setTotalRecords(count);
-		userInfoListDto.setTotalPages(count / TableConfig.PAGE_SIZE);
-		userInfoListDto.setRecordsPerPage(TableConfig.PAGE_SIZE);
-		return userInfoListDto;
+	public UserInfoRespone getSystemUsersList(SearchRequest searchRequest) {
+		final Pageable pageable = buildPage(searchRequest);
+		final Specification<UserInfo> spec = UserSpecification.buildSpecification(searchRequest.getSearchFilters());
+		final Page<UserInfo> list = userInfoRepository.findAll(spec, pageable);
+		return pageableEventResponse(list, spec, searchRequest.getCurrentPage());
 	}
 
 	@Transactional
 	public void deleteSystemUserByUserName(UserInfoDto systemUserDto) {
 		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class,
 				UserInfo.class);
-		systemUserRepo.delete(mapper.dtoToEntity(systemUserDto));
+		userInfoRepository.delete(mapper.dtoToEntity(systemUserDto));
 	}
 
 	public boolean udpateSecuredUserDetails(UserSecuredDetailsReq securedDetailsReq, UserInfo targetUser,
@@ -165,7 +161,7 @@ public class UserService {
 			uploadSystemUserProfilePicUrl(targetUser, fileUrl);
 		}
 
-		systemUserRepo.save(targetUser);
+		userInfoRepository.save(targetUser);
 		return true;
 	}
 
@@ -194,7 +190,7 @@ public class UserService {
 			targetUserInfo.setEmailValidated(false);
 			targetUserInfo.setStatus(Status.INACTIVE);
 		}
-		systemUserRepo.save(targetUserInfo);
+		userInfoRepository.save(targetUserInfo);
 	}
 
 	public UserInfo isUserActive(String userName) {
@@ -207,7 +203,7 @@ public class UserService {
 	}
 
 	public UserInfo getExistingSystemUser(String userName) {
-		final UserInfo existingUser = systemUserRepo.findByUserName(userName);
+		final UserInfo existingUser = userInfoRepository.findByUserName(userName);
 		if (existingUser == null) {
 			throw new UserNotFoundException("User doesnot exists in the system");
 		}
@@ -219,9 +215,63 @@ public class UserService {
 		return userInfo != null;
 	}
 
-//	public UserInfo isPermitted(UserInfo currentUser, UserInfo targetUser) {
-//		final Role role = currentUser.getRoles().get(0);
-//		return true;
-//	}
+	private Pageable buildPage(SearchRequest searchDto) {
+		Pageable pageable = PageRequest.of(0, TableConfig.PAGE_SIZE);
+		if (StringUtils.hasText(searchDto.getSortColumn())) {
+			final Sort sort = searchDto.getSortOrder().equals(SortOrder.DESC)
+					? Sort.by(searchDto.getSortColumn()).descending()
+					: Sort.by(searchDto.getSortColumn()).ascending();
+			pageable = PageRequest.of(searchDto.getCurrentPage(), TableConfig.PAGE_SIZE, sort);
+		}
+		return pageable;
+	}
+
+	private UserInfoRespone pageableEventResponse(Page<UserInfo> pagedEventList, Specification<UserInfo> spec, int currentPage) {
+		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class, UserInfo.class);
+		final UserInfoRespone eventDtoList = new UserInfoRespone();
+		final ColumnConfigDto columnConfig = new ColumnConfigDto(TableConfig.USER_COlUMNS);
+		eventDtoList.setColumnConfig(columnConfig);
+		eventDtoList.setUserInfoList(mapper.entityToDto(pagedEventList.getContent()));
+		eventDtoList.setUserPage(buildEventPage(spec, currentPage, pagedEventList.getContent().size()));
+		return eventDtoList;
+	}
+
+	private UserPage buildEventPage(Specification<UserInfo> spec, int currentPage, int currentRecordSize) {
+		final UserPage eventPage = new UserPage();
+		final int filteredCount = getEventCount(spec);
+		eventPage.setTotalPages((int) Math.ceil((double) filteredCount / TableConfig.PAGE_SIZE));
+		eventPage.setFilteredRecords(filteredCount);
+		eventPage.setTotalRecords(getEventCount(null));
+		eventPage.setRecordsPerPage(TableConfig.PAGE_SIZE);
+		eventPage.setCurrentPage(currentPage);
+		final int rowStartIndex = currentPage * TableConfig.PAGE_SIZE;
+		eventPage.setRowStartIndex(rowStartIndex + 1);
+		eventPage.setRowEndIndex(rowStartIndex + currentRecordSize);
+		eventPage
+				.setDisplayPagesIndex(generateDisplayPagesIndex(eventPage.getTotalPages(), eventPage.getCurrentPage()));
+
+		return eventPage;
+	}
+
+	private List<Integer> generateDisplayPagesIndex(int totalPages, int currentPage) {
+		List<Integer> displayPagesIndex = new ArrayList<>();
+
+		if (totalPages <= 0 || currentPage < 0 || currentPage >= totalPages) {
+			final Integer[] array = { 1, 2, 3, 4, 5 };
+			displayPagesIndex = new ArrayList<>(Arrays.asList(array));
+		} else {
+			int start = Math.max(0, Math.min(currentPage - 2, totalPages - 5));
+			int end = Math.min(totalPages, start + 5);
+
+			for (int i = start; i < end; i++) {
+				displayPagesIndex.add(i);
+			}
+		}
+		return displayPagesIndex;
+	}
+
+	private int getEventCount(Specification<UserInfo> spec) {
+		return spec != null ? (int) userInfoRepository.count(spec) : (int) userInfoRepository.count();
+	}
 
 }

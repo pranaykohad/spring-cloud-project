@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -15,9 +16,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.urbanShows.userService.dto.LoggedinUserDetails;
+import com.urbanShows.userService.dto.SearchRequest;
 import com.urbanShows.userService.dto.UserBasicDetails;
 import com.urbanShows.userService.dto.UserInfoDto;
-import com.urbanShows.userService.dto.UserInfoListDto;
+import com.urbanShows.userService.dto.UserInfoRespone;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSecuredDetailsRes;
 import com.urbanShows.userService.entity.UserInfo;
@@ -33,7 +35,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("api/user/system")
 @AllArgsConstructor
-@PreAuthorize("hasAnyAuthority('ROLE_SYSTEM_USER', 'ROLE_SUPER_ADMIN_USER', 'ROLE_ORGANIZER_USER')")
+@PreAuthorize("hasAnyAuthority('ROLE_SYSTEM_USER', 'ROLE_SUPER_ADMIN_USER', 'ROLE_ORGANIZER_USER', 'ROLE_ADMIN_USER')")
 public class UserController {
 
 	private final UserService systemUserService;
@@ -116,10 +118,10 @@ public class UserController {
 				.ok(systemUserService.udpateSecuredUserDetails(securedDetails, targetUser, principal.getName()));
 	}
 
-	@GetMapping("user-list")
-	public ResponseEntity<UserInfoListDto> getUsersList(Principal principal) {
+	@PostMapping("user-list")
+	public ResponseEntity<UserInfoRespone> getUsersList(@RequestBody SearchRequest searchRequest, Principal principal) {
 		systemUserService.isUserActive(principal.getName());
-		return ResponseEntity.ok(systemUserService.getSystemUsersList());
+		return ResponseEntity.ok(systemUserService.getSystemUsersList(searchRequest));
 	}
 
 	@GetMapping("user-activation")

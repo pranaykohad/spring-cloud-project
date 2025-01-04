@@ -57,11 +57,11 @@ public class UserServiceApplication {
 				log.info(profile);
 			}
 		}
-//		addInitialData();
+		addInitialData();
 	}
  
 	private void addInitialData() {
-		insertEventDataSample.insertUserSampleDate();		
+//		insertEventDataSample.insertUserSampleDate();		
 	}
 
 }
