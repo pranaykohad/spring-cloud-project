@@ -1,4 +1,5 @@
 <div id="profile" class="m-3">
+  @if(newUserBasicDetails) {
   <p-card header="Profile section" [style]="{passingTop: '0px'}">
     <div class="d-flex m-2">
       <div class="d-flex align-items-center" style="margin-right: 60px;">
@@ -10,7 +11,7 @@
       <div class="d-flex align-items-center" style="margin-right: 60px;">
         <div class="label-label-margin-right">User Roles:</div>
         <div>
-          <div class="disable-div">{{userSecuredDetails.roles}}</div>
+          <div class="disable-div">{{userSecuredDetails?.roles}}</div>
         </div>
       </div>
       <div class="d-flex align-items-center">
@@ -18,8 +19,8 @@
         <div>
           <div class="disable-div">{{newUserBasicDetails.createdAt | date: 'medium'}}</div>
         </div>
-        <button pTooltip="Sync Details" pButton type="button" icon="pi pi-sync"
-          class="p-button-outlined sync-btn" (click)="syncDetails()"></button>
+        <button pTooltip="Sync Details" pButton type="button" icon="pi pi-sync" class="p-button-outlined sync-btn"
+          (click)="syncDetails()"></button>
       </div>
     </div>
     <p-tabView>
@@ -118,8 +119,7 @@
             <div class="d-flex align-items-center div-margin-buttom">
               <div class="label-margin-right-cnf-pass">Phone validation status:</div>
               <div>
-                <i
-                  [ngClass]="userSecuredDetails.phoneValidated ? 'pi pi-check-square active-check': 'pi pi-times inactive-check'"></i>
+                <i [pTooltip]="userSecuredDetails.phoneValidated ? 'Validatation done' : 'Validatation pending'" [ngClass]="userSecuredDetails.phoneValidated ? 'pi pi-check-square active-check': 'pi pi-times inactive-check'"></i>
               </div>
             </div>
           </div>
@@ -140,7 +140,7 @@
             <div class="d-flex align-items-center div-margin-buttom">
               <div class="label-margin-right-cnf-pass">Email validation status:</div>
               <div>
-                <i
+                <i [pTooltip]="userSecuredDetails.phoneValidated ? 'Validatation done' : 'Validatation pending'"
                   [ngClass]="userSecuredDetails.emailValidated ? 'pi pi-check-square active-check': 'pi pi-times inactive-check'"></i>
               </div>
             </div>
@@ -169,6 +169,7 @@
       </p-tabPanel>
     </p-tabView>
   </p-card>
+  }
 </div>
 
 <ng-container #otpContainer></ng-container>

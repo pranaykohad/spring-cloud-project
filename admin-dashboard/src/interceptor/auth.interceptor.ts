@@ -42,7 +42,6 @@ export class AuthInterceptor implements HttpInterceptor {
       });
       req = req.clone({ headers: headers });
     }
-    // this.messageService.enableLoader();
     return this.Appinterceptor(next, req);
   }
 
@@ -50,20 +49,16 @@ export class AuthInterceptor implements HttpInterceptor {
     next: HttpHandler,
     clonedReq: HttpRequest<any>
   ): Observable<HttpEvent<any>> {
+    setTimeout(() => {
+      this.messageService.enableLoader();
+    });
     return next.handle(clonedReq).pipe(
       catchError((error) => {
-        if (error.status === 401) {
-          this.toastService.showErrorToast(error.error.error);
-          // this.router.navigate(['login']);
-        } else if (error.status === 503) {
-          this.toastService.showErrorToast(error.error.error);
-        } else {
-          this.toastService.showErrorToast(error.error.error);
-        }
+        this.toastService.showErrorToast(error.error.error);
         return throwError(() => error);
       }),
       finalize(() => {
-        // this.messageService.disableLoader();
+        this.messageService.disableLoader();
       })
     );
   }

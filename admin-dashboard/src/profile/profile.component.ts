@@ -116,12 +116,10 @@ export class ProfileComponent implements OnInit {
 
   updateBasicDetails() {
     if (this.validateBasicDetails() && this.enableBasicUpdateBtn) {
-      this.messageService.enableLoader();
       this.userService
         .updateBasicDetails(this.newUserBasicDetails)
         .subscribe((res: Boolean) => {
           if (res) {
-            this.messageService.disableLoader();
             this.toastService.showSuccessToast(
               'User basic details are updated successfully'
             );
@@ -289,7 +287,6 @@ export class ProfileComponent implements OnInit {
     this.otpComponent.instance.userName = this.userName;
     this.otpComponent.instance.device = device;
     this.otpComponent.instance.otpEmiter.subscribe((otp) => {
-      this.messageService.enableLoader();
       this.userService.userActivation(this.userName, otp).subscribe((res) => {
         if (device === 'EMAIL') {
           this.editSecuredDetails.emailValidated = true;
@@ -300,7 +297,6 @@ export class ProfileComponent implements OnInit {
         }
         this.enableSecuredUpdateBtn = true;
         this.otpComponent.instance.visible = false;
-        this.messageService.disableLoader();
       });
     });
   }
@@ -336,12 +332,10 @@ export class ProfileComponent implements OnInit {
             );
             this.getUserSecuredDetails();
             this.otpComponent.instance.visible = false;
-            this.messageService.disableLoader();
           }
         },
         error: (err: string) => {
           this.otpComponent.instance.visible = false;
-          this.messageService.disableLoader();
         },
       });
       this.enableSecuredUpdateBtn = false;
