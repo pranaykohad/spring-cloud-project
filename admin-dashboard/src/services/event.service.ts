@@ -13,10 +13,9 @@ export class EventService {
 
   constructor(private http: HttpClient) {}
 
-  getEventList(searchAndPage: SearchRequest): Observable<EventListDto> {
+  getEventList(searchRequest: SearchRequest): Observable<EventListDto> {
     return this.http.post<EventListDto>(
-      `${this.baseUrl}api/event/list`,
-      searchAndPage
+      `${this.baseUrl}api/event/list`, searchRequest
     );
   }
 }

@@ -1,4 +1,4 @@
-package com.urbanShows.eventService.config;
+package com.urbanShows.eventService.service;
 
 import java.util.List;
 
@@ -60,26 +60,4 @@ public class EventSpecification {
 		return null;
 	}
 
-//	public static Specification<Event> hasEventName(String eventName) {
-//		return (root, query, criteriaBuilder) -> StringUtils.hasText(eventName)
-//				? criteriaBuilder.like(root.get("eventName"), "%" + eventName + "%")
-//				: null;
-//	}
-//
-//	public static Specification<Event> hasOrganizer(String organizer) {
-//		return (root, query, criteriaBuilder) -> StringUtils.hasText(organizer)
-//				? criteriaBuilder.like(root.get("organizer"), "%" + organizer + "%")
-//				: null;
-//	}
-//
-//	public static Specification<Event> isBookingOpen(boolean bookingOpen) {
-//		return (root, query,
-//				criteriaBuilder) -> bookingOpen ? criteriaBuilder.equal(root.get("bookingOpen"), bookingOpen) : null;
-//	}
-
-//	public static Specification<Event> bookingStartsAfter(LocalDateTime dateTime) {
-//		return (root, query, criteriaBuilder) -> dateTime != null
-//				? criteriaBuilder.greaterThanOrEqualTo(root.get("bookingOpenAt"), dateTime)
-//				: null;
-//	}
 }

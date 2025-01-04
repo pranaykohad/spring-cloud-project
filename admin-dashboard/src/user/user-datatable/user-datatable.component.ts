@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { TableRowSelectEvent } from 'primeng/table';
-import { UserInfoListObject } from '../../models/UserInfoListObject';
+import { UserInfoRespone } from '../../models/UserInfoListObject';
 import { SharedModule } from '../../shared/shared.module';
+import { SortEvent } from 'primeng/api';
 
 @Component({
   selector: 'app-user-datatable',
@@ -12,14 +13,20 @@ import { SharedModule } from '../../shared/shared.module';
   styleUrl: './user-datatable.component.scss',
 })
 export class UserDatatableComponent {
+  displayPages: number[] = [1, 2, 3, 4, 5];
   constructor(private router: Router) {}
 
-  first: number = 0;
   @Input()
-  userInfoListObject!: UserInfoListObject;
+  userInfoListObject!: UserInfoRespone;
 
   @Output()
-  userNameEmitter = new EventEmitter<string>();
+  sortEventEmitter = new EventEmitter<{
+    sortColumn: string;
+    sortOrder: number;
+  }>();
+
+  @Output()
+  pageEmitter = new EventEmitter<number>();
 
   onRowSelect(event: TableRowSelectEvent) {
     if (event.data) {
@@ -27,11 +34,12 @@ export class UserDatatableComponent {
     }
   }
 
-  //TODO:
-  // custom sorting
-  // custom filter
-  // custom search
-  // global search
-
-  customSort(event: any) {}
+  customSort(event: SortEvent) {
+    if (event?.field && event?.order) {
+      this.sortEventEmitter.emit({
+        sortColumn: event.field,
+        sortOrder: event.order,
+      });
+    }
+  }
 }

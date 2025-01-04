@@ -27,9 +27,6 @@ export class EventDatatableComponent {
   eventListDto!: EventListDto;
 
   @Output()
-  eventNameEmitter = new EventEmitter<string>();
-
-  @Output()
   sortEventEmitter = new EventEmitter<{
     sortColumn: string;
     sortOrder: number;

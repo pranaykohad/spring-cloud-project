@@ -3,7 +3,8 @@
     <div>
       <div>search and filters</div>
       <div>
-        <app-user-datatable [userInfoListObject]="userInfoListObject"></app-user-datatable>
+        <app-user-datatable [userInfoListObject]="userInfoListObject" (pageEmitter)="pageEmitHandler($event)"
+        (sortEventEmitter)="sortEventHandler($event)"></app-user-datatable>
       </div>
     </div>
   </p-card>

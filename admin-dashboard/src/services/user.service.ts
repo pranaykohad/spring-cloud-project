@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environment';
-import { UserInfoListObject } from '../models/UserInfoListObject';
+import { UserInfoRespone } from '../models/UserInfoListObject';
 import {
   UserBasicDetails,
   UserSecuredDetailsReq,
   UserSecuredDetailsRes,
 } from '../models/UserUpdateRequest';
+import { SearchRequest } from '../models/SearchRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -62,9 +63,9 @@ export class UserService {
     );
   }
 
-  getUserInfoList(): Observable<UserInfoListObject> {
-    return this.http.get<UserInfoListObject>(
-      `${this.baseUrl}api/user/system/user-list`
+  getUserInfoList(searchRequest: SearchRequest): Observable<UserInfoRespone> {
+    return this.http.post<UserInfoRespone>(
+      `${this.baseUrl}api/user/system/user-list`, searchRequest
     );
   }
 }
