@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.service.JwtService;
+import com.urbanShows.userService.service.UserService;
 import com.urbanShows.userService.util.Helper;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import lombok.AllArgsConstructor;
 public class CommonController {
 
 	private final JwtService jwtService;
+	private final UserService systemUserService;
 
 	@GetMapping("logout")
 	public ResponseEntity<Boolean> logout(HttpServletRequest request) {
@@ -36,4 +39,10 @@ public class CommonController {
 		throw new UnauthorizedException("Unauthorized access");
 	}
 
+	@GetMapping("is-user-active")
+	public ResponseEntity<Boolean> checkIsUserActive(Principal principal) {
+		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
+		return ResponseEntity.ok(existingUser != null);
+	}
+	
 }

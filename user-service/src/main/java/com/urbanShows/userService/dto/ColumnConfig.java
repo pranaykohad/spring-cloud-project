@@ -13,8 +13,4 @@ public class ColumnConfig {
 
 	private List<String> columns;
 
-	private long totalRows;
-
-	private long rowsPerPage;
-
 }

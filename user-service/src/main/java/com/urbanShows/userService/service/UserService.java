@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.urbanShows.userService.azure.AzureBlobStorageService;
+import com.urbanShows.userService.config.TableConfig;
 import com.urbanShows.userService.constants.ColumnConfigList;
 import com.urbanShows.userService.dto.ColumnConfig;
 import com.urbanShows.userService.dto.UserBasicDetails;
@@ -79,9 +80,9 @@ public class UserService {
 	}
 
 	public Boolean addSystemUser(UserSigninDto systemUserSigninDto) {
-		if(systemUserSigninDto.getRoles().contains(Role.SUPER_ADMIN_USER)) {
+		if (systemUserSigninDto.getRoles().contains(Role.SUPER_ADMIN_USER)) {
 			final List<UserInfo> usersByRoles = systemUserRepo.findByRoles(systemUserSigninDto.getRoles());
-			if(!usersByRoles.isEmpty()) {
+			if (!usersByRoles.isEmpty()) {
 				throw new UnauthorizedException("You are not authorized to perform this operation");
 			}
 		}
@@ -98,12 +99,11 @@ public class UserService {
 		systemUser.setEmail(systemUserSigninDto.getEmail().trim());
 		systemUser.setPhone(systemUserSigninDto.getPhone().trim());
 		systemUser.setStatus(Status.INACTIVE);
-		roleList.stream().filter(i -> i.equals(Role.SUPER_ADMIN_USER))
-				.forEach(i -> {
-					systemUser.setStatus(Status.ACTIVE);
-					systemUser.setPhoneValidated(true);
-					systemUser.setEmailValidated(true);
-				});
+		roleList.stream().filter(i -> i.equals(Role.SUPER_ADMIN_USER)).forEach(i -> {
+			systemUser.setStatus(Status.ACTIVE);
+			systemUser.setPhoneValidated(true);
+			systemUser.setEmailValidated(true);
+		});
 		systemUser.setCreatedAt(LocalDateTime.now());
 		systemUserRepo.save(systemUser);
 		log.info("System User {} is register in the system ", systemUserSigninDto.getUserName());
@@ -114,17 +114,17 @@ public class UserService {
 		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class,
 				UserInfo.class);
 
-		final long count = systemUserRepo.count();
+		final int count = (int) systemUserRepo.count();
 		final ColumnConfig columnConfig = new ColumnConfig();
 		columnConfig.setColumns(ColumnConfigList.USER_COlUMNS);
-		columnConfig.setRowsPerPage(10);
-		columnConfig.setTotalRows(count);
 
 		final List<UserInfo> all = systemUserRepo.findAll();
 		final UserInfoListDto userInfoListDto = new UserInfoListDto();
 		userInfoListDto.setUserInfoList(mapper.entityToDto(all));
 		userInfoListDto.setColumnConfig(columnConfig);
-
+		userInfoListDto.setTotalRecords(count);
+		userInfoListDto.setTotalPages(count / TableConfig.PAGE_SIZE);
+		userInfoListDto.setRecordsPerPage(TableConfig.PAGE_SIZE);
 		return userInfoListDto;
 	}
 
