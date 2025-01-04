@@ -5,6 +5,7 @@ import { SearchRequest } from '../models/SearchRequest';
 import { EventService } from '../services/event.service';
 import { SharedModule } from '../shared/shared.module';
 import { EventDatatableComponent } from './event-datatable/event-datatable.component';
+import { MessageService } from '../behaviorSubject/message.service';
 
 @Component({
   selector: 'app-event',
@@ -30,7 +31,7 @@ export class EventComponent implements OnInit {
           value: 'nile',
           operator: SearchOperator.LIKE,
           valueTo: null,
-        }
+        },
       ],
     };
     this.getEventList();
@@ -39,6 +40,20 @@ export class EventComponent implements OnInit {
   pageEmitHandler(pageNumber: number) {
     this.searchRequest.currentPage = pageNumber;
     this.getEventList();
+  }
+
+  sortEventHandler(value: { sortColumn: string; sortOrder: number }) {
+    const sortColumn: string = value?.sortColumn;
+    const sortOrder: SortOrder =
+      value.sortOrder === 1 ? SortOrder.ASC : SortOrder.DESC;
+    if (
+      this.searchRequest.sortColumn !== sortColumn ||
+      this.searchRequest.sortOrder !== sortOrder
+    ) {
+      this.searchRequest.sortColumn = sortColumn;
+      this.searchRequest.sortOrder = sortOrder;
+      this.getEventList();
+    }
   }
 
   private getEventList() {

@@ -6,6 +6,7 @@ import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 import { UserAuthService } from '../services/user-auth.service';
 import { SharedModule } from '../shared/shared.module';
 import { LocalstorageService } from './../services/localstorage.service';
+import { MegaMenu } from 'primeng/megamenu';
 
 @Component({
   selector: 'app-navbar',
@@ -15,6 +16,10 @@ import { LocalstorageService } from './../services/localstorage.service';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
+
+onMouseLeave(megaMenu: MegaMenu) {
+  megaMenu.hide();
+}
   @Input()
   set loggedInUserDetails(value: LoggedInUserDetails) {
     this._loggedInUserDetails = value;

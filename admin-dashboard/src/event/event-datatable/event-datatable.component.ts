@@ -1,9 +1,11 @@
-import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { EventListDto } from '../../models/EventListDto';
-import { SharedModule } from '../../shared/shared.module';
 import { TableRowSelectEvent } from 'primeng/table';
+import { EventListDto } from '../../models/EventListDto';
 import { PaginatorComponent } from '../../paginator/paginator.component';
+import { SharedModule } from '../../shared/shared.module';
+import { SortEvent } from 'primeng/api';
+import { SortOrder } from '../../models/Enums';
 
 @Component({
   selector: 'app-event-datatable',
@@ -19,23 +21,19 @@ export class EventDatatableComponent {
     'bookingCloseAt',
   ]);
 
-  private _eventListDto!: EventListDto;
   displayPages: number[] = [1, 2, 3, 4, 5];
-  @ViewChild('myButton') buttonRef!: ElementRef<HTMLButtonElement>;
 
   @Input()
-  set eventListDto(eventListDto: EventListDto) {
-    if (eventListDto) {
-      this._eventListDto = eventListDto;
-    }
-  }
-
-  get eventListDto(): EventListDto {
-    return this._eventListDto;
-  }
+  eventListDto!: EventListDto;
 
   @Output()
   eventNameEmitter = new EventEmitter<string>();
+
+  @Output()
+  sortEventEmitter = new EventEmitter<{
+    sortColumn: string;
+    sortOrder: number;
+  }>();
 
   @Output()
   pageEmitter = new EventEmitter<number>();
@@ -48,7 +46,14 @@ export class EventDatatableComponent {
     }
   }
 
-  customSort(event: any) {}
+  customSort(event: SortEvent) {
+    if (event?.field && event?.order) {
+      this.sortEventEmitter.emit({
+        sortColumn: event.field,
+        sortOrder: event.order,
+      });
+    }
+  }
 
   isDateColumn(column: string): boolean {
     return this.DATE_COLUMN.has(column);

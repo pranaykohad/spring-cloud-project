@@ -6,13 +6,13 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
-import { LocalstorageService } from '../services/localstorage.service';
 import { Router } from '@angular/router';
+import { catchError, finalize, Observable, throwError } from 'rxjs';
+import { MessageService } from '../behaviorSubject/message.service';
 import { LocalStorageKeys } from '../models/Enums';
 import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
+import { LocalstorageService } from '../services/localstorage.service';
 import { ToastService } from '../services/toast.service';
-import { MessageService } from '../behaviorSubject/message.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -42,7 +42,7 @@ export class AuthInterceptor implements HttpInterceptor {
       });
       req = req.clone({ headers: headers });
     }
-
+    // this.messageService.enableLoader();
     return this.Appinterceptor(next, req);
   }
 
@@ -52,7 +52,6 @@ export class AuthInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     return next.handle(clonedReq).pipe(
       catchError((error) => {
-        this.messageService.disableLoader();
         if (error.status === 401) {
           this.toastService.showErrorToast(error.error.error);
           // this.router.navigate(['login']);
@@ -62,6 +61,9 @@ export class AuthInterceptor implements HttpInterceptor {
           this.toastService.showErrorToast(error.error.error);
         }
         return throwError(() => error);
+      }),
+      finalize(() => {
+        // this.messageService.disableLoader();
       })
     );
   }

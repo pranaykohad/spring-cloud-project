@@ -1,5 +1,6 @@
 <div id="event" class="m-3">
   <p-card header="Event list">
-    <app-event-datatable [eventListDto]="eventListDto" (pageEmitter)="pageEmitHandler($event)"></app-event-datatable>
+    <app-event-datatable [eventListDto]="eventListDto" (pageEmitter)="pageEmitHandler($event)"
+      (sortEventEmitter)="sortEventHandler($event)"></app-event-datatable>
   </p-card>
 </div>
