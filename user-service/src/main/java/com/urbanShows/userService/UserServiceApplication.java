@@ -8,6 +8,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import com.urbanShows.userService.testingData.InsertEventDataSample;
+
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,9 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceApplication {
 
 	private final Environment environment;
+	private final InsertEventDataSample insertEventDataSample;
 
-	UserServiceApplication(Environment environment) {
+	UserServiceApplication(Environment environment, InsertEventDataSample insertEventDataSample) {
 		this.environment = environment;
+		this.insertEventDataSample = insertEventDataSample;
 	}
 
 	@Value("${server.port}")
@@ -53,6 +57,11 @@ public class UserServiceApplication {
 				log.info(profile);
 			}
 		}
+//		addInitialData();
+	}
+ 
+	private void addInitialData() {
+		insertEventDataSample.insertUserSampleDate();		
 	}
 
 }

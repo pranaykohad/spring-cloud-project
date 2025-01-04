@@ -40,9 +40,7 @@ public class AppUserService {
 		final GenericMapper<AppUserSigninReqDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper,
 				AppUserSigninReqDto.class, AppUserInfo.class);
 		final AppUserInfo appUser = mapper.dtoToEntity(appUserDto);
-		final List<Role> roleList = new ArrayList<>();
-		roleList.add(Role.APP_USER);
-		appUser.setRoles(roleList);
+		appUser.setRoles(List.of(Role.APP_USER));
 		appUser.setInternalPassword(AuthTokenAndPasswordUtil.generatorPassword());
 		appUserInfoRepo.save(appUser);
 		otpService.createOtpForAppUser(appUser);
