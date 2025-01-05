@@ -4,11 +4,12 @@ import { TableRowSelectEvent } from 'primeng/table';
 import { UserInfoRespone } from '../../models/UserInfoListObject';
 import { SharedModule } from '../../shared/shared.module';
 import { SortEvent } from 'primeng/api';
+import { PaginatorComponent } from '../../paginator/paginator.component';
 
 @Component({
   selector: 'app-user-datatable',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, PaginatorComponent],
   templateUrl: './user-datatable.component.html',
   styleUrl: './user-datatable.component.scss',
 })

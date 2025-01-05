@@ -1,9 +1,8 @@
 @if(userInfoListObject && userInfoListObject.userInfoList.length){
-<p-table id="user-datatable" [resizableColumns]="true" [paginator]="true"
-  [rows]="userInfoListObject.userPage.recordsPerPage" [showCurrentPageReport]="true"
-  styleClass="p-datatable-gridlines position-static" [columns]="userInfoListObject.columnConfig.columns"
-  [value]="userInfoListObject.userInfoList" selectionMode="single" (onRowSelect)="onRowSelect($event)"
-  (sortFunction)="customSort($event)" [customSort]="true">
+<p-table id="user-datatable" [resizableColumns]="true" [rows]="userInfoListObject.userPage.recordsPerPage"
+  [showCurrentPageReport]="true" styleClass="p-datatable-gridlines position-static"
+  [columns]="userInfoListObject.columnConfig.columns" [value]="userInfoListObject.userInfoList" selectionMode="single"
+  (onRowSelect)="onRowSelect($event)" (sortFunction)="customSort($event)" [customSort]="true">
   <ng-template pTemplate="header" let-columns>
     <tr class="border-grey">
       @for (column of columns; track $index) {
@@ -47,6 +46,8 @@
       }
     </tr>
   </ng-template>
-  <!-- <ng-template pTemplate="footer">paginator</ng-template> -->
 </p-table>
+<app-paginator [page]="userInfoListObject.userPage" (pageEmitter)="pageEmitter.emit($event)"></app-paginator>
+} @else {
+<div class="d-flex justify-content-center">No data found</div>
 }

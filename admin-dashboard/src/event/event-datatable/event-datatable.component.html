@@ -1,9 +1,8 @@
 @if(eventListDto && eventListDto.eventList.length){
-<p-table id="event-datatable" [resizableColumns]="true" [paginator]="false"
-  [rows]="eventListDto.eventPage.recordsPerPage" [showCurrentPageReport]="true"
-  styleClass="p-datatable-gridlines position-static d-flex flex-column" [columns]="eventListDto.columnConfig.columns"
-  [value]="eventListDto.eventList" selectionMode="single" (onRowSelect)="onRowSelect($event)"
-  (sortFunction)="customSort($event)" [customSort]="true">
+<p-table id="event-datatable" [resizableColumns]="true" [rows]="eventListDto.eventPage.recordsPerPage"
+  [showCurrentPageReport]="true" styleClass="p-datatable-gridlines position-static d-flex flex-column"
+  [columns]="eventListDto.columnConfig.columns" [value]="eventListDto.eventList" selectionMode="single"
+  (onRowSelect)="onRowSelect($event)" (sortFunction)="customSort($event)" [customSort]="true">
   <ng-template pTemplate="header" let-columns>
     <tr class="border-grey">
       @for (column of columns; track $index) {
@@ -31,7 +30,7 @@
     </tr>
   </ng-template>
 </p-table>
-<app-paginator [eventListDto]="eventListDto" (pageEmitter)="pageEmitter.emit($event)"></app-paginator>
+<app-paginator [page]="eventListDto.eventPage" (pageEmitter)="pageEmitter.emit($event)"></app-paginator>
 } @else {
 <div class="d-flex justify-content-center">No data found</div>
 }

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { SharedModule } from '../shared/shared.module';
 import { EventListDto } from '../models/EventListDto';
+import { Page } from '../models/Page';
 
 @Component({
   selector: 'app-paginator',
@@ -11,7 +12,7 @@ import { EventListDto } from '../models/EventListDto';
 })
 export class PaginatorComponent {
   @Input()
-  eventListDto!: EventListDto;
+  page!: Page;
 
   @Output()
   pageEmitter = new EventEmitter<number>();

@@ -1,6 +1,4 @@
-import { SearchFilter } from './SearchFilter';
-
-export interface EventPage {
+export interface Page {
   totalRecords: number;
   filteredRecords: number;
   totalPages: number;
