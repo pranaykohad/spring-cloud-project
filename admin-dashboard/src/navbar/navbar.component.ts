@@ -18,7 +18,7 @@ import { MegaMenu } from 'primeng/megamenu';
 export class NavbarComponent {
 
 onMouseLeave(megaMenu: MegaMenu) {
-  megaMenu.hide();
+  // megaMenu.hide();
 }
   @Input()
   set loggedInUserDetails(value: LoggedInUserDetails) {
