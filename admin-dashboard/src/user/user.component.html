@@ -1,11 +1,6 @@
 <div id="user" class="m-3">
   <p-card header="User list">
-    <div>
-      <div>search and filters</div>
-      <div>
-        <app-user-datatable [userInfoListObject]="userInfoListObject" (pageEmitter)="pageEmitHandler($event)"
-        (sortEventEmitter)="sortEventHandler($event)"></app-user-datatable>
-      </div>
-    </div>
+    <app-user-datatable [userInfoListObject]="userInfoListObject" (pageEmitter)="pageEmitHandler($event)"
+      (sortEventEmitter)="sortEventHandler($event)"></app-user-datatable>
   </p-card>
 </div>

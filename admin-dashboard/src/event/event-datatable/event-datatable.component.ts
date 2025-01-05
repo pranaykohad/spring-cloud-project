@@ -21,8 +21,6 @@ export class EventDatatableComponent {
     'bookingCloseAt',
   ]);
 
-  displayPages: number[] = [1, 2, 3, 4, 5];
-
   @Input()
   eventListDto!: EventListDto;
 

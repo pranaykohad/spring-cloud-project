@@ -52,6 +52,7 @@ export class EventComponent implements OnInit {
     ) {
       this.searchRequest.sortColumn = sortColumn;
       this.searchRequest.sortOrder = sortOrder;
+      this.searchRequest.currentPage = 0;
       this.getEventList();
     }
   }

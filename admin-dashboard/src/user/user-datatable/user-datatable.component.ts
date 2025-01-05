@@ -14,7 +14,6 @@ import { PaginatorComponent } from '../../paginator/paginator.component';
   styleUrl: './user-datatable.component.scss',
 })
 export class UserDatatableComponent {
-  displayPages: number[] = [1, 2, 3, 4, 5];
   constructor(private router: Router) {}
 
   @Input()

@@ -14,14 +14,22 @@ export enum Msg {
   INIT_MSG,
   ENABLE_LOADER,
   DISABLE_LOADER,
-  UPDATE_LOGGEDIN_USER_DETAILS
+  UPDATE_LOGGEDIN_USER_DETAILS,
 }
 
 export enum SearchOperator {
-	EQUALS, LIKE, GT, GTE, LT, LTE, RANGE
+  EQUALS,
+  LIKE,
+  GT,
+  GTE,
+  LT,
+  LTE,
+  RANGE,
 }
 
 export enum SortOrder {
-	ASC,
-	DESC
+  ASC,
+  DESC,
 }
+
+export const DisplayPages = [1, 2, 3, 4, 5];
