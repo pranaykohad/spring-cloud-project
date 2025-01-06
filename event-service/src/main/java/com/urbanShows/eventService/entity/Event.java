@@ -1,6 +1,7 @@
 package com.urbanShows.eventService.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +26,7 @@ public class Event {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 
-	private String eventName;
+	private String eventTitle;
 
 	private String eventDescription;
 
@@ -43,8 +45,9 @@ public class Event {
 	@ManyToOne
 	@JoinColumn(name = "event_type_id")
 	private EventType eventType;
-//	
-//	private List<EventMedia> eventPhotos;
+	
+	@OneToMany
+	private List<EventMedia> eventPhotos;
 //	
 //	private List<EventVenue> eventVenues;
 //	

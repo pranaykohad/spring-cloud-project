@@ -1,35 +1,30 @@
 package com.urbanShows.eventService.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import com.urbanShows.eventService.entity.EventMedia;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
-public class EventDto {
+public class EventOverview {
 
 	@NotNull(message = "id cannot be null")
 	private long id;
-
+	
 	@NotNull(message = "event title cannot be null")
 	private String eventTitle;
-
+	
 	private String eventDescription;
-
+	
 	private LocalDateTime createdOn = LocalDateTime.now();
-
-	private LocalDateTime bookingOpenAt;
-
-	private LocalDateTime bookingCloseAt;
-
-	private boolean isBookingOpen;
-
-	private int userMinAge = 0;
-
+	
 	@NotNull(message = "organizer cannot be null")
-	private String organizer;
-
-	@NotNull(message = "event type cannot be null")
-	private EventTypeDto eventType;
-
+	private String organizer;	
+	
+	private int userMinAge = 0;
+	
+	private List<EventMedia> eventPhotos;
 }

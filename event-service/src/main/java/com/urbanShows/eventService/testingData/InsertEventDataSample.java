@@ -22,7 +22,7 @@ public class InsertEventDataSample {
 	private final EventRepository eventRepository;
 	private final EventTypeRepository eventTypeRepository;
 
-	private final String[] eventNames = { "Dandiya Raas", "Rock Fest", "Stand-up Comedy Night", "Food Carnival",
+	private final String[] eventTitle = { "Dandiya Raas", "Rock Fest", "Stand-up Comedy Night", "Food Carnival",
 			"Adventure Trek", "Yoga Retreat", "Gaming Championship", "Art Exhibition", "Charity Auction", "Book Fair",
 			"Wine Tasting Night", "Play Festival", "Sports Marathon", "Tech Conference", "Coding Workshop",
 			"Trade Show", "Music Concert", "Cycling Tour", "Meetup Event", "Cultural Festival" };
@@ -44,7 +44,7 @@ public class InsertEventDataSample {
 	public void insertEventSampleDate() {
 		IntStream.range(1, 9).forEach(i -> {
 			final Event event = new Event();
-			event.setEventName(eventNames[i % eventNames.length] + " #" + i);
+			event.setEventTitle(eventTitle[i % eventTitle.length] + " #" + i);
 			event.setEventDescription(descriptions[i % descriptions.length]);
 			event.setCreatedOn(LocalDateTime.now());
 			event.setBookingOpenAt(LocalDateTime.now().plusMinutes(i * 10));

@@ -14,6 +14,8 @@ import io.micrometer.observation.annotation.Observed;
 @Observed
 public interface EventRepository extends JpaRepository<Event, Long>, JpaSpecificationExecutor<Event> {
 
-	Page<Event> findByEventNameContainsOrOrganizerContains(String eventName, String organizer, Pageable pageable);
+	Page<Event> findByEventTitleContainsOrOrganizerContains(String eventTitle, String organizer, Pageable pageable);
+	
+	Event findByIdAndOrganizer(long id, String organizer);
 
 }

@@ -16,12 +16,15 @@ import com.urbanShows.eventService.constant.TableConfig;
 import com.urbanShows.eventService.dto.ColumnConfigDto;
 import com.urbanShows.eventService.dto.EventDto;
 import com.urbanShows.eventService.dto.EventListDto;
+import com.urbanShows.eventService.dto.EventOverview;
 import com.urbanShows.eventService.dto.EventPage;
 import com.urbanShows.eventService.dto.SearchRequest;
 import com.urbanShows.eventService.entity.Event;
 import com.urbanShows.eventService.enums.SortOrder;
 import com.urbanShows.eventService.mapper.GenericMapper;
 import com.urbanShows.eventService.repository.EventRepository;
+import com.urbanShows.eventService.security.enums.Role;
+import com.urbanShows.eventService.security.exception.GenericException;
 
 import io.jsonwebtoken.lang.Arrays;
 import lombok.AllArgsConstructor;
@@ -38,6 +41,16 @@ public class EventService {
 		final Specification<Event> spec = EventSpecification.buildSpecification(searchDto.getSearchFilters());
 		final Page<Event> list = eventRepository.findAll(spec, pageable);
 		return pageableEventResponse(list, spec, searchDto.getCurrentPage());
+	}
+
+	public EventOverview getEventOverview(long eventId, String organizer) {
+		final Event event = eventRepository.findByIdAndOrganizer(eventId, organizer);
+		if(event == null) {
+			throw new GenericException("Event not found or inaccessible");
+		}
+		final GenericMapper<EventOverview, Event> mapper = new GenericMapper<>(modelMapper, EventOverview.class,
+				Event.class);
+		return mapper.entityToDto(event);
 	}
 
 	private Pageable buildPage(SearchRequest searchDto) {
@@ -98,5 +111,10 @@ public class EventService {
 	private int getEventCount(Specification<Event> spec) {
 		return spec != null ? (int) eventRepository.count(spec) : (int) eventRepository.count();
 	}
+
+	public Boolean saveEventOverview(EventOverview eventOverview) {
+		// TODO Auto-generated method stub
+		return false;
+	} 
 
 }

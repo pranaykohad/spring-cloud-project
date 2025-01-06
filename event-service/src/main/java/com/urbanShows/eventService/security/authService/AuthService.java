@@ -55,7 +55,7 @@ public class AuthService {
 		}
 	}
 	
-	public boolean checkIsUserActive(String jwt) {
+	public boolean isUserActive(String jwt) {
 		try {
 			final ResponseEntity<Boolean> isValidate = restTemplate.exchange(
 					(userServiceUrl + "/api/user/common/is-user-active"), HttpMethod.GET, buildHeaderEntity(jwt),

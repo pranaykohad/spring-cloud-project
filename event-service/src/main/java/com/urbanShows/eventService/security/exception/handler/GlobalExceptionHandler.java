@@ -12,13 +12,19 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.urbanShows.eventService.security.exception.ConnectionException;
-import com.urbanShows.eventService.security.exception.JwtParseException;
+import com.urbanShows.eventService.security.exception.GenericException;
 import com.urbanShows.eventService.security.exception.ServiceUnavailableException;
 
 import io.jsonwebtoken.security.SignatureException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+	@ExceptionHandler(GenericException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseEntity<Map<String, String>> handleGenericException(GenericException ex) {
+		return new ResponseEntity<>(buildErrorMap(ex), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 	@ExceptionHandler(ServiceUnavailableException.class)
 	@ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
@@ -31,19 +37,19 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<Map<String, String>> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
 		return new ResponseEntity<>(buildErrorMap(ex), HttpStatus.FORBIDDEN);
 	}
-	
+
 	@ExceptionHandler(SignatureException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	public ResponseEntity<Map<String, String>> handleSignatureException(SignatureException ex) {
 		return new ResponseEntity<>(buildErrorMap(ex), HttpStatus.FORBIDDEN);
 	}
-	
+
 	@ExceptionHandler(ConnectionException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)
 	public ResponseEntity<Map<String, String>> handleConnectionException(ConnectionException ex) {
 		return new ResponseEntity<>(buildErrorMap(ex), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
