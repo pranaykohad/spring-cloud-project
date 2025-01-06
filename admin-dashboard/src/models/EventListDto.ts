@@ -7,7 +7,7 @@ export interface EventType {
 
 export interface Event {
   id: string;
-  eventName: string;
+  eventTitle: string;
   eventDescription: string;
   createdOn: string;
   bookingOpenFrom: string;

@@ -38,6 +38,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { ColumnPipe } from '../pipes/column.pipe';
 import { RolePipe } from '../pipes/role.pipe';
 import { DataViewModule } from 'primeng/dataview';
+import { GalleriaModule } from 'primeng/galleria';
 
 @NgModule({
   declarations: [],
@@ -81,7 +82,8 @@ import { DataViewModule } from 'primeng/dataview';
     InputSwitchModule,
     InputTextareaModule,
     InputNumberModule,
-    DataViewModule
+    DataViewModule,
+    GalleriaModule,
   ],
   exports: [
     CommonModule,
@@ -123,7 +125,8 @@ import { DataViewModule } from 'primeng/dataview';
     InputSwitchModule,
     InputTextareaModule,
     InputNumberModule,
-    DataViewModule
+    DataViewModule,
+    GalleriaModule,
   ],
 })
 export class SharedModule {}

@@ -1,0 +1,68 @@
+<div id="event-overiew" class="d-flex">
+  <div class="col-4">
+    <div class="d-flex align-items-center mb-20">
+      <div class="event-label col-3">Event title:</div>
+      <div>
+        <input type="text" pInputText pSize="small">
+      </div>
+    </div>
+    <div class="d-flex align-items-center mb-20">
+      <div class="event-label col-3">Event description:</div>
+      <div class="p-float-label">
+        <textarea id="float-input" rows="5" cols="35" pInputTextarea [style]="{maxWidth: '500px'}"></textarea>
+        <label for="float-input">Mention few line about your event...</label>
+      </div>
+    </div>
+    <div class="d-flex align-items-center mb-20">
+      <div class="event-label col-3">Organiser:</div>
+      <div>
+        <div class="disable-div">name here - readonly</div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center mb-20">
+      <div class="event-label col-3">Created on:</div>
+      <div>
+        <div class="disable-div">name here - readonly</div>
+      </div>
+    </div>
+    <div class="d-flex align-items-center mb-20">
+      <div class="event-label col-3">User min age:</div>
+      <div>
+        <p-inputNumber inputId="minmax" inputId="minmax" mode="decimal" [min]="0" [max]="100">
+        </p-inputNumber>
+      </div>
+    </div>
+  </div>
+  <div class="col-5 d-flex flex-column justify-content-center align-items-center">
+    <div style="margin-bottom: 20px;">Event Media</div>
+    <p-galleria [value]="images" [containerStyle]="{'max-width': '650px', 'background-color': '#383838'}"
+      [numVisible]="5" [showItemNavigators]="true" [showItemNavigatorsOnHover]="true" [showThumbnails]="false">
+      <ng-template pTemplate="item" let-item>
+        <img [src]="item" [alt]="item.alt" [style]="{width: '650px', height: '550px'}" />
+      </ng-template>
+    </p-galleria>
+  </div>
+  <div class="d-flex col-3 flex-column align-items-center">
+    <div style="margin-bottom: 20px;">Media Details</div>
+    <div>
+      <div class="d-flex align-items-center mb-20">
+        <div class="event-label col-4">Media name:</div>
+        <div>
+          <div class="disable-div">name here</div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center mb-20">
+        <div class="event-label col-4">Media type:</div>
+        <div>
+          <div class="disable-div">name here</div>
+        </div>
+      </div>
+      <div class="d-flex align-items-center mb-20">
+        <div class="event-label col-4">Cover media:</div>
+        <div>
+          <div class="disable-div">name here</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

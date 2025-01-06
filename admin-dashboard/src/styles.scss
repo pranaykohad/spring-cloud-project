@@ -249,11 +249,6 @@ input {
   background-color: #ff9980;
 }
 
-// #nav-bar-menu:hover {
-//   background-color: #ffc2b3;
-// }
-
-// background-color: #ffc2b3
 .p-menuitem-active {
   background-color: #ff9980;
 }
@@ -272,5 +267,9 @@ input {
 }
 
 .p-tabview-nav-container {
+  position: static;
+}
+
+.p-tabview-nav-link {
   position: static;
 }
