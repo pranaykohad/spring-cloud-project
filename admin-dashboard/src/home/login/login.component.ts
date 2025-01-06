@@ -5,7 +5,7 @@ import { SystemUserLoginRequest } from '../../models/SystemUserLoginRequest';
 import { LocalstorageService } from '../../services/localstorage.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
-import { LocalStorageKeys, ToastType } from '../../models/Enums';
+import { APP_ROUTES, LocalStorageKeys, ToastType } from '../../models/Enums';
 import { LoggedInUserDetails } from '../../models/LoggedinUserDetails';
 
 @Component({
@@ -70,7 +70,7 @@ export class LoginComponent implements OnInit {
             LocalStorageKeys.INMEMORY_USERNAME
           );
         }
-        this.router.navigate(['']);
+        this.router.navigate([APP_ROUTES.BASE]);
         this.toastService.showSuccessToast(
           `${this.loggedinUserDetails.displayName} logged in`
         );
@@ -78,6 +78,6 @@ export class LoginComponent implements OnInit {
   }
 
   nagivateToSignin() {
-    this.router.navigate(['signin']);
+    this.router.navigate([APP_ROUTES.SIGNIN]);
   }
 }

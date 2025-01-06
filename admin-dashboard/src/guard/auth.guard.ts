@@ -6,7 +6,7 @@ import {
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
 } from '@angular/router';
-import { LocalStorageKeys } from '../models/Enums';
+import { APP_ROUTES, LocalStorageKeys } from '../models/Enums';
 import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 
 @Injectable({
@@ -34,7 +34,7 @@ export class AuthGuard implements CanActivate {
     ) {
       return true;
     } else {
-      this.router.navigate(['login']);
+      this.router.navigate([APP_ROUTES.LOGIN]);
       return false;
     }
   }
@@ -52,7 +52,7 @@ export class AuthGuard implements CanActivate {
   ) {
     const userRolesSet = new Set(userRoles);
     if (url === '/' && userRolesSet.has('ORGANIZER_USER')) {
-      this.router.navigate(['event-list']);
+      this.router.navigate([APP_ROUTES.EVENT_LIST]);
     }
     return allowedRoles.some((r) => userRolesSet.has(r));
   }

@@ -5,7 +5,7 @@ import { EventListDto } from '../../models/EventListDto';
 import { PaginatorComponent } from '../../paginator/paginator.component';
 import { SharedModule } from '../../shared/shared.module';
 import { SortEvent } from 'primeng/api';
-import { SortOrder } from '../../models/Enums';
+import { APP_ROUTES, SortOrder } from '../../models/Enums';
 
 @Component({
   selector: 'app-event-datatable',
@@ -37,7 +37,7 @@ export class EventDatatableComponent {
 
   onRowSelect(event: TableRowSelectEvent) {
     if (event.data) {
-      this.router.navigate(['event-details', event.data.id]);
+      this.router.navigate([APP_ROUTES.EVENT_DETAILS, event.data.id]);
     }
   }
 

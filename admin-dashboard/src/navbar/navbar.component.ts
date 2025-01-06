@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { MegaMenuItem, MenuItem } from 'primeng/api';
-import { LocalStorageKeys } from '../models/Enums';
+import { APP_ROUTES, LocalStorageKeys } from '../models/Enums';
 import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 import { UserAuthService } from '../services/user-auth.service';
 import { SharedModule } from '../shared/shared.module';
@@ -131,7 +131,7 @@ onMouseLeave(megaMenu: MegaMenu) {
 
   openSection(section: string) {
     switch (section) {
-      case 'profile':
+      case APP_ROUTES.PROFILE:
         this.openProfile();
         break;
       case 'logout':
@@ -153,7 +153,7 @@ onMouseLeave(megaMenu: MegaMenu) {
           LocalStorageKeys.INMEMORY_USERNAME,
           inMemoryUserName
         );
-        this.router.navigate(['login']);
+        this.router.navigate([APP_ROUTES.LOGIN]);
       }
     });
   }
@@ -186,7 +186,7 @@ onMouseLeave(megaMenu: MegaMenu) {
 
   private openProfile() {
     if (this.loggedInUserDetails.userName !== null) {
-      this.router.navigate(['profile', this.loggedInUserDetails.userName]);
+      this.router.navigate([APP_ROUTES.PROFILE, this.loggedInUserDetails.userName]);
     }
   }
 }

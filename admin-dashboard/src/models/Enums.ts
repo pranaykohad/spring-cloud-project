@@ -33,3 +33,15 @@ export enum SortOrder {
 }
 
 export const DisplayPages = [1, 2, 3, 4, 5];
+
+export enum APP_ROUTES {
+  BASE = '',
+  LOGIN = 'login',
+  SIGNIN = 'signin',
+  SETTING = 'setting',
+  PROFILE = 'profile',
+  EVENT_LIST = 'event-list',
+  EVENT_DETAILS = 'event-details',
+  ADD_SECURITY = 'add-security',
+
+}

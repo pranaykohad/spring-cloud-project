@@ -9,6 +9,7 @@ import { UserAuthService } from '../../services/user-auth.service';
 import { ToastService } from '../../services/toast.service';
 import { SharedModule } from '../../shared/shared.module';
 import { Role } from '../../models/Role';
+import { APP_ROUTES } from '../../models/Enums';
 
 @Component({
   selector: 'app-signin',
@@ -182,7 +183,7 @@ export class SigninComponent implements OnInit {
   }
 
   nagivateToLogin() {
-    this.router.navigate(['login']);
+    this.router.navigate([APP_ROUTES.LOGIN]);
   }
 
   private isValidPhoneNumber(): boolean {

@@ -5,6 +5,7 @@ import { UserInfoRespone } from '../../models/UserInfoListObject';
 import { SharedModule } from '../../shared/shared.module';
 import { SortEvent } from 'primeng/api';
 import { PaginatorComponent } from '../../paginator/paginator.component';
+import { APP_ROUTES } from '../../models/Enums';
 
 @Component({
   selector: 'app-user-datatable',
@@ -30,7 +31,7 @@ export class UserDatatableComponent {
 
   onRowSelect(event: TableRowSelectEvent) {
     if (event.data) {
-      this.router.navigate(['profile', event.data.userName]);
+      this.router.navigate([APP_ROUTES.PROFILE, event.data.userName]);
     }
   }
 
