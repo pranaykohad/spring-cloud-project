@@ -5,10 +5,6 @@ import { environment } from '../../environment';
 import { SystemUserLoginRequest } from '../models/SystemUserLoginRequest';
 import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 import { SystemUserSigninRequest } from '../models/SystemUserSigninRequest';
-import {
-  UserBasicDetails,
-  UserSecuredDetailsReq,
-} from '../models/UserUpdateRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +22,7 @@ export class UserAuthService {
 
   getLoggedinUserDetails(): Observable<LoggedInUserDetails> {
     return this.http.get<LoggedInUserDetails>(
-      `${this.baseUrl}api/user/system/details`
+      `${this.baseUrl}api/user/system/loggin-user-details`
     );
   }
 

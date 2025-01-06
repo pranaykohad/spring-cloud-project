@@ -52,7 +52,7 @@ export class AuthGuard implements CanActivate {
   ) {
     const userRolesSet = new Set(userRoles);
     if (url === '/' && userRolesSet.has('ORGANIZER_USER')) {
-      this.router.navigate(['event']);
+      this.router.navigate(['event-list']);
     }
     return allowedRoles.some((r) => userRolesSet.has(r));
   }

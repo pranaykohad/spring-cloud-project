@@ -25,12 +25,12 @@ export class UserComponent implements OnInit {
       sortColumn: 'userName',
       sortOrder: SortOrder.ASC,
       searchFilters: [
-        {
-          key: 'userName',
-          value: 'A',
-          operator: SearchOperator.LIKE,
-          valueTo: null,
-        },
+        // {
+        //   key: 'userName',
+        //   value: 'nilhesh',
+        //   operator: SearchOperator.LIKE,
+        //   valueTo: null,
+        // },
       ],
     };
     this.getUserInfoList();
