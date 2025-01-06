@@ -1,46 +1,48 @@
 <div id="event-overiew" class="d-flex">
   <div class="col-4">
-    <div class="d-flex align-items-center mb-20">
+    <div class="d-flex align-items-center mb-30">
       <div class="event-label col-3">Event title:</div>
-      <div>
-        <input type="text" pInputText pSize="small">
+      <div class="d-flex flex-column">
+        <input type="text" pInputText pSize="small" [(ngModel)]="eventOverviewEdit.eventTitle"
+          (input)="clearEventDetailsValidation()">
+        <span class="error-cntr">{{eventOverviewError.eventTitle}}</span>
       </div>
     </div>
     <div class="d-flex align-items-center mb-20">
       <div class="event-label col-3">Event description:</div>
-      <div class="p-float-label">
-        <textarea id="float-input" rows="5" cols="35" pInputTextarea [style]="{maxWidth: '500px'}"></textarea>
-        <label for="float-input">Mention few line about your event...</label>
-      </div>
-    </div>
-    <div class="d-flex align-items-center mb-20">
-      <div class="event-label col-3">Organiser:</div>
-      <div>
-        <div class="disable-div">name here - readonly</div>
-      </div>
-    </div>
-    <div class="d-flex align-items-center mb-20">
-      <div class="event-label col-3">Created on:</div>
-      <div>
-        <div class="disable-div">name here - readonly</div>
+      <div class="d-flex flex-column">
+        <div class="p-float-label">
+          <textarea id="float-input" rows="5" cols="35" pInputTextarea [style]="{maxWidth: '500px'}"
+            [(ngModel)]="eventOverviewEdit.eventDescription" (input)="clearEventDetailsValidation()"></textarea>
+          <label for="float-input">Mention few line about the event...</label>
+        </div>
+        <span class="error-cntr">{{eventOverviewError.eventDescription}}</span>
       </div>
     </div>
     <div class="d-flex align-items-center mb-20">
       <div class="event-label col-3">User min age:</div>
-      <div>
-        <p-inputNumber inputId="minmax" inputId="minmax" mode="decimal" [min]="0" [max]="100">
+      <div class="d-flex flex-column">
+        <p-inputNumber inputId="minmax" inputId="minmax" mode="decimal" [min]="0" [max]="90"
+          [(ngModel)]="eventOverviewEdit.userMinAge" (input)="clearEventDetailsValidation()">
         </p-inputNumber>
+        <span class="error-cntr">{{eventOverviewError.userMinAge}}</span>
       </div>
     </div>
   </div>
   <div class="col-5 d-flex flex-column justify-content-center align-items-center">
     <div style="margin-bottom: 20px;">Event Media</div>
-    <p-galleria [value]="images" [containerStyle]="{'max-width': '650px', 'background-color': '#383838'}"
-      [numVisible]="5" [showItemNavigators]="true" [showItemNavigatorsOnHover]="true" [showThumbnails]="false">
+    @if(eventOverviewEdit && eventOverviewEdit.eventPhotos.length) {
+    <p-galleria [value]="eventOverviewEdit.eventPhotos"
+      [containerStyle]="{'max-width': '650px', 'background-color': '#383838'}" [numVisible]="5"
+      [showItemNavigators]="true" [showItemNavigatorsOnHover]="true" [showThumbnails]="false">
       <ng-template pTemplate="item" let-item>
         <img [src]="item" [alt]="item.alt" [style]="{width: '650px', height: '550px'}" />
       </ng-template>
     </p-galleria>
+    } @else {
+    <div [style]="{width: '650px', height: '550px', border: '1px solid lightgrey'}"
+      class="d-flex justify-content-center align-items-center">no media added</div>
+    }
   </div>
   <div class="d-flex col-3 flex-column align-items-center">
     <div style="margin-bottom: 20px;">Media Details</div>
@@ -59,10 +61,16 @@
       </div>
       <div class="d-flex align-items-center mb-20">
         <div class="event-label col-4">Cover media:</div>
-        <div>
-          <div class="disable-div">name here</div>
+        <div class="d-flex">
+          <p-inputSwitch></p-inputSwitch>
         </div>
       </div>
     </div>
   </div>
+</div>
+<div class="d-flex">
+  <p-button label="Save Event Details" [raised]="true" severity="info" [style]="{marginRight: '15px'}"
+    [disabled]="!enableEventSaveBtn" (click)="saveEventDetails()"/>
+  <p-button label="Cancel" [raised]="true" severity="secondary" [disabled]="!enableEventSaveBtn"
+    (click)="cancelEventDetailsChanges()" />
 </div>

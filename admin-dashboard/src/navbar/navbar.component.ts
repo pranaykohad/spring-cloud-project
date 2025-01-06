@@ -18,7 +18,7 @@ import { MegaMenu } from 'primeng/megamenu';
 export class NavbarComponent {
 
 onMouseLeave(megaMenu: MegaMenu) {
-  // megaMenu.hide();
+  megaMenu.hide();
 }
   @Input()
   set loggedInUserDetails(value: LoggedInUserDetails) {
@@ -69,7 +69,13 @@ onMouseLeave(megaMenu: MegaMenu) {
                 {
                   label: 'Event List',
                   command: () => {
-                    this.openSection('event-list');
+                    this.openSection(APP_ROUTES.EVENT_LIST);
+                  },
+                },
+                {
+                  label: 'Add Event',
+                  command: () => {
+                    this.openSection(`${APP_ROUTES.EVENT_DETAILS}/0/new`);
                   },
                 },
               ],

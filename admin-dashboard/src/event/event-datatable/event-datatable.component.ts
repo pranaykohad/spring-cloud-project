@@ -37,7 +37,11 @@ export class EventDatatableComponent {
 
   onRowSelect(event: TableRowSelectEvent) {
     if (event.data) {
-      this.router.navigate([APP_ROUTES.EVENT_DETAILS, event.data.id]);
+      this.router.navigate([
+        APP_ROUTES.EVENT_DETAILS,
+        event.data.id,
+        event.data.organizer,
+      ]);
     }
   }
 

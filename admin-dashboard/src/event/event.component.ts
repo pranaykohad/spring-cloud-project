@@ -26,12 +26,12 @@ export class EventComponent implements OnInit {
       sortColumn: 'id',
       sortOrder: SortOrder.ASC,
       searchFilters: [
-        {
-          key: 'organizer',
-          value: 'nile',
-          operator: SearchOperator.LIKE,
-          valueTo: null,
-        },
+        // {
+        //   key: 'organizer',
+        //   value: 'nile',
+        //   operator: SearchOperator.LIKE,
+        //   valueTo: null,
+        // },
       ],
     };
     this.getEventList();

@@ -273,3 +273,18 @@ input {
 .p-tabview-nav-link {
   position: static;
 }
+
+.inactive-check {
+  color: red;
+  font-size: 1.5rem;
+  margin-left: 10px;
+}
+.active-check {
+  color: green;
+  font-size: 1.5rem;
+  margin-left: 10px;
+}
+.error-cntr {
+  font-size: small;
+  color: red;
+}

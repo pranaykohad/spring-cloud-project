@@ -1,13 +1,19 @@
 <div id="event-details" class="m-3">
   <p-accordion>
     <p-accordionTab header="Event overview" [selected]="true">
+      <div class="d-flex m-2">
+        <div class="d-flex align-items-center" style="margin-right: 60px;">
+          <div class="label-label-margin-right">Organizer:</div>
+          <div>
+            <div class="disable-div">{{organizer}}</div>
+          </div>
+        </div>
+      </div>
+      <p-divider></p-divider>
       <p-tabView>
         <p-tabPanel header="Event infornmation">
-          <app-event-overview></app-event-overview>
-          <div class="d-flex">
-            <p-button label="Save Event Details" [raised]="true" severity="info" [style]="{marginRight: '15px'}" />
-            <p-button label="Cancel" [raised]="true" severity="secondary" />
-          </div>
+          <app-event-overview [eventId]="eventId" [organizer]="organizer"
+            [isNewEvent]="isNewEvent"></app-event-overview>
         </p-tabPanel>
         <p-tabPanel header="Booking infornmation">
           <app-booking-info></app-booking-info>

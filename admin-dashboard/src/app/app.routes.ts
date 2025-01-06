@@ -20,16 +20,14 @@ export const routes: Routes = [
             'ADMIN_USER',
             'SUPPORT_USER',
             'SUPER_ADMIN_USER',
-            'ORGANIZER_USER'
+            'ORGANIZER_USER',
           ],
         },
         children: [
           {
             path: APP_ROUTES.BASE,
             loadComponent: () =>
-              import('../user/user.component').then(
-                (m) => m.UserComponent
-              ),
+              import('../user/user.component').then((m) => m.UserComponent),
             canActivate: [AuthGuard],
             data: {
               roles: [
@@ -37,7 +35,7 @@ export const routes: Routes = [
                 'ADMIN_USER',
                 'SUPPORT_USER',
                 'SUPER_ADMIN_USER',
-                'ORGANIZER_USER'
+                'ORGANIZER_USER',
               ],
             },
           },
@@ -58,12 +56,10 @@ export const routes: Routes = [
           {
             path: APP_ROUTES.EVENT_LIST,
             loadComponent: () =>
-              import('../event/event.component').then(
-                (m) => m.EventComponent
-              ),
+              import('../event/event.component').then((m) => m.EventComponent),
           },
           {
-            path: `${APP_ROUTES.EVENT_DETAILS}/:eventId`,
+            path: `${APP_ROUTES.EVENT_DETAILS}/:eventId/:organizer`,
             loadComponent: () =>
               import('../event/event-details/event-details.component').then(
                 (m) => m.EventDetailsComponent
@@ -72,9 +68,9 @@ export const routes: Routes = [
           {
             path: APP_ROUTES.ADD_SECURITY,
             loadComponent: () =>
-              import('../add-security-person/add-security-person.component').then(
-                (m) => m.AddSecurityPersonComponent
-              ),
+              import(
+                '../add-security-person/add-security-person.component'
+              ).then((m) => m.AddSecurityPersonComponent),
           },
         ],
       },

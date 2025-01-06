@@ -182,7 +182,9 @@ export class ProfileComponent implements OnInit {
   }
 
   clearBasicDetailsValidation() {
-    this.userBasicDetailsError.displayName = '';
+    this.userBasicDetailsError = {
+      displayName: '',
+    };
     this.enableBasicUpdateBtn = true;
   }
 

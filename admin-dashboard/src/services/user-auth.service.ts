@@ -22,7 +22,7 @@ export class UserAuthService {
 
   getLoggedinUserDetails(): Observable<LoggedInUserDetails> {
     return this.http.get<LoggedInUserDetails>(
-      `${this.baseUrl}api/user/system/loggin-user-details`
+      `${this.baseUrl}api/user/system/loggedin-user-details`
     );
   }
 
