@@ -23,8 +23,6 @@ public class JwtToken {
 	
 	private String username;
 	
-	private List<Role> roles;
-	
 	private LocalDateTime expiration;
 
 }

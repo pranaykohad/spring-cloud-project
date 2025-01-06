@@ -61,7 +61,7 @@ public class UserController {
 //		return ResponseEntity.ok(uploadAppUserProfile);
 //	}
 
-	@GetMapping("details")
+	@GetMapping("loggin-user-details")
 	public ResponseEntity<LoggedinUserDetails> getUserDetails(Principal principal) {
 		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
 		final GenericMapper<LoggedinUserDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
