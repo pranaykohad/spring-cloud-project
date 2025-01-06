@@ -1,40 +1,43 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AccordionModule } from 'primeng/accordion';
-import { CheckboxModule } from 'primeng/checkbox';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { ListboxModule } from 'primeng/listbox';
-import { MultiSelectModule } from 'primeng/multiselect';
-import { DividerModule } from 'primeng/divider';
-import { ChartModule } from 'primeng/chart';
-import { TableModule } from 'primeng/table';
-import { FieldsetModule } from 'primeng/fieldset';
-import { DialogModule } from 'primeng/dialog';
-import { ImageModule } from 'primeng/image';
-import { PanelModule } from 'primeng/panel';
-import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { FloatLabelModule } from 'primeng/floatlabel';
-import { PasswordModule } from 'primeng/password';
-import { IconFieldModule } from 'primeng/iconfield';
-import { InputIconModule } from 'primeng/inputicon';
 import { RouterModule } from '@angular/router';
-import { MenuModule } from 'primeng/menu';
-import { ToastModule } from 'primeng/toast';
-import { SkeletonModule } from 'primeng/skeleton';
-import { MegaMenuModule } from 'primeng/megamenu';
-import { SelectButtonModule } from 'primeng/selectbutton';
+import { AccordionModule } from 'primeng/accordion';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { ChartModule } from 'primeng/chart';
+import { CheckboxModule } from 'primeng/checkbox';
+import { DialogModule } from 'primeng/dialog';
+import { DividerModule } from 'primeng/divider';
 import { DropdownModule } from 'primeng/dropdown';
-import { TooltipModule } from 'primeng/tooltip';
-import { TabViewModule } from 'primeng/tabview';
+import { FieldsetModule } from 'primeng/fieldset';
 import { FileUploadModule } from 'primeng/fileupload';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { IconFieldModule } from 'primeng/iconfield';
+import { ImageModule } from 'primeng/image';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ListboxModule } from 'primeng/listbox';
+import { MegaMenuModule } from 'primeng/megamenu';
+import { MenuModule } from 'primeng/menu';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { PanelModule } from 'primeng/panel';
+import { PasswordModule } from 'primeng/password';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { SelectButtonModule } from 'primeng/selectbutton';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TableModule } from 'primeng/table';
+import { TabViewModule } from 'primeng/tabview';
 import { TagModule } from 'primeng/tag';
+import { ToastModule } from 'primeng/toast';
+import { TooltipModule } from 'primeng/tooltip';
 import { ColumnPipe } from '../pipes/column.pipe';
 import { RolePipe } from '../pipes/role.pipe';
-import { InputSwitchModule } from 'primeng/inputswitch';
+import { DataViewModule } from 'primeng/dataview';
 
 @NgModule({
   declarations: [],
@@ -75,7 +78,10 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     TagModule,
     ColumnPipe,
     RolePipe,
-    InputSwitchModule
+    InputSwitchModule,
+    InputTextareaModule,
+    InputNumberModule,
+    DataViewModule
   ],
   exports: [
     CommonModule,
@@ -114,7 +120,10 @@ import { InputSwitchModule } from 'primeng/inputswitch';
     TagModule,
     ColumnPipe,
     RolePipe,
-    InputSwitchModule
+    InputSwitchModule,
+    InputTextareaModule,
+    InputNumberModule,
+    DataViewModule
   ],
 })
 export class SharedModule {}
