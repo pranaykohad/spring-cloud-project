@@ -1,10 +1,4 @@
-import {
-  Component,
-  ComponentRef,
-  Input,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
+import { Component, Input } from '@angular/core';
 import {
   EventMedia,
   EventOverview,
@@ -40,11 +34,6 @@ export class EventOverviewComponent {
       this.getEventOverview();
     }
   }
-
-  imageComponent!: ComponentRef<ImageComponent>;
-
-  @ViewChild('coverImageContainer', { read: ViewContainerRef, static: true })
-  coverImageContainer!: ViewContainerRef;
 
   get isNewEvent() {
     return this._isNewEvent;
@@ -146,6 +135,11 @@ export class EventOverviewComponent {
     private eventService: EventService,
     private toastService: ToastService
   ) {}
+
+  editableEventMediaHandler(event: EventMedia) {
+    this.eventOverviewEdit.eventPhotos[event.index] = event;
+    this.enableEventSaveBtn = true;
+  }
 
   onUpload(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -258,10 +252,6 @@ export class EventOverviewComponent {
     };
   }
 
-  onActiveItemChange(value: any) {
-    console.log(value);
-  }
-
   onIsCoverMediaChange(value: boolean) {}
 
   getEventOverview() {
@@ -270,21 +260,6 @@ export class EventOverviewComponent {
       .subscribe((res: EventOverview) => {
         this.eventOverview = res;
         this.eventOverviewEdit = JSON.parse(JSON.stringify(this.eventOverview));
-        // this.createImageConponent();
       });
   }
-
-  // private createImageConponent() {
-  //   this.coverImageContainer.clear();
-  //   this.imageComponent =
-  //     this.coverImageContainer.createComponent(ImageComponent);
-  //   this.imageComponent.instance.eventMedia =
-  //     this.eventOverviewEdit.eventPhotos[0];
-  //   this.imageComponent.instance.eventMedia =
-  //     this.eventOverviewEdit.eventPhotos[1];
-
-  //   this.imageComponent.instance.editableEventMediaEmitter.subscribe((res) => {
-  //     console.log(res);
-  //   });
-  // }
 }

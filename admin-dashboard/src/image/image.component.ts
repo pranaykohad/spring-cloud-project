@@ -1,4 +1,11 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { EventMedia } from '../models/EventDetailObject';
 import { ToastService } from '../services/toast.service';
 import { SharedModule } from '../shared/shared.module';
@@ -11,7 +18,6 @@ import { SharedModule } from '../shared/shared.module';
   styleUrl: './image.component.scss',
 })
 export class ImageComponent {
-
   @ViewChild('eventMediaTemplate') myInputRef!: ElementRef;
 
   constructor(private toastService: ToastService) {}
@@ -38,8 +44,7 @@ export class ImageComponent {
   @Output()
   editableEventMediaEmitter = new EventEmitter<EventMedia>();
 
-  onUpload(event: Event, inputElement: HTMLInputElement) {
-    console.log(inputElement);
+  onUpload(event: Event) {
     if (!this.eventTitle) {
       this.toastService.showErrorToast(
         'please add event title before add photos'
@@ -59,7 +64,7 @@ export class ImageComponent {
       return;
     }
 
-    const maxSize = 10 * 1024 * 1024; // 5 MB
+    const maxSize = 5 * 1024 * 1024; // 5 MB
     if (file.size > maxSize) {
       this.toastService.showErrorToast('File size exceeds 5 MB');
       return;

@@ -37,45 +37,47 @@
           <tr>
             <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
               <app-image [eventMedia]="eventOverviewEdit.eventPhotos[0]"
-                [eventTitle]="this.eventOverviewEdit.eventTitle"></app-image>
-              <!-- <ng-container #coverImageContainer></ng-container> -->
+                [eventTitle]="this.eventOverviewEdit.eventTitle"
+                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
             </td>
             <td [style]=" {borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'
                   }">
               <app-image [eventMedia]="eventOverviewEdit.eventPhotos[1]"
-                [eventTitle]="this.eventOverviewEdit.eventTitle"></app-image>
+                [eventTitle]="this.eventOverviewEdit.eventTitle"
+                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
             </td>
             <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
               <app-image [eventMedia]="eventOverviewEdit.eventPhotos[2]"
-                [eventTitle]="this.eventOverviewEdit.eventTitle"></app-image>
+                [eventTitle]="this.eventOverviewEdit.eventTitle"
+                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
             </td>
           </tr>
           <tr>
             <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[3]"
-                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[3]" [eventTitle]="eventOverviewEdit.eventTitle"
+                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
             </td>
             <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[4]"
-                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[4]" [eventTitle]="eventOverviewEdit.eventTitle"
+                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
             </td>
             <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[5]"
-                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[5]" [eventTitle]="eventOverviewEdit.eventTitle"
+                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
             </td>
           </tr>
           <tr>
             <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[6]"
-                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[6]" [eventTitle]="eventOverviewEdit.eventTitle"
+                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
             </td>
             <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[7]"
-                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[7]" [eventTitle]="eventOverviewEdit.eventTitle"
+                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
             </td>
             <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[8]"
-                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[8]" [eventTitle]="eventOverviewEdit.eventTitle"
+                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
             </td>
           </tr>
         </tbody>

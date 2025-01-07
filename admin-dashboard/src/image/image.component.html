@@ -13,7 +13,7 @@
       class="p-button-outlined p-button-rounded p-button-secondary" [style]="{height: '40px'}"
       [pTooltip]="editableEventMedia.index === 0 ? 'add/replace cover':'add/replace photo'"></label>
     <input type="file" readonly #eventMediaTemplate [id]="'event-media-'+editableEventMedia.index" name="file"
-      accept="image/*" [style]="{display: 'none'}" (change)="onUpload($event, eventMediaTemplate)">
+      accept="image/*" [style]="{display: 'none'}" (change)="onUpload($event)">
     @if(editableEventMedia.mediaUrl) {
     <button pButton pRipple type="button" icon="pi pi-times"
       class="p-button-rounded p-button-secondary p-button-outlined"
