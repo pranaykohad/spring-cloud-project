@@ -3,6 +3,8 @@ export interface EventMedia {
   mediaUrl: string;
   mediaType: string;
   isForCover: boolean;
+  mediaFile: File;
+  index: number;
 }
 
 export interface EventOverview {

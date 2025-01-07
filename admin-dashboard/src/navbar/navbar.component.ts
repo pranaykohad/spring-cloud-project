@@ -7,6 +7,7 @@ import { UserAuthService } from '../services/user-auth.service';
 import { SharedModule } from '../shared/shared.module';
 import { LocalstorageService } from './../services/localstorage.service';
 import { MegaMenu } from 'primeng/megamenu';
+import { Menu } from 'primeng/menu';
 
 @Component({
   selector: 'app-navbar',
@@ -16,10 +17,10 @@ import { MegaMenu } from 'primeng/megamenu';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
+  onMouseLeave(menu: MegaMenu | Menu) {
+    menu.hide();
+  }
 
-onMouseLeave(megaMenu: MegaMenu) {
-  megaMenu.hide();
-}
   @Input()
   set loggedInUserDetails(value: LoggedInUserDetails) {
     this._loggedInUserDetails = value;
@@ -192,7 +193,10 @@ onMouseLeave(megaMenu: MegaMenu) {
 
   private openProfile() {
     if (this.loggedInUserDetails.userName !== null) {
-      this.router.navigate([APP_ROUTES.PROFILE, this.loggedInUserDetails.userName]);
+      this.router.navigate([
+        APP_ROUTES.PROFILE,
+        this.loggedInUserDetails.userName,
+      ]);
     }
   }
 }

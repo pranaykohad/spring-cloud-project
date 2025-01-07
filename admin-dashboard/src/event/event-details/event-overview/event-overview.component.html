@@ -12,9 +12,8 @@
       <div class="event-label col-3">Event description:</div>
       <div class="d-flex flex-column">
         <div class="p-float-label">
-          <textarea id="float-input" rows="5" cols="35" pInputTextarea [style]="{maxWidth: '500px'}"
+          <textarea id="float-input" rows="5" cols="35" pInputTextarea [style]="{maxWidth: '420px',}"
             [(ngModel)]="eventOverviewEdit.eventDescription" (input)="clearEventDetailsValidation()"></textarea>
-          <label for="float-input">Mention few line about the event...</label>
         </div>
         <span class="error-cntr">{{eventOverviewError.eventDescription}}</span>
       </div>
@@ -29,48 +28,64 @@
       </div>
     </div>
   </div>
-  <div class="col-5 d-flex flex-column justify-content-center align-items-center">
+  <div class="col-8 d-flex flex-column justify-content-center align-items-center">
     <div style="margin-bottom: 20px;">Event Media</div>
-    @if(eventOverviewEdit && eventOverviewEdit.eventPhotos.length) {
-    <p-galleria [value]="eventOverviewEdit.eventPhotos"
-      [containerStyle]="{'max-width': '650px', 'background-color': '#383838'}" [numVisible]="5"
-      [showItemNavigators]="true" [showItemNavigatorsOnHover]="true" [showThumbnails]="false">
-      <ng-template pTemplate="item" let-item>
-        <img [src]="item" [alt]="item.alt" [style]="{width: '650px', height: '550px'}" />
-      </ng-template>
-    </p-galleria>
-    } @else {
-    <div [style]="{width: '650px', height: '550px', border: '1px solid lightgrey'}"
-      class="d-flex justify-content-center align-items-center">no media added</div>
-    }
-  </div>
-  <div class="d-flex col-3 flex-column align-items-center">
-    <div style="margin-bottom: 20px;">Media Details</div>
-    <div>
-      <div class="d-flex align-items-center mb-20">
-        <div class="event-label col-4">Media name:</div>
-        <div>
-          <div class="disable-div">name here</div>
-        </div>
-      </div>
-      <div class="d-flex align-items-center mb-20">
-        <div class="event-label col-4">Media type:</div>
-        <div>
-          <div class="disable-div">name here</div>
-        </div>
-      </div>
-      <div class="d-flex align-items-center mb-20">
-        <div class="event-label col-4">Cover media:</div>
-        <div class="d-flex">
-          <p-inputSwitch></p-inputSwitch>
-        </div>
-      </div>
+    <div class="d-flex">
+      <table class="table table-bordered"
+        [style]="{width: '75rem', border: '1px solid lightgrey', borderSpacing: '10px', borderRadius: '7px'}">
+        <tbody>
+          <tr>
+            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[0]"
+                [eventTitle]="this.eventOverviewEdit.eventTitle"></app-image>
+              <!-- <ng-container #coverImageContainer></ng-container> -->
+            </td>
+            <td [style]=" {borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'
+                  }">
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[1]"
+                [eventTitle]="this.eventOverviewEdit.eventTitle"></app-image>
+            </td>
+            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[2]"
+                [eventTitle]="this.eventOverviewEdit.eventTitle"></app-image>
+            </td>
+          </tr>
+          <tr>
+            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[3]"
+                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+            </td>
+            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[4]"
+                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+            </td>
+            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[5]"
+                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+            </td>
+          </tr>
+          <tr>
+            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[6]"
+                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+            </td>
+            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[7]"
+                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+            </td>
+            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[8]"
+                [eventTitle]="eventOverviewEdit.eventTitle"></app-image>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>
 <div class="d-flex">
   <p-button label="Save Event Details" [raised]="true" severity="info" [style]="{marginRight: '15px'}"
-    [disabled]="!enableEventSaveBtn" (click)="saveEventDetails()"/>
+    [disabled]="!enableEventSaveBtn" (click)="saveEventDetails()" />
   <p-button label="Cancel" [raised]="true" severity="secondary" [disabled]="!enableEventSaveBtn"
     (click)="cancelEventDetailsChanges()" />
 </div>

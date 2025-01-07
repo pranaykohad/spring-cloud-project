@@ -3,7 +3,7 @@
     <div class="font-Quicksand-Bold home-logo pointer-cursor" (click)="openSection('')">Urban Shows</div>
   </div>
   <div class="d-flex justify-content-end col-8">
-    <p-megaMenu [model]="navbarModel" id="nav-bar-menu" (mouseleave)="onMouseLeave(megamenu)" #megamenu/>
+    <p-megaMenu [model]="navbarModel" id="nav-bar-menu" (mouseleave)="onMouseLeave(megamenu)" #megamenu />
   </div>
   <div class="col-2 d-flex justify-content-end self-align-end">
     <div>
@@ -13,7 +13,7 @@
       <span class="user-profile-img">no img</span>
       }
     </div>
-    <div class="font-Quicksand-SemiBold p-2 d-flex justify-content-center align-items-center user-name"
+    <div #test class="font-Quicksand-SemiBold p-2 d-flex justify-content-center align-items-center user-name"
       style="margin-right: 15px;">
       <span (click)="menu.toggle($event)" class="d-flex flex-column align-items-start pointer-cursor">
         <div>
@@ -22,8 +22,8 @@
         <div style="font-size: small" class="align-self-end">{{loggedInUserDetails && loggedInUserDetails.roles}}
         </div>
       </span>
-      <p-menu #menu [model]="model" [popup]="true" [styleClass]="'d-flex'" id="user-menu" autoZIndex="true"
-        appendTo="body" />
+      <p-menu #menu [model]="model" [popup]="true" [styleClass]="'d-flex'" id="user-menu" [appendTo]="'body'"
+        [style]="{zIndex: '99999999999999999999999999999'}" />
     </div>
   </div>
 </div>

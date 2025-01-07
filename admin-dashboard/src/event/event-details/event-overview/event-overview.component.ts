@@ -1,15 +1,24 @@
-import { Component, Input } from '@angular/core';
 import {
+  Component,
+  ComponentRef,
+  Input,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
+import {
+  EventMedia,
   EventOverview,
   EventOverviewError,
 } from '../../../models/EventDetailObject';
 import { EventService } from '../../../services/event.service';
+import { ToastService } from '../../../services/toast.service';
 import { SharedModule } from '../../../shared/shared.module';
+import { ImageComponent } from '../../../image/image.component';
 
 @Component({
   selector: 'app-event-overview',
   standalone: true,
-  imports: [SharedModule],
+  imports: [SharedModule, ImageComponent],
   templateUrl: './event-overview.component.html',
   styleUrl: './event-overview.component.scss',
 })
@@ -32,18 +41,96 @@ export class EventOverviewComponent {
     }
   }
 
+  imageComponent!: ComponentRef<ImageComponent>;
+
+  @ViewChild('coverImageContainer', { read: ViewContainerRef, static: true })
+  coverImageContainer!: ViewContainerRef;
+
   get isNewEvent() {
     return this._isNewEvent;
   }
 
   eventOverviewEdit: EventOverview = {
     id: 0,
-    eventTitle: '',
+    eventTitle: 'pranay',
     eventDescription: '',
     organizer: '',
     userMinAge: 0,
     createdOn: '',
-    eventPhotos: [],
+    eventPhotos: [
+      {
+        id: 0,
+        mediaUrl: 'assets/img/event image 1.png',
+        mediaType: '',
+        isForCover: true,
+        mediaFile: new File([], ''),
+        index: 0,
+      },
+      {
+        id: 0,
+        mediaUrl: 'assets/img/event image 2.png',
+        mediaType: '',
+        isForCover: false,
+        mediaFile: new File([], ''),
+        index: 1,
+      },
+      {
+        id: 0,
+        mediaUrl: 'assets/img/event image 3.png',
+        mediaType: '',
+        isForCover: false,
+        mediaFile: new File([], ''),
+        index: 2,
+      },
+      {
+        id: 0,
+        mediaUrl: 'assets/img/event image 4.png',
+        mediaType: '',
+        isForCover: false,
+        mediaFile: new File([], ''),
+        index: 3,
+      },
+      {
+        id: 0,
+        mediaUrl: '',
+        mediaType: '',
+        isForCover: false,
+        mediaFile: new File([], ''),
+        index: 4,
+      },
+      {
+        id: 0,
+        mediaUrl: '',
+        mediaType: '',
+        isForCover: false,
+        mediaFile: new File([], ''),
+        index: 5,
+      },
+      {
+        id: 0,
+        mediaUrl: '',
+        mediaType: '',
+        isForCover: false,
+        mediaFile: new File([], ''),
+        index: 6,
+      },
+      {
+        id: 0,
+        mediaUrl: '',
+        mediaType: '',
+        isForCover: false,
+        mediaFile: new File([], ''),
+        index: 7,
+      },
+      {
+        id: 0,
+        mediaUrl: '',
+        mediaType: '',
+        isForCover: false,
+        mediaFile: new File([], ''),
+        index: 8,
+      },
+    ],
   };
 
   eventOverviewError: EventOverviewError = {
@@ -55,7 +142,55 @@ export class EventOverviewComponent {
   eventOverview!: EventOverview;
   enableEventSaveBtn: boolean = false;
 
-  constructor(private eventService: EventService) {}
+  constructor(
+    private eventService: EventService,
+    private toastService: ToastService
+  ) {}
+
+  onUpload(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      const fileList: FileList = input.files;
+      for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        if (!file.type.startsWith('image/')) {
+          this.toastService.showErrorToast('Only image files are allowed');
+          return;
+        }
+
+        const maxSize = 10 * 1024 * 1024; // 5 MB
+        if (file.size > maxSize) {
+          this.toastService.showErrorToast('File size exceeds 5 MB');
+          return;
+        }
+
+        const eventMedia: EventMedia = {
+          id: 0,
+          mediaFile: new File(
+            [file],
+            `${this.eventOverviewEdit.eventTitle}-${i}.${file.name
+              .split('.')
+              .pop()}`,
+            {
+              type: file.type,
+            }
+          ),
+          isForCover: false,
+          mediaUrl: '',
+          mediaType: file.type,
+          index: 0,
+        };
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          eventMedia.mediaUrl = reader.result as string;
+        };
+        reader.readAsDataURL(file);
+        this.eventOverviewEdit.eventPhotos.push(eventMedia);
+      }
+      console.log(this.eventOverviewEdit);
+    }
+  }
 
   clearEventDetailsValidation() {
     this.eventOverviewError = {
@@ -123,12 +258,33 @@ export class EventOverviewComponent {
     };
   }
 
+  onActiveItemChange(value: any) {
+    console.log(value);
+  }
+
+  onIsCoverMediaChange(value: boolean) {}
+
   getEventOverview() {
     this.eventService
       .getEventOverview(this.eventId, this.organizer)
       .subscribe((res: EventOverview) => {
         this.eventOverview = res;
-        this.eventOverviewEdit = this.eventOverview;
+        this.eventOverviewEdit = JSON.parse(JSON.stringify(this.eventOverview));
+        // this.createImageConponent();
       });
   }
+
+  // private createImageConponent() {
+  //   this.coverImageContainer.clear();
+  //   this.imageComponent =
+  //     this.coverImageContainer.createComponent(ImageComponent);
+  //   this.imageComponent.instance.eventMedia =
+  //     this.eventOverviewEdit.eventPhotos[0];
+  //   this.imageComponent.instance.eventMedia =
+  //     this.eventOverviewEdit.eventPhotos[1];
+
+  //   this.imageComponent.instance.editableEventMediaEmitter.subscribe((res) => {
+  //     console.log(res);
+  //   });
+  // }
 }

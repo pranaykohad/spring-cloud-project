@@ -129,9 +129,9 @@ input {
     text-decoration: none;
     color: black;
   }
-  .p-tabview-nav-container {
-    position: static;
-  }
+  // .p-tabview-nav-container {
+  //   position: static;
+  // }
 
   .p-tabview-title {
     text-decoration: none;
@@ -144,7 +144,7 @@ input {
     padding-top: 30px;
   }
   .p-fileupload-choose {
-    position: static;
+    // position: static;
     margin-left: 15px;
   }
 }
@@ -233,7 +233,7 @@ input {
 }
 
 .position-static {
-  position: static;
+  // position: static;
 }
 
 .success-btn {
@@ -262,17 +262,17 @@ input {
   border: 1px solid lightgrey;
 }
 
-.p-accordion-header-link {
-  position: static;
-}
+// .p-accordion-header-link {
+//   position: static;
+// }
 
-.p-tabview-nav-container {
-  position: static;
-}
+// .p-tabview-nav-container {
+//   position: static;
+// }
 
-.p-tabview-nav-link {
-  position: static;
-}
+// .p-tabview-nav-link {
+//   position: static;
+// }
 
 .inactive-check {
   color: red;
@@ -288,3 +288,44 @@ input {
   font-size: small;
   color: red;
 }
+
+.custom-file-upload {
+  position: relative;
+  display: inline-block;
+}
+
+.custom-button {
+  margin-left: 20px;
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #0284c7;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.custom-image-button {
+  margin-left: 20px;
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: lightgrey;
+  border: "5px solid red";
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+// .ng-trigger-overlayAnimation{
+//   z-index: 999999999999;
+// }
+
+// .p-menu-overlay {
+//   z-index: 999999999;
+// }
