@@ -1,190 +1,112 @@
-import { Component, Input } from '@angular/core';
 import {
-  EventMedia,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+  ComponentRef,
+} from '@angular/core';
+import {
+  EventIdentifier,
   EventOverview,
   EventOverviewError,
 } from '../../../models/EventDetailObject';
 import { EventService } from '../../../services/event.service';
 import { ToastService } from '../../../services/toast.service';
 import { SharedModule } from '../../../shared/shared.module';
-import { ImageComponent } from '../../../image/image.component';
+import { OtpComponent } from '../../../popups/otp/otp.component';
+import { LoggedInUserDetails } from '../../../models/LoggedinUserDetails';
+import { LocalstorageService } from '../../../services/localstorage.service';
+import { APP_ROUTES, LocalStorageKeys } from '../../../models/Enums';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-event-overview',
   standalone: true,
-  imports: [SharedModule, ImageComponent],
+  imports: [SharedModule],
   templateUrl: './event-overview.component.html',
   styleUrl: './event-overview.component.scss',
 })
-export class EventOverviewComponent {
-  @Input()
-  eventId!: number;
+export class EventOverviewComponent implements OnInit {
+  private _eventIdentifier!: EventIdentifier;
+
+  otpComponent!: ComponentRef<OtpComponent>;
+
+  @ViewChild('otpContainer', { read: ViewContainerRef, static: true })
+  otpContainer!: ViewContainerRef;
 
   @Input()
-  organizer!: string;
-
-  private _isNewEvent!: boolean;
-
-  @Input()
-  set isNewEvent(value: boolean) {
-    if (value === true) {
-      this._isNewEvent = true;
-    } else {
-      this._isNewEvent = false;
-      this.getEventOverview();
+  set eventIdentifier(value: EventIdentifier) {
+    if (value) {
+      this._eventIdentifier = value;
+      this.getExistingEventOverview();
     }
   }
 
-  get isNewEvent() {
-    return this._isNewEvent;
+  get eventIdentifier(): EventIdentifier {
+    return this._eventIdentifier;
   }
 
-  eventOverviewEdit: EventOverview = {
-    id: 0,
-    eventTitle: 'pranay',
-    eventDescription: '',
-    organizer: '',
-    userMinAge: 0,
-    createdOn: '',
-    eventPhotos: [
-      {
-        id: 0,
-        mediaUrl: 'assets/img/event image 1.png',
-        mediaType: '',
-        isForCover: true,
-        mediaFile: new File([], ''),
-        index: 0,
-      },
-      {
-        id: 0,
-        mediaUrl: 'assets/img/event image 2.png',
-        mediaType: '',
-        isForCover: false,
-        mediaFile: new File([], ''),
-        index: 1,
-      },
-      {
-        id: 0,
-        mediaUrl: 'assets/img/event image 3.png',
-        mediaType: '',
-        isForCover: false,
-        mediaFile: new File([], ''),
-        index: 2,
-      },
-      {
-        id: 0,
-        mediaUrl: 'assets/img/event image 4.png',
-        mediaType: '',
-        isForCover: false,
-        mediaFile: new File([], ''),
-        index: 3,
-      },
-      {
-        id: 0,
-        mediaUrl: '',
-        mediaType: '',
-        isForCover: false,
-        mediaFile: new File([], ''),
-        index: 4,
-      },
-      {
-        id: 0,
-        mediaUrl: '',
-        mediaType: '',
-        isForCover: false,
-        mediaFile: new File([], ''),
-        index: 5,
-      },
-      {
-        id: 0,
-        mediaUrl: '',
-        mediaType: '',
-        isForCover: false,
-        mediaFile: new File([], ''),
-        index: 6,
-      },
-      {
-        id: 0,
-        mediaUrl: '',
-        mediaType: '',
-        isForCover: false,
-        mediaFile: new File([], ''),
-        index: 7,
-      },
-      {
-        id: 0,
-        mediaUrl: '',
-        mediaType: '',
-        isForCover: false,
-        mediaFile: new File([], ''),
-        index: 8,
-      },
-    ],
-  };
-
-  eventOverviewError: EventOverviewError = {
-    eventTitle: '',
-    eventDescription: '',
-    userMinAge: '',
-  };
-
+  eventOverviewEdit!: EventOverview;
+  eventOverviewError!: EventOverviewError;
   eventOverview!: EventOverview;
   enableEventSaveBtn: boolean = false;
 
   constructor(
     private eventService: EventService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private localstorageService: LocalstorageService,
+    private router: Router
   ) {}
 
-  editableEventMediaHandler(event: EventMedia) {
-    this.eventOverviewEdit.eventPhotos[event.index] = event;
-    this.enableEventSaveBtn = true;
+  ngOnInit(): void {
+    this.initEventOverview();
   }
 
-  onUpload(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      const fileList: FileList = input.files;
-      for (let i = 0; i < fileList.length; i++) {
-        const file = fileList[i];
-        if (!file.type.startsWith('image/')) {
-          this.toastService.showErrorToast('Only image files are allowed');
-          return;
-        }
+  // onUpload(event: Event) {
+  //   const input = event.target as HTMLInputElement;
+  //   if (input.files) {
+  //     const fileList: FileList = input.files;
+  //     for (let i = 0; i < fileList.length; i++) {
+  //       const file = fileList[i];
+  //       if (!file.type.startsWith('image/')) {
+  //         this.toastService.showErrorToast('Only image files are allowed');
+  //         return;
+  //       }
 
-        const maxSize = 10 * 1024 * 1024; // 5 MB
-        if (file.size > maxSize) {
-          this.toastService.showErrorToast('File size exceeds 5 MB');
-          return;
-        }
+  //       const maxSize = 10 * 1024 * 1024; // 5 MB
+  //       if (file.size > maxSize) {
+  //         this.toastService.showErrorToast('File size exceeds 5 MB');
+  //         return;
+  //       }
 
-        const eventMedia: EventMedia = {
-          id: 0,
-          mediaFile: new File(
-            [file],
-            `${this.eventOverviewEdit.eventTitle}-${i}.${file.name
-              .split('.')
-              .pop()}`,
-            {
-              type: file.type,
-            }
-          ),
-          isForCover: false,
-          mediaUrl: '',
-          mediaType: file.type,
-          index: 0,
-        };
+  //       const eventMedia: EventMedia = {
+  //         id: 0,
+  //         mediaFile: new File(
+  //           [file],
+  //           `${this.eventOverviewEdit.eventTitle}-${i}.${file.name
+  //             .split('.')
+  //             .pop()}`,
+  //           {
+  //             type: file.type,
+  //           }
+  //         ),
+  //         isForCover: false,
+  //         mediaUrl: '',
+  //         mediaType: file.type,
+  //         index: 0,
+  //       };
 
-        const reader = new FileReader();
-        reader.onload = () => {
-          eventMedia.mediaUrl = reader.result as string;
-        };
-        reader.readAsDataURL(file);
-        this.eventOverviewEdit.eventPhotos.push(eventMedia);
-      }
-      console.log(this.eventOverviewEdit);
-    }
-  }
+  //       const reader = new FileReader();
+  //       reader.onload = () => {
+  //         eventMedia.mediaUrl = reader.result as string;
+  //       };
+  //       reader.readAsDataURL(file);
+  //       this.eventOverviewEdit.eventPhotos.push(eventMedia);
+  //     }
+  //     console.log(this.eventOverviewEdit);
+  //   }
+  // }
 
   clearEventDetailsValidation() {
     this.eventOverviewError = {
@@ -195,15 +117,23 @@ export class EventOverviewComponent {
     this.enableEventSaveBtn = true;
   }
 
-  saveEventDetails() {
+  saveEventInfornmation() {
     if (this.validateEventDetails() && this.enableEventSaveBtn) {
-      this.eventService
-        .saveEventOverview(this.eventOverviewEdit)
-        .subscribe((res: boolean) => {});
+      this.loadOtpCompoment();
     }
   }
 
-  validateEventDetails(): boolean {
+  cancelEventDetailsChanges() {
+    if (this.eventIdentifier.id === 0) {
+      this.initEventOverview();
+      this.clearError();
+    } else {
+      this.getExistingEventOverview();
+    }
+    this.enableEventSaveBtn = false;
+  }
+
+  private validateEventDetails(): boolean {
     let isEventDetailsValid = true;
     if (this.eventOverviewEdit.eventTitle.length <= 5) {
       this.eventOverviewError.eventTitle = 'Event title is too short';
@@ -212,39 +142,27 @@ export class EventOverviewComponent {
     if (this.eventOverviewEdit.eventDescription.length <= 10) {
       this.eventOverviewError.eventDescription =
         'Event description is too short';
+      isEventDetailsValid = false;
     }
     if (
-      this.eventOverviewEdit.userMinAge <= 0 &&
+      this.eventOverviewEdit.userMinAge <= 0 ||
       this.eventOverviewEdit.userMinAge >= 100
     ) {
       this.eventOverviewError.userMinAge = 'Invalid user minium age';
+      isEventDetailsValid = false;
     }
     if (isEventDetailsValid) {
-      this.cancelEventDetailsChanges();
+      this.clearError();
     }
     this.eventOverviewEdit.eventTitle =
       this.eventOverviewEdit.eventTitle.trim();
     this.eventOverviewEdit.eventDescription =
       this.eventOverviewEdit.eventDescription.trim();
     this.eventOverviewEdit.userMinAge;
-    return false;
+    return isEventDetailsValid;
   }
 
-  cancelEventDetailsChanges() {
-    if (this.isNewEvent) {
-      this.eventOverviewEdit = {
-        id: 0,
-        eventTitle: '',
-        eventDescription: '',
-        organizer: '',
-        userMinAge: 0,
-        createdOn: '',
-        eventPhotos: [],
-      };
-    } else {
-      this.getEventOverview();
-    }
-    this.enableEventSaveBtn = false;
+  private clearError() {
     this.eventOverviewError = {
       eventTitle: '',
       eventDescription: '',
@@ -252,14 +170,80 @@ export class EventOverviewComponent {
     };
   }
 
-  onIsCoverMediaChange(value: boolean) {}
+  private getExistingEventOverview() {
+    if (
+      this.eventIdentifier.id !== 0 &&
+      this.eventIdentifier.organizer !== 'new'
+    ) {
+      this.eventService
+        .getEventOverview(
+          this.eventIdentifier.id,
+          this.eventIdentifier.organizer
+        )
+        .subscribe((res: EventOverview) => {
+          this.eventOverview = res;
+          this.eventOverviewEdit = JSON.parse(
+            JSON.stringify(this.eventOverview)
+          );
+          const loggedInUser: LoggedInUserDetails =
+            this.localstorageService.getItem(
+              LocalStorageKeys.LOGGED_IN_USER_DETAILS
+            );
+          this.eventOverviewEdit.userName = loggedInUser.userName;
+        });
+    } else {
+      this.initEventOverview();
+    }
+  }
 
-  getEventOverview() {
-    this.eventService
-      .getEventOverview(this.eventId, this.organizer)
-      .subscribe((res: EventOverview) => {
-        this.eventOverview = res;
-        this.eventOverviewEdit = JSON.parse(JSON.stringify(this.eventOverview));
+  private initEventOverview() {
+    const loggedInUser: LoggedInUserDetails = this.localstorageService.getItem(
+      LocalStorageKeys.LOGGED_IN_USER_DETAILS
+    );
+    this.eventOverviewEdit = {
+      userName: loggedInUser.userName,
+      otp: '',
+      eventTitle: '',
+      eventDescription: '',
+      organizer: this.eventIdentifier.organizer,
+      userMinAge: 0,
+      createdOn: '',
+    };
+    this.eventOverviewError = {
+      eventTitle: '',
+      eventDescription: '',
+      userMinAge: '',
+    };
+  }
+
+  private loadOtpCompoment() {
+    this.otpContainer.clear();
+    this.otpComponent = this.otpContainer.createComponent(OtpComponent);
+    this.otpComponent.instance.visible = true;
+    const loggedInUser: LoggedInUserDetails = this.localstorageService.getItem(
+      LocalStorageKeys.LOGGED_IN_USER_DETAILS
+    );
+    this.otpComponent.instance.userName = loggedInUser.userName;
+    this.otpComponent.instance.device = 'PHONE';
+    this.otpComponent.instance.otpEmiter.subscribe((res) => {
+      this.eventOverviewEdit.otp = res;
+      this.eventService.saveEventOverview(this.eventOverviewEdit).subscribe({
+        next: (res: number) => {
+          this.toastService.showSuccessToast(
+            'Event overview is added/updated successfully'
+          );
+          this.router.navigate([
+            `${APP_ROUTES.EVENT_DETAILS}/${res}/${this.eventOverviewEdit.organizer}`,
+          ]);
+        },
+        error: (err: string) => {
+          this.otpComponent.instance.visible = false;
+        },
+        complete: () => {
+          this.otpComponent.instance.visible = false;
+          this.enableEventSaveBtn = false;
+        },
       });
+    });
   }
 }

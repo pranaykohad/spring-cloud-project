@@ -37,9 +37,11 @@ export const DisplayPages = [1, 2, 3, 4, 5];
 export enum APP_ROUTES {
   BASE = '',
   LOGIN = 'login',
+  LOGOUT = 'logout',
   SIGNIN = 'signin',
   SETTING = 'setting',
   PROFILE = 'profile',
+  USER_LIST = 'user-list',
   EVENT_LIST = 'event-list',
   EVENT_DETAILS = 'event-details',
   ADD_SECURITY = 'add-security',

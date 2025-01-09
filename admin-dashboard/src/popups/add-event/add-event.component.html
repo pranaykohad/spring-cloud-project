@@ -1,0 +1,16 @@
+<div>
+  <p-dialog header="Select organizer" [(visible)]="visible" [modal]="true" [style]="{width: '23vw', height: '50vh'}"
+    [draggable]="false" [resizable]="false">
+    <div class="d-flex flex-column">
+      @if(organizerList){
+      <p-dropdown id="organizer-dropdown" [options]="organizerList" [(ngModel)]="selectedOrganizer"
+        placeholder="Select an organizer" [showClear]="selectedOrganizer" [style]="{minWidth: '20vw', marginTop: '10px'}"
+        (onChange)="selectRole($event.value)" />
+      <p-button label="proceed" [raised]="true" [style]="{borderRadius: '7px', minWidth: '20vw', marginTop: '50px'}"
+        (click)="proceed()" [disabled]="!selectedOrganizer" />
+      } @else {
+      <div>no organizer found</div>
+      }
+    </div>
+  </p-dialog>
+</div>

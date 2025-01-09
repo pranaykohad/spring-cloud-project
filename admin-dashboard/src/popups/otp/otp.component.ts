@@ -30,7 +30,7 @@ export class OtpComponent implements OnInit, OnDestroy {
   otpEmiter: EventEmitter<string> = new EventEmitter<string>();
 
   currentTimerValue: number = 0;
-  otpTimeout: number = 10;
+  otpTimeout: number = 60;
   warningTimeout: number = 8;
   otpArray!: number[];
   enableResendBtn: boolean = false;

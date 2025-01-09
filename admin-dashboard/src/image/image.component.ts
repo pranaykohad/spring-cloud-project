@@ -1,11 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { EventMedia } from '../models/EventDetailObject';
 import { ToastService } from '../services/toast.service';
 import { SharedModule } from '../shared/shared.module';
@@ -18,8 +11,6 @@ import { SharedModule } from '../shared/shared.module';
   styleUrl: './image.component.scss',
 })
 export class ImageComponent {
-  @ViewChild('eventMediaTemplate') myInputRef!: ElementRef;
-
   constructor(private toastService: ToastService) {}
 
   private _eventMedia!: EventMedia;

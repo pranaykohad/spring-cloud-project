@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+import { EventIdentifier } from '../../models/EventDetailObject';
 import { SharedModule } from '../../shared/shared.module';
-import { PerformerInfoComponent } from '../performer-info/performer-info.component';
 import { BookingInfoComponent } from './booking-info/booking-info.component';
 import { EventOverviewComponent } from './event-overview/event-overview.component';
+import { EventPhotosComponent } from './event-photos/event-photos.component';
+import { PerformerInfoComponent } from './performer-info/performer-info.component';
 
 @Component({
   selector: 'app-event-details',
@@ -13,22 +15,32 @@ import { EventOverviewComponent } from './event-overview/event-overview.componen
     EventOverviewComponent,
     BookingInfoComponent,
     PerformerInfoComponent,
+    EventPhotosComponent,
   ],
   templateUrl: './event-details.component.html',
   styleUrl: './event-details.component.scss',
 })
 export class EventDetailsComponent implements OnInit {
-  eventId!: number;
-  organizer!: string;
-  isNewEvent!: boolean;
+  eventIdentifier: EventIdentifier = {
+    id: 0,
+    organizer: 'new',
+  };
+  organizerList!: string[];
 
   constructor(private activatedRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.eventId = this.activatedRoute.snapshot.params['eventId'];
-    this.organizer = this.activatedRoute.snapshot.params['organizer'];
-    if (Number(this.eventId) === 0 && this.organizer === 'new') {
-      this.isNewEvent = true;
-    }
+    this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+      const id = Number(params.get('eventId'));
+      const org = params.get('organizer');
+      if (id !== null && org !== null) {
+        this.eventIdentifier = {
+          id: 0,
+          organizer: 'new',
+        };
+        this.eventIdentifier.id = id;
+        this.eventIdentifier.organizer = org;
+      }
+    });
   }
 }

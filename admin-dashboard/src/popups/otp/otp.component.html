@@ -1,5 +1,5 @@
 <div id="otp-component">
-  <p-dialog header="Enter Otp" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
+  <p-dialog header="Enter Otp" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }" [draggable]="false" [resizable]="false">
     <div class="d-flex m-3 justify-content-center">
       @if (enableProgressBar) {
       <p-progressBar [value]="getCurrentTimerValue()" [style]="{width: '300px', height: '15px'}"
@@ -10,7 +10,7 @@
       </p-progressBar>
       }
     </div>
-    <div class="d-flex m-1 justify-content-center align-items-center">
+    <div class="d-flex m-1 justify-content-center align-items-center pad-buttom">
       <input type="text" #otpTemp1 pInputText [(ngModel)]="otpArray[0]" class="otp-input otp-input-right-m"
         maxlength="1" (input)="onInput(otpTemp1, otpTemp2)" (paste)="$event.preventDefault()" />
       <input type="text" #otpTemp2 pInputText [(ngModel)]="otpArray[1]" class="otp-input otp-input-right-m"
@@ -25,9 +25,9 @@
         (input)="onInput(otpTemp6, null)" />
       <div class="pi pi-info-circle" pTooltip="Paste in not allowed"></div>
     </div>
-    <div class="d-flex justify-content-center" [style]="{marginTop: '35px'}">
+    <!-- <div class="d-flex justify-content-center" [style]="{marginTop: '35px'}">
       <p-button label="Cancel" severity="secondary" (click)="visible = false" [style]="{marginRight: '20px'}" />
       <p-button label="Resend otp" severity="success" (click)="resendOtp()" [disabled]="!enableResendBtn" />
-    </div>
+    </div> -->
   </p-dialog>
 </div>

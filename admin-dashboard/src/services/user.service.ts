@@ -19,6 +19,12 @@ export class UserService {
 
   constructor(private http: HttpClient) {}
 
+  getOrganizerList(): Observable<string[]> {
+    return this.http.get<string[]>(
+      `${this.baseUrl}api/user/common/organiser-list`
+    );
+  }
+
   getUserBasicDetails(userName: string): Observable<UserBasicDetails> {
     return this.http.get<UserBasicDetails>(
       `${this.baseUrl}api/user/system/basic-details?userName=${encodeURIComponent(userName)}`
@@ -37,9 +43,9 @@ export class UserService {
     );
   }
 
-  userActivation(userName: string, otp: string): Observable<void> {
+  activateUser(userName: string, otp: string): Observable<void> {
     return this.http.get<void>(
-      `${this.baseUrl}api/user/system/user-activation?userName=${encodeURIComponent(userName)}&otp=${otp}`
+      `${this.baseUrl}api/user/system/activate-user?userName=${encodeURIComponent(userName)}&otp=${otp}`
     );
   }
 

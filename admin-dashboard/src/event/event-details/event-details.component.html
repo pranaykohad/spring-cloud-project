@@ -5,24 +5,32 @@
         <div class="d-flex align-items-center" style="margin-right: 60px;">
           <div class="label-label-margin-right">Organizer:</div>
           <div>
-            <div class="disable-div">{{organizer}}</div>
+            <!-- @if(isNewEvent){
+            <p-dropdown id="role-dropdown" [options]="organizerList" [(ngModel)]="organizer"
+              placeholder="Select organizer" [showClear]="organizer" [style]="{minWidth: '20vw'}"
+              (onChange)="selectOrganizer($event.value)" />
+            } @else { -->
+            <div class="disable-div">{{eventIdentifier.organizer}}</div>
+            <!-- } -->
           </div>
         </div>
       </div>
       <p-divider></p-divider>
       <p-tabView>
         <p-tabPanel header="Event infornmation">
-          <app-event-overview [eventId]="eventId" [organizer]="organizer"
-            [isNewEvent]="isNewEvent"></app-event-overview>
+          <app-event-overview [eventIdentifier]="eventIdentifier"></app-event-overview>
         </p-tabPanel>
-        <p-tabPanel header="Booking infornmation">
+        <p-tabPanel header="Event media" [disabled]="eventIdentifier.id === 0">
+          <app-event-photos [eventIdentifier]="eventIdentifier"></app-event-photos>
+        </p-tabPanel>
+        <p-tabPanel header="Booking infornmation" [disabled]="eventIdentifier.id === 0">
           <app-booking-info></app-booking-info>
           <div class="d-flex">
             <p-button label="Save Booking Details" [raised]="true" severity="info" [style]="{marginRight: '15px'}" />
             <p-button label="Cancel" [raised]="true" severity="secondary" />
           </div>
         </p-tabPanel>
-        <p-tabPanel header="Performer infornmation">
+        <p-tabPanel header="Performer infornmation" [disabled]="eventIdentifier.id === 0">
           <app-performer-info></app-performer-info>
           <div class="d-flex">
             <p-button label="Save Performer Details" [raised]="true" severity="info" [style]="{marginRight: '15px'}" />

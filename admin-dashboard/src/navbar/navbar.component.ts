@@ -1,4 +1,10 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component,
+  ComponentRef,
+  Input,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { MegaMenuItem, MenuItem } from 'primeng/api';
 import { APP_ROUTES, LocalStorageKeys } from '../models/Enums';
@@ -8,6 +14,7 @@ import { SharedModule } from '../shared/shared.module';
 import { LocalstorageService } from './../services/localstorage.service';
 import { MegaMenu } from 'primeng/megamenu';
 import { Menu } from 'primeng/menu';
+import { AddEventComponent } from '../popups/add-event/add-event.component';
 
 @Component({
   selector: 'app-navbar',
@@ -17,9 +24,10 @@ import { Menu } from 'primeng/menu';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
-  onMouseLeave(menu: MegaMenu | Menu) {
-    menu.hide();
-  }
+  addEventComponent!: ComponentRef<AddEventComponent>;
+
+  @ViewChild('addEventContainer', { read: ViewContainerRef, static: true })
+  addEventContainer!: ViewContainerRef;
 
   @Input()
   set loggedInUserDetails(value: LoggedInUserDetails) {
@@ -28,63 +36,6 @@ export class NavbarComponent {
       this.loggedInUserRoles = new Set(value.roles);
       this.setMegaPanel();
     }
-  }
-
-  private setMegaPanel() {
-    this.navbarModel = [
-      {
-        label: 'User',
-        icon: 'pi pi-users',
-        items: [
-          [
-            {
-              // label: 'User Section',
-              items: [
-                {
-                  label: 'User List',
-                  visible: this.isSectionVisible('user-list'),
-                  command: () => {
-                    this.openSection('');
-                  },
-                },
-                {
-                  label: 'Add Security Person',
-                  visible: this.isSectionVisible('add-security'),
-                  command: () => {
-                    this.openSection('add-security');
-                  },
-                },
-              ],
-            },
-          ],
-        ],
-      },
-      {
-        label: 'Events',
-        icon: 'pi pi-calendar-plus',
-        items: [
-          [
-            {
-              // label: 'Event Section',
-              items: [
-                {
-                  label: 'Event List',
-                  command: () => {
-                    this.openSection(APP_ROUTES.EVENT_LIST);
-                  },
-                },
-                {
-                  label: 'Add Event',
-                  command: () => {
-                    this.openSection(`${APP_ROUTES.EVENT_DETAILS}/0/new`);
-                  },
-                },
-              ],
-            },
-          ],
-        ],
-      },
-    ];
   }
 
   get loggedInUserDetails(): LoggedInUserDetails {
@@ -136,13 +87,20 @@ export class NavbarComponent {
     private router: Router
   ) {}
 
+  onMouseLeave(menu: MegaMenu | Menu) {
+    menu.hide();
+  }
+
   openSection(section: string) {
     switch (section) {
       case APP_ROUTES.PROFILE:
         this.openProfile();
         break;
-      case 'logout':
-        this.openSection('logout');
+      case APP_ROUTES.LOGOUT:
+        this.logout();
+        break;
+      case `${APP_ROUTES.EVENT_DETAILS}/0/new`:
+        this.handleAddEvent();
         break;
       default:
         this.router.navigate([section]);
@@ -165,17 +123,98 @@ export class NavbarComponent {
     });
   }
 
+  private setMegaPanel() {
+    this.navbarModel = [
+      {
+        label: 'User',
+        icon: 'pi pi-users',
+        items: [
+          [
+            {
+              items: [
+                {
+                  label: 'User List',
+                  visible: this.isSectionVisible('user-list'),
+                  command: () => {
+                    this.openSection('');
+                  },
+                },
+                {
+                  label: 'Add Security Person',
+                  visible: this.isSectionVisible('add-security'),
+                  command: () => {
+                    this.openSection('add-security');
+                  },
+                },
+              ],
+            },
+          ],
+        ],
+      },
+      {
+        label: 'Events',
+        icon: 'pi pi-calendar-plus',
+        items: [
+          [
+            {
+              items: [
+                {
+                  label: 'Event List',
+                  command: () => {
+                    this.openSection(APP_ROUTES.EVENT_LIST);
+                  },
+                },
+                {
+                  label: 'Add Event',
+                  command: () => {
+                    this.openSection(`${APP_ROUTES.EVENT_DETAILS}/0/new`);
+                  },
+                },
+              ],
+            },
+          ],
+        ],
+      },
+    ];
+  }
+
+  private handleAddEvent() {
+    if (this.isInAllowedRole(['ORGANIZER_USER'])) {
+      this.router.navigate([
+        `${APP_ROUTES.EVENT_DETAILS}/0/${this.loggedInUserDetails.userName}`,
+      ]);
+    } else if (
+      this.isInAllowedRole([
+        'SYSTEM_USER',
+        'ADMIN_USER',
+        'SUPPORT_USER',
+        'SUPER_ADMIN_USER',
+      ])
+    ) {
+      this.addEventContainer.clear();
+      this.addEventComponent =
+        this.addEventContainer.createComponent(AddEventComponent);
+      this.addEventComponent.instance.visible = true;
+      this.addEventComponent.instance.organizerNameEmiter.subscribe(
+        (res: string) => {
+          this.router.navigate([`${APP_ROUTES.EVENT_DETAILS}/0/${res}`]);
+          this.addEventComponent.instance.visible = false;
+        }
+      );
+    }
+  }
+
   private isSectionVisible(section: string): boolean {
     let isVisible: boolean = false;
     switch (section) {
-      case 'user-list':
+      case APP_ROUTES.USER_LIST:
         return this.isInAllowedRole([
           'SYSTEM_USER',
           'ADMIN_USER',
           'SUPPORT_USER',
           'SUPER_ADMIN_USER',
         ]);
-      case 'add-security':
+      case APP_ROUTES.ADD_SECURITY:
         return this.isInAllowedRole([
           'SYSTEM_USER',
           'ADMIN_USER',

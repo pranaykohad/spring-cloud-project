@@ -1,13 +1,13 @@
-<div [style]="{height: '300px'}" class="d-flex flex-column justify-content-center">
+<div [style]="{height: '400px', width: '580px'}" class="d-flex flex-column justify-content-center">
   @if(editableEventMedia.mediaUrl){
-  <div [style]="{height: '250px'}">
+  <div [style]="{height: '340px'}">
     <p-image [attr.for]="'event-media-'+editableEventMedia.index" [src]="editableEventMedia.mediaUrl" alt="Image"
-      width="400px" height="250px" [preview]="true" [imageStyle]="{borderRadius: '7px', verticalAlign: 'super'}"
+      width="580px" height="340px" [preview]="true" [imageStyle]="{borderRadius: '7px', verticalAlign: 'super'}"
       [id]="editableEventMedia.index">
     </p-image>
   </div>
   }
-  <div [style]="{height: '40px', paddingTop: '5px'}" class="d-flex justify-content-center align-items-center">
+  <div [style]="{height: '40px', paddingTop: '10px'}" class="d-flex justify-content-center align-items-center">
     <label [attr.for]="'event-media-'+editableEventMedia.index" pButton pRipple type="button"
       [label]="editableEventMedia.index === 0 ? '+ cover': '+'"
       class="p-button-outlined p-button-rounded p-button-secondary" [style]="{height: '40px'}"

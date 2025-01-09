@@ -1,5 +1,5 @@
 <div id="event-overiew" class="d-flex">
-  <div class="col-4">
+  <div class="col-6">
     <div class="d-flex align-items-center mb-30">
       <div class="event-label col-3">Event title:</div>
       <div class="d-flex flex-column">
@@ -21,73 +21,18 @@
     <div class="d-flex align-items-center mb-20">
       <div class="event-label col-3">User min age:</div>
       <div class="d-flex flex-column">
-        <p-inputNumber inputId="minmax" inputId="minmax" mode="decimal" [min]="0" [max]="90"
-          [(ngModel)]="eventOverviewEdit.userMinAge" (input)="clearEventDetailsValidation()">
+        <p-inputNumber inputId="minmax" inputId="minmax" mode="decimal" [(ngModel)]="eventOverviewEdit.userMinAge"
+          (onInput)="clearEventDetailsValidation()" pTooltip="0 - 100">
         </p-inputNumber>
         <span class="error-cntr">{{eventOverviewError.userMinAge}}</span>
       </div>
     </div>
   </div>
-  <div class="col-8 d-flex flex-column justify-content-center align-items-center">
-    <div style="margin-bottom: 20px;">Event Media</div>
-    <div class="d-flex">
-      <table class="table table-bordered"
-        [style]="{width: '75rem', border: '1px solid lightgrey', borderSpacing: '10px', borderRadius: '7px'}">
-        <tbody>
-          <tr>
-            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[0]"
-                [eventTitle]="this.eventOverviewEdit.eventTitle"
-                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-            </td>
-            <td [style]=" {borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'
-                  }">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[1]"
-                [eventTitle]="this.eventOverviewEdit.eventTitle"
-                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-            </td>
-            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[2]"
-                [eventTitle]="this.eventOverviewEdit.eventTitle"
-                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-            </td>
-          </tr>
-          <tr>
-            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[3]" [eventTitle]="eventOverviewEdit.eventTitle"
-                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-            </td>
-            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[4]" [eventTitle]="eventOverviewEdit.eventTitle"
-                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-            </td>
-            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[5]" [eventTitle]="eventOverviewEdit.eventTitle"
-                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-            </td>
-          </tr>
-          <tr>
-            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[6]" [eventTitle]="eventOverviewEdit.eventTitle"
-                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-            </td>
-            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[7]" [eventTitle]="eventOverviewEdit.eventTitle"
-                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-            </td>
-            <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-              <app-image [eventMedia]="eventOverviewEdit.eventPhotos[8]" [eventTitle]="eventOverviewEdit.eventTitle"
-                (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
 </div>
 <div class="d-flex">
   <p-button label="Save Event Details" [raised]="true" severity="info" [style]="{marginRight: '15px'}"
-    [disabled]="!enableEventSaveBtn" (click)="saveEventDetails()" />
+    [disabled]="!enableEventSaveBtn" (click)="saveEventInfornmation()" />
   <p-button label="Cancel" [raised]="true" severity="secondary" [disabled]="!enableEventSaveBtn"
     (click)="cancelEventDetailsChanges()" />
 </div>
+<ng-container #otpContainer></ng-container>

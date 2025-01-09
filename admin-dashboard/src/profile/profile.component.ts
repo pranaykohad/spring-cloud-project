@@ -288,7 +288,7 @@ export class ProfileComponent implements OnInit {
     this.otpComponent.instance.userName = this.userName;
     this.otpComponent.instance.device = device;
     this.otpComponent.instance.otpEmiter.subscribe((otp) => {
-      this.userService.userActivation(this.userName, otp).subscribe((res) => {
+      this.userService.activateUser(this.userName, otp).subscribe((res) => {
         if (device === 'EMAIL') {
           this.editSecuredDetails.emailValidated = true;
           this.toastService.showSuccessToast("Opt is send on client's email");
@@ -310,7 +310,6 @@ export class ProfileComponent implements OnInit {
     this.otpComponent.instance.device = 'PHONE';
     this.otpComponent.instance.otpEmiter.subscribe((res) => {
       this.editSecuredDetails.otp = res;
-      this.messageService.enableLoader();
       let finalObject = {
         userName: this.editSecuredDetails.userName,
         otp: this.editSecuredDetails.otp,
