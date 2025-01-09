@@ -1,27 +1,27 @@
-package com.urbanShows.eventService.entity;
+package com.urbanShows.eventService.dto;
 
-import jakarta.persistence.Entity;
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Entity(name = "EVENT_MEDIA")
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class EventMedia {
+public class EventMediaDto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+	
+	private long eventId;
 
 	private String mediaUrl;
 
+	private MultipartFile mediaFile;
+
 	private boolean isForCover;
+	
+	private int index;
 
 }

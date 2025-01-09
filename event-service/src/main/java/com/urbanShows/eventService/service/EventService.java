@@ -1,7 +1,9 @@
 package com.urbanShows.eventService.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -16,13 +18,15 @@ import com.urbanShows.eventService.constant.TableConfig;
 import com.urbanShows.eventService.dto.ColumnConfigDto;
 import com.urbanShows.eventService.dto.EventDto;
 import com.urbanShows.eventService.dto.EventListDto;
-import com.urbanShows.eventService.dto.EventOverview;
+import com.urbanShows.eventService.dto.EventMediaDto;
+import com.urbanShows.eventService.dto.EventOverviewDto;
 import com.urbanShows.eventService.dto.EventPage;
 import com.urbanShows.eventService.dto.SearchRequest;
 import com.urbanShows.eventService.entity.Event;
 import com.urbanShows.eventService.enums.SortOrder;
 import com.urbanShows.eventService.mapper.GenericMapper;
 import com.urbanShows.eventService.repository.EventRepository;
+import com.urbanShows.eventService.security.authService.AuthService;
 import com.urbanShows.eventService.security.enums.Role;
 import com.urbanShows.eventService.security.exception.GenericException;
 
@@ -35,6 +39,7 @@ public class EventService {
 
 	private final EventRepository eventRepository;
 	private final ModelMapper modelMapper;
+	private final AuthService authService;
 
 	public EventListDto searchEvents(SearchRequest searchDto) {
 		final Pageable pageable = buildPage(searchDto);
@@ -43,14 +48,31 @@ public class EventService {
 		return pageableEventResponse(list, spec, searchDto.getCurrentPage());
 	}
 
-	public EventOverview getEventOverview(long eventId, String organizer) {
+	public EventOverviewDto getEventOverview(long eventId, String organizer) {
 		final Event event = eventRepository.findByIdAndOrganizer(eventId, organizer);
-		if(event == null) {
+		if (event == null) {
 			throw new GenericException("Event not found or inaccessible");
 		}
-		final GenericMapper<EventOverview, Event> mapper = new GenericMapper<>(modelMapper, EventOverview.class,
+		final GenericMapper<EventOverviewDto, Event> mapper = new GenericMapper<>(modelMapper, EventOverviewDto.class,
 				Event.class);
 		return mapper.entityToDto(event);
+	}
+
+	public List<EventMediaDto> getEventPhotos(long eventId, String organizer) {
+		final Event event = eventRepository.findByIdAndOrganizer(eventId, organizer);
+		if (event == null) {
+			throw new GenericException("Event not found or inaccessible");
+		}
+		final List<EventMediaDto> list = new ArrayList<>();
+		event.getEventPhotos().forEach(i -> {
+			final EventMediaDto object = new EventMediaDto();
+			object.setId(i.getId());
+			object.setEventId(event.getId());
+			object.setForCover(i.isForCover());
+			object.setMediaUrl(i.getMediaUrl());
+			list.add(object);
+		});
+		return list;
 	}
 
 	private Pageable buildPage(SearchRequest searchDto) {
@@ -112,9 +134,24 @@ public class EventService {
 		return spec != null ? (int) eventRepository.count(spec) : (int) eventRepository.count();
 	}
 
-	public Boolean saveEventOverview(EventOverview eventOverview) {
-		// TODO Auto-generated method stub
-		return false;
-	} 
+	public long saveEventOverview(EventOverviewDto eventOverview) {
+		final Optional<Event> byId = eventRepository.findById(eventOverview.getId());
+		Event event;
+		if (byId.isPresent()) {
+			event = byId.get();
+			event.setEventTitle(eventOverview.getEventTitle());
+			event.setEventDescription(eventOverview.getEventDescription());
+			event.setUserMinAge(eventOverview.getUserMinAge());
+		} else {
+			event = new Event();
+			event.setEventTitle(eventOverview.getEventTitle());
+			event.setEventDescription(eventOverview.getEventDescription());
+			event.setUserMinAge(eventOverview.getUserMinAge());
+			event.setOrganizer(eventOverview.getOrganizer());
+			event.setCreatedOn(LocalDateTime.now());
+		}
+		final Event save = eventRepository.save(event);
+		return save.getId();
+	}
 
 }

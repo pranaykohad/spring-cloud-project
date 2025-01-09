@@ -1,5 +1,9 @@
 package com.urbanShows.eventService.security.authService;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -8,6 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.urbanShows.eventService.security.dto.UserInternalInfo;
 import com.urbanShows.eventService.security.exception.ConnectionException;
 
@@ -21,7 +29,29 @@ public class AuthService {
 	private String userServiceUrl;
 
 	private final RestTemplate restTemplate;
-	
+
+	public Boolean isOrganizerActive(String jwt, String userName) {
+		try {
+			final ResponseEntity<Boolean> exchange = restTemplate.exchange(
+					(userServiceUrl + "/api/user/common/is-valid-organizer?userName=" + userName), HttpMethod.GET,
+					buildHeaderEntity(jwt), Boolean.class);
+			return exchange.getBody();
+		} catch (Exception e) {
+			throw new ConnectionException(extractMessage(e.getMessage()));
+		}
+	}
+
+	public Boolean validateLoggedinUserByOtp(String jwt, String otp) {
+		try {
+			final ResponseEntity<Boolean> exchange = restTemplate.exchange(
+					(userServiceUrl + "/api/user/common/username-otp-validation?otp=" + otp), HttpMethod.GET,
+					buildHeaderEntity(jwt), Boolean.class);
+			return exchange.getBody();
+		} catch (Exception e) {
+			throw new ConnectionException(extractMessage(e.getMessage()));
+		}
+	}
+
 	public UserInternalInfo getLoggedinAppUserInfo(String jwt) {
 		try {
 			final ResponseEntity<UserInternalInfo> exchange = restTemplate.exchange(
@@ -29,7 +59,7 @@ public class AuthService {
 					buildHeaderEntity(jwt), UserInternalInfo.class);
 			return exchange.getBody();
 		} catch (Exception e) {
-			throw new ConnectionException("Error in user service, please try later");
+			throw new ConnectionException(extractMessage(e.getMessage()));
 		}
 	}
 
@@ -40,7 +70,7 @@ public class AuthService {
 					buildHeaderEntity(jwt), UserInternalInfo.class);
 			return exchange.getBody();
 		} catch (Exception e) {
-			throw new ConnectionException("Error in user service, please try later");
+			throw new ConnectionException(extractMessage(e.getMessage()));
 		}
 	}
 
@@ -51,25 +81,30 @@ public class AuthService {
 					Boolean.class);
 			return isValidate.getBody();
 		} catch (Exception e) {
-			throw new ConnectionException("Error in user service, please try later");
+			throw new ConnectionException(extractMessage(e.getMessage()));
 		}
 	}
-	
-	public boolean isUserActive(String jwt) {
+
+	public boolean isLogginUserActive(String jwt) {
 		try {
 			final ResponseEntity<Boolean> isValidate = restTemplate.exchange(
 					(userServiceUrl + "/api/user/common/is-user-active"), HttpMethod.GET, buildHeaderEntity(jwt),
 					Boolean.class);
 			return isValidate.getBody();
 		} catch (Exception e) {
-			throw new ConnectionException("Error in user service, please try later");
+			throw new ConnectionException(extractMessage(e.getMessage()));
 		}
 	}
-	
+
 	private HttpEntity<String> buildHeaderEntity(String jwt) {
 		final HttpHeaders headers = new HttpHeaders();
 		headers.set("Authorization", "Bearer " + jwt);
 		return new HttpEntity<>(headers);
+	}
+	
+	private String extractMessage(String message) {
+		final String[] split = message.split(":");
+		return split[split.length - 1].replaceAll("[^a-zA-Z0-9 ]", "");
 	}
 
 }
