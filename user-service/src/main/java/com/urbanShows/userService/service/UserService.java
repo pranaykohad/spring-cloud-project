@@ -57,17 +57,43 @@ public class UserService {
 	private final OtpService otpService;
 	private final AzureBlobStorageService azureBlobStorageService;
 
+	public List<String> getOrganizerList() {
+		final List<UserInfo> systemUserList = userInfoRepository.findByRolesAndStatus(List.of(Role.ORGANIZER_USER),
+				Status.ACTIVE);
+		if (!systemUserList.isEmpty()) {
+			return systemUserList.stream().map(UserInfo::getUserName).toList();
+		}
+		throw new UserNotFoundException("user not found");
+	}
+
+	public Boolean isValidOrganizer(String userName) {
+		final UserInfo systemUserList = userInfoRepository.findByUserNameAndRolesAndStatus(userName,
+				List.of(Role.ORGANIZER_USER), Status.ACTIVE);
+		if (systemUserList == null) {
+			throw new UserNotFoundException("user not found");
+		}
+		return systemUserList != null;
+	}
+
 	public void uploadProfilePicUrl(UserInfoDto systemUserDto, String profilePicUrl) {
 		final UserInfo appUser = new UserInfo();
 		appUser.setUserName(systemUserDto.getUserName());
 		appUser.setProfilePicUrl(profilePicUrl);
 		userInfoRepository.save(appUser);
 	}
-
+	
 	public UserInfo authenticateSystemUserByOtp(String userName, String otp) {
-		final UserInfo systemUser = userInfoRepository.findByUserNameAndOtp(userName, otp);
+		final UserInfo systemUser = userInfoRepository.findByUserNameAndOtpAndStatus(userName, otp, Status.ACTIVE);
 		if (systemUser == null) {
-			throw new IncorrectOtpException("OTP is not correct or expired");
+			throw new IncorrectOtpException("OTP is not correct or expired or user is inactive");
+		}
+		return systemUser;
+	}
+
+	public UserInfo getUserByUsernameAndOtp(String userName, String otp) {
+		final UserInfo systemUser = userInfoRepository.findByUserNameAndOtpAndStatus(userName, otp, Status.INACTIVE);
+		if (systemUser == null) {
+			throw new IncorrectOtpException("OTP is not correct or expired or user is inactive");
 		}
 		return systemUser;
 	}
@@ -210,8 +236,8 @@ public class UserService {
 		return existingUser;
 	}
 
-	public boolean userActivation(String userName, String otp) {
-		final UserInfo userInfo = this.authenticateSystemUserByOtp(userName, otp);
+	public boolean activateUser(String userName, String otp) {
+		final UserInfo userInfo = this.getUserByUsernameAndOtp(userName, otp);
 		return userInfo != null;
 	}
 
@@ -226,8 +252,10 @@ public class UserService {
 		return pageable;
 	}
 
-	private UserInfoRespone pageableEventResponse(Page<UserInfo> pagedEventList, Specification<UserInfo> spec, int currentPage) {
-		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class, UserInfo.class);
+	private UserInfoRespone pageableEventResponse(Page<UserInfo> pagedEventList, Specification<UserInfo> spec,
+			int currentPage) {
+		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class,
+				UserInfo.class);
 		final UserInfoRespone eventDtoList = new UserInfoRespone();
 		final ColumnConfigDto columnConfig = new ColumnConfigDto(TableConfig.USER_COlUMNS);
 		eventDtoList.setColumnConfig(columnConfig);

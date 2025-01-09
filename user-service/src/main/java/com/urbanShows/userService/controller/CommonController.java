@@ -1,13 +1,16 @@
 package com.urbanShows.userService.controller;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.UserService;
@@ -43,6 +46,18 @@ public class CommonController {
 	public ResponseEntity<Boolean> checkIsUserActive(Principal principal) {
 		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
 		return ResponseEntity.ok(existingUser != null);
+	}
+	
+	@GetMapping("is-valid-organizer")
+	public ResponseEntity<Boolean> isValidOrganizer(@RequestParam String userName, Principal principal) {
+		systemUserService.isUserActive(principal.getName());
+		return ResponseEntity.ok(systemUserService.isValidOrganizer(userName));
+	}
+
+	@GetMapping("username-otp-validation")
+	public ResponseEntity<Boolean> usernameAndOtpvalidation(@RequestParam String otp, Principal principal) {
+		final UserInfo currentUser = systemUserService.authenticateSystemUserByOtp(principal.getName(), otp);
+		return ResponseEntity.ok(currentUser != null); 
 	}
 	
 }
