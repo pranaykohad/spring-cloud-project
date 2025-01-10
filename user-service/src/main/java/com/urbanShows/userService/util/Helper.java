@@ -28,6 +28,14 @@ public class Helper {
 	private Helper() {
 	}
 	
+	public static String getFileNameWithoutExtension(String fileName) {
+		final int dotIndex = fileName.lastIndexOf('.');
+		if (dotIndex > 0) {
+			return fileName.substring(0, dotIndex);
+		}
+		return "";
+	}
+	
 	public static Pair<String, String> extractUserNameAndToken(HttpServletRequest request) {
 		String authHeader = request.getHeader("Authorization");
 		String token = null;

@@ -183,7 +183,7 @@ public class UserService {
 						: targetUser.getDisplayName());
 
 		if (basicDetails.getProfilePicFile() != null) {
-			final String fileUrl = azureBlobStorageService.uploadUserProfile(basicDetails.getProfilePicFile());
+			final String fileUrl = azureBlobStorageService.uploadFile(basicDetails.getProfilePicFile());
 			uploadSystemUserProfilePicUrl(targetUser, fileUrl);
 		}
 

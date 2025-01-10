@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.urbanShows.userService.azure.AzureBlobStorageService;
 import com.urbanShows.userService.dto.LoggedinUserDetails;
 import com.urbanShows.userService.dto.SearchRequest;
 import com.urbanShows.userService.dto.UserBasicDetails;
@@ -31,6 +32,7 @@ import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.UserService;
 import com.urbanShows.userService.util.RolesUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
@@ -42,6 +44,7 @@ public class UserController {
 
 	private final UserService systemUserService;
 	private final ModelMapper modelMapper;
+	private final AzureBlobStorageService azureBlobStorageService;
 
 	@DeleteMapping("remove")
 	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody UserInfoDto systemUser) {
@@ -137,4 +140,11 @@ public class UserController {
 		systemUserService.isUserActive(principal.getName());
 		return ResponseEntity.ok(systemUserService.getOrganizerList());
 	}
+
+//	@PatchMapping("event-photos")
+//	public ResponseEntity<String> saveEventPhoto(@RequestParam(required = false) MultipartFile file,
+//			HttpServletRequest httpServletRequest, Principal principal) {
+//		systemUserService.isUserActive(principal.getName());
+//		return ResponseEntity.ok(azureBlobStorageService.uploadUserProfile(file));
+//	}
 }

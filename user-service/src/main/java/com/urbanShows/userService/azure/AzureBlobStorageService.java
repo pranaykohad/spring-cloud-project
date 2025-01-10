@@ -5,13 +5,17 @@ import java.io.IOException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.azure.core.http.rest.PagedIterable;
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobStorageException;
+import com.azure.storage.blob.models.ListBlobsOptions;
 import com.urbanShows.userService.exception.BlobNotFoundException;
 import com.urbanShows.userService.exception.GenericException;
 import com.urbanShows.userService.util.Helper;
 
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,13 +24,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AzureBlobStorageService {
 
+	private BlobContainerClient blobContainerClient;
+
 	private AzureConfig azureConfig;
-	
-	public String uploadUserProfile(MultipartFile file) {
+
+	@PostConstruct
+	public void init() {
+		blobContainerClient = azureConfig.getBlobContainerClient();
+		blobContainerClient.createIfNotExists();
+	}
+
+	public String uploadFile(MultipartFile file) {
 		final String originalFileName = file.getOriginalFilename();
 		Helper.validateBlob(originalFileName, file.getSize());
 		try {
-			final String fileUrl = uploadFile(file);
+			final String fileUrl = uploadFileInContainer(file);
 			log.info("file: {} is uploaded/replaced in azure container", originalFileName);
 			return fileUrl;
 		} catch (Exception e) {
@@ -36,31 +48,30 @@ public class AzureBlobStorageService {
 
 	public byte[] downloadFile(String blobName) {
 		try {
-			return azureConfig.getBlobContainerClient().getBlobClient(blobName).downloadContent().toBytes();
+			return blobContainerClient.getBlobClient(blobName).downloadContent().toBytes();
 		} catch (BlobStorageException ex) {
 			throw new BlobNotFoundException(ex.getLocalizedMessage());
 		}
 	}
 
-//	public boolean uploadAppUserProfile(MultipartFile file, AppUserInfo appUser) {
-//		final String originalFileName = file.getOriginalFilename();
-//		Helper.validateBlob(originalFileName, file.getSize());
-//		try {
-//			final String fileUrl = uploadFile(file);
-//			log.info("file: {} is uploaded/replaced in azure container", originalFileName);
-//			appUserService.uploadAppUserProfilePicUrl(appUser, fileUrl);
-//			return true;
-//		} catch (Exception e) {
-//			throw new GenericException("Error while uploading file on Azure Storage for app user");
-//		}
-//	}
-
-	private String uploadFile(MultipartFile file) {
-		final BlobContainerClient blobContainerClient = azureConfig.getBlobContainerClient();
-		blobContainerClient.createIfNotExists();
-		final String imageBlobName = file.getOriginalFilename();
-		final BlobClient blobClient = blobContainerClient.getBlobClient(imageBlobName);
+	private String uploadFileInContainer(MultipartFile file) {
+		final String mediaFileName = file.getOriginalFilename();
+		final BlobClient blobClient = blobContainerClient.getBlobClient(mediaFileName);
 		try {
+			final ListBlobsOptions listOption = new ListBlobsOptions();
+			listOption.setPrefix(file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")));
+			final PagedIterable<BlobItem> blobList = blobContainerClient.listBlobs(listOption, null, null);
+
+			for (BlobItem blobItem : blobList) {
+				final String blobName = blobItem.getName().substring(blobItem.getName().lastIndexOf('/') + 1);
+				if (Helper.getFileNameWithoutExtension(blobName)
+						.equals(Helper.getFileNameWithoutExtension(mediaFileName))) {
+					blobContainerClient.getBlobClient(blobName).delete();
+					log.info("Blob: {} is deleted from conatiner: {}", blobName,
+							blobContainerClient.getBlobContainerName());
+				}
+
+			}
 			blobClient.upload(file.getInputStream(), file.getSize(), true);
 			return blobClient.getBlobUrl();
 		} catch (IOException e) {
