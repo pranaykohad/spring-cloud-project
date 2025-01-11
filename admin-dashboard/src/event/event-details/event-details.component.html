@@ -4,19 +4,11 @@
       <div class="d-flex m-2">
         <div class="d-flex align-items-center" style="margin-right: 60px;">
           <div class="label-label-margin-right">Organizer:</div>
-          <div>
-            <!-- @if(isNewEvent){
-            <p-dropdown id="role-dropdown" [options]="organizerList" [(ngModel)]="organizer"
-              placeholder="Select organizer" [showClear]="organizer" [style]="{minWidth: '20vw'}"
-              (onChange)="selectOrganizer($event.value)" />
-            } @else { -->
-            <div class="disable-div">{{eventIdentifier.organizer}}</div>
-            <!-- } -->
-          </div>
+          <div class="disable-div">{{eventIdentifier.organizer}}</div>
         </div>
       </div>
       <p-divider></p-divider>
-      <p-tabView>
+      <p-tabView [(activeIndex)]="activeIndex">
         <p-tabPanel header="Event infornmation">
           <app-event-overview [eventIdentifier]="eventIdentifier"></app-event-overview>
         </p-tabPanel>

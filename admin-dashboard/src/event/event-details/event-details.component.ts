@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { EventIdentifier } from '../../models/EventDetailObject';
 import { SharedModule } from '../../shared/shared.module';
@@ -26,8 +26,12 @@ export class EventDetailsComponent implements OnInit {
     organizer: 'new',
   };
   organizerList!: string[];
+  activeIndex: number = 0;
 
-  constructor(private activatedRoute: ActivatedRoute) {}
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private cdrf: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
