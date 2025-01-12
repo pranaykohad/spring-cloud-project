@@ -58,12 +58,15 @@ public class AzureBlobStorageService {
 		final String mediaFileName = file.getOriginalFilename();
 		final BlobClient blobClient = blobContainerClient.getBlobClient(mediaFileName);
 		try {
+			// Extract blob list from azure container with same name
 			final ListBlobsOptions listOption = new ListBlobsOptions();
-			listOption.setPrefix(file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf(".")));
+			listOption.setPrefix(Helper.getFileNameWithoutExtension(mediaFileName));
 			final PagedIterable<BlobItem> blobList = blobContainerClient.listBlobs(listOption, null, null);
 
 			for (BlobItem blobItem : blobList) {
-				final String blobName = blobItem.getName().substring(blobItem.getName().lastIndexOf('/') + 1);
+				final String blobName = blobItem.getName();
+				
+				// Check in new media file name and existing blob name are same and delete blob from container
 				if (Helper.getFileNameWithoutExtension(blobName)
 						.equals(Helper.getFileNameWithoutExtension(mediaFileName))) {
 					blobContainerClient.getBlobClient(blobName).delete();
@@ -72,6 +75,8 @@ public class AzureBlobStorageService {
 				}
 
 			}
+			
+			// Upload new blob in container and return the url
 			blobClient.upload(file.getInputStream(), file.getSize(), true);
 			return blobClient.getBlobUrl();
 		} catch (IOException e) {
