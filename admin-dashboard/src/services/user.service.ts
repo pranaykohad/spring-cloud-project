@@ -21,7 +21,7 @@ export class UserService {
 
   getOrganizerList(): Observable<string[]> {
     return this.http.get<string[]>(
-      `${this.baseUrl}api/user/common/organiser-list`
+      `${this.baseUrl}api/user/system/organiser-list`
     );
   }
 

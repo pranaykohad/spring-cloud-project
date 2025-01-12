@@ -1,55 +1,65 @@
 <div id="event-photos" class="d-flex">
-  <table class="table table-bordered"
-    [style]="{borderSpacing: '10px'}">
+  <table class="table table-bordered" [style]="{borderSpacing: '10px'}">
     <tbody>
       <tr>
         <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-          <app-image [eventMedia]="eventPhotos[0]" [eventTitle]="'eventTitle'"
+          <app-image [eventMedia]="eventPhotos[0]" [eventId]="eventIdentifier.id"
+            [organizer]="eventIdentifier.organizer"
             (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
         </td>
         <td [style]=" {borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'
                   }">
-          <app-image [eventMedia]="eventPhotos[1]" [eventTitle]="'eventTitle'"
+          <app-image [eventMedia]="eventPhotos[1]" [eventId]="eventIdentifier.id"
+            [organizer]="eventIdentifier.organizer"
             (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
         </td>
         <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-          <app-image [eventMedia]="eventPhotos[2]" [eventTitle]="'eventTitle'"
-            (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-        </td>
-      </tr>
-      <tr>
-        <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-          <app-image [eventMedia]="eventPhotos[3]" [eventTitle]="'eventTitle'"
-            (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-        </td>
-        <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-          <app-image [eventMedia]="eventPhotos[4]" [eventTitle]="'eventTitle'"
-            (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
-        </td>
-        <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-          <app-image [eventMedia]="eventPhotos[5]" [eventTitle]="'eventTitle'"
+          <app-image [eventMedia]="eventPhotos[2]" [eventId]="eventIdentifier.id"
+            [organizer]="eventIdentifier.organizer"
             (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
         </td>
       </tr>
       <tr>
         <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-          <app-image [eventMedia]="eventPhotos[6]" [eventTitle]="'eventTitle'"
+          <app-image [eventMedia]="eventPhotos[3]" [eventId]="eventIdentifier.id"
+            [organizer]="eventIdentifier.organizer"
             (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
         </td>
         <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-          <app-image [eventMedia]="eventPhotos[7]" [eventTitle]="'eventTitle'"
+          <app-image [eventMedia]="eventPhotos[4]" [eventId]="eventIdentifier.id"
+            [organizer]="eventIdentifier.organizer"
             (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
         </td>
         <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
-          <app-image [eventMedia]="eventPhotos[8]" [eventTitle]="'eventTitle'"
+          <app-image [eventMedia]="eventPhotos[5]" [eventId]="eventIdentifier.id"
+            [organizer]="eventIdentifier.organizer"
+            (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
+        </td>
+      </tr>
+      <tr>
+        <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+          <app-image [eventMedia]="eventPhotos[6]" [eventId]="eventIdentifier.id"
+            [organizer]="eventIdentifier.organizer"
+            (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
+        </td>
+        <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+          <app-image [eventMedia]="eventPhotos[7]" [eventId]="eventIdentifier.id"
+            [organizer]="eventIdentifier.organizer"
+            (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
+        </td>
+        <td [style]="{borderRadius: '7px', textAlign: 'center', backgroundColor: '#ebeae8'}">
+          <app-image [eventMedia]="eventPhotos[8]" [eventId]="eventIdentifier.id"
+            [organizer]="eventIdentifier.organizer"
             (editableEventMediaEmitter)="editableEventMediaHandler($event)"></app-image>
         </td>
       </tr>
     </tbody>
   </table>
 </div>
-<div class="d-flex">
+<div class="d-flex" style="padding-left: 10px;">
   <p-button label="Save Event Details" [raised]="true" severity="info" [style]="{marginRight: '15px'}"
-    (click)="saveEventPhotos()"/>
-  <p-button label="Cancel" [raised]="true" severity="secondary" (click)="cancelEventPhotos()" />
+    (click)="saveEventPhotos()" [disabled]="!enableEventMediaSaveBtn" />
+  <p-button label="Cancel" [raised]="true" severity="secondary" (click)="cancelEventPhotos()"
+    [disabled]="!enableEventMediaSaveBtn" />
 </div>
+<ng-container #otpContainer></ng-container>

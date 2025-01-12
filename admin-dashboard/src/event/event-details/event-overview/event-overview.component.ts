@@ -39,7 +39,7 @@ export class EventOverviewComponent implements OnInit {
   set eventIdentifier(value: EventIdentifier) {
     if (value) {
       this._eventIdentifier = value;
-      this.getExistingEventOverview();
+      this.buildEventOverviewObject();
     }
   }
 
@@ -63,51 +63,6 @@ export class EventOverviewComponent implements OnInit {
     this.initEventOverview();
   }
 
-  // onUpload(event: Event) {
-  //   const input = event.target as HTMLInputElement;
-  //   if (input.files) {
-  //     const fileList: FileList = input.files;
-  //     for (let i = 0; i < fileList.length; i++) {
-  //       const file = fileList[i];
-  //       if (!file.type.startsWith('image/')) {
-  //         this.toastService.showErrorToast('Only image files are allowed');
-  //         return;
-  //       }
-
-  //       const maxSize = 10 * 1024 * 1024; // 5 MB
-  //       if (file.size > maxSize) {
-  //         this.toastService.showErrorToast('File size exceeds 5 MB');
-  //         return;
-  //       }
-
-  //       const eventMedia: EventMedia = {
-  //         id: 0,
-  //         mediaFile: new File(
-  //           [file],
-  //           `${this.eventOverviewEdit.eventTitle}-${i}.${file.name
-  //             .split('.')
-  //             .pop()}`,
-  //           {
-  //             type: file.type,
-  //           }
-  //         ),
-  //         isForCover: false,
-  //         mediaUrl: '',
-  //         mediaType: file.type,
-  //         index: 0,
-  //       };
-
-  //       const reader = new FileReader();
-  //       reader.onload = () => {
-  //         eventMedia.mediaUrl = reader.result as string;
-  //       };
-  //       reader.readAsDataURL(file);
-  //       this.eventOverviewEdit.eventPhotos.push(eventMedia);
-  //     }
-  //     console.log(this.eventOverviewEdit);
-  //   }
-  // }
-
   clearEventDetailsValidation() {
     this.eventOverviewError = {
       eventTitle: '',
@@ -128,7 +83,7 @@ export class EventOverviewComponent implements OnInit {
       this.initEventOverview();
       this.clearError();
     } else {
-      this.getExistingEventOverview();
+      this.buildEventOverviewObject();
     }
     this.enableEventSaveBtn = false;
   }
@@ -170,7 +125,7 @@ export class EventOverviewComponent implements OnInit {
     };
   }
 
-  private getExistingEventOverview() {
+  private buildEventOverviewObject() {
     if (
       this.eventIdentifier.id !== 0 &&
       this.eventIdentifier.organizer !== 'new'
@@ -233,7 +188,7 @@ export class EventOverviewComponent implements OnInit {
             'Event overview is added/updated successfully'
           );
           this.router.navigate([
-            `${APP_ROUTES.EVENT_DETAILS}/${res}/${this.eventOverviewEdit.organizer}`,
+            `${APP_ROUTES.EVENT_DETAILS}/${res}/${this.eventIdentifier.organizer}`,
           ]);
         },
         error: (err: string) => {

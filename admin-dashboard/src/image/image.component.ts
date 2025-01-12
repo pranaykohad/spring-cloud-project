@@ -13,9 +13,11 @@ import { SharedModule } from '../shared/shared.module';
 export class ImageComponent {
   constructor(private toastService: ToastService) {}
 
-  private _eventMedia!: EventMedia;
-
   editableEventMedia!: EventMedia;
+  imagePreview!: string;
+  tempFile!: File;
+
+  private _eventMedia!: EventMedia;
 
   @Input()
   set eventMedia(value: EventMedia) {
@@ -30,57 +32,72 @@ export class ImageComponent {
   }
 
   @Input()
-  eventTitle!: string;
+  eventId!: number;
+
+  @Input()
+  organizer!: string;
 
   @Output()
   editableEventMediaEmitter = new EventEmitter<EventMedia>();
 
   onUpload(event: Event) {
-    if (!this.eventTitle) {
+    if (!this.eventId || this.eventId === 0) {
       this.toastService.showErrorToast(
         'please add event title before add photos'
       );
     }
+
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length == 1) {
-      const fileList: FileList = input.files;
-      const file = fileList[0];
-      this.handleFile(file);
-    }
-  }
+      const file = input.files[0];
 
-  private handleFile(file: File) {
-    if (!file.type.startsWith('image/')) {
-      this.toastService.showErrorToast('Only image files are allowed');
-      return;
-    }
-
-    const maxSize = 5 * 1024 * 1024; // 5 MB
-    if (file.size > maxSize) {
-      this.toastService.showErrorToast('File size exceeds 5 MB');
-      return;
-    }
-
-    this.editableEventMedia.mediaFile = new File(
-      [file],
-      `${this.eventTitle}-${this.editableEventMedia.index}.${file.name
-        .split('.')
-        .pop()}`,
-      {
-        type: file.type,
+      if (!file.type.startsWith('image/')) {
+        this.toastService.showErrorToast('Only image files are allowed');
+        return;
       }
-    );
-    this.editableEventMedia.mediaType = file.type;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.editableEventMedia.mediaUrl = reader.result as string;
-    };
-    reader.readAsDataURL(file);
-    this.editableEventMediaEmitter.emit(this.editableEventMedia);
+      const maxSize = 5 * 1024 * 1024; // 5 MB
+      if (file.size > maxSize) {
+        this.toastService.showErrorToast('File size exceeds 5 MB');
+        return;
+      }
+
+      const timestamp = new Date()
+        .toISOString()
+        .replace(/[-:.]/g, '')
+        .slice(0, 15);
+
+      this.tempFile = new File(
+        [file],
+        `${this.organizer}-${this.eventId}-${
+          this.editableEventMedia.mediaIndex
+        }-${timestamp}.${file.name.split('.').pop()}`,
+        {
+          type: file.type,
+        }
+      );
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+      const emitFile: EventMedia = {
+        mediaUrl: '',
+        coverMedia: this.editableEventMedia.mediaIndex === 0,
+        mediaFile: this.tempFile,
+        mediaIndex: this.editableEventMedia.mediaIndex,
+      };
+      this.editableEventMediaEmitter.emit(emitFile);
+    }
   }
 
   cancel() {
     this.editableEventMedia = JSON.parse(JSON.stringify(this.eventMedia));
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+    };
+    reader.readAsDataURL(this.editableEventMedia.mediaFile);
   }
 }

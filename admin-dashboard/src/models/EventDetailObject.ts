@@ -1,11 +1,9 @@
 export interface EventMedia {
   id?: number;
-  eventId: number;
   mediaUrl: string;
-  mediaType: string;
-  isForCover: boolean;
+  coverMedia: boolean;
   mediaFile: File;
-  index: number;
+  mediaIndex: number;
 }
 
 export interface EventOverview {
@@ -25,9 +23,20 @@ export interface EventOverviewError {
   userMinAge: string;
 }
 
-
-
 export interface EventIdentifier {
   id: number;
   organizer: string;
+}
+
+export interface EventMediaReqObject {
+  id?: number;
+  coverMedia: boolean;
+  mediaIndex: number;
+  fileName: string;
+}
+
+export interface EventMediaRequest {
+  eventId: number;
+  otp: string;
+  eventMediaReqObject: EventMediaReqObject[];
 }

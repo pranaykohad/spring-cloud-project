@@ -1,20 +1,20 @@
-<div [style]="{height: '400px', width: '580px'}" class="d-flex flex-column justify-content-center">
-  @if(editableEventMedia.mediaUrl){
+<div [style]="{height: '400px', width: '580px'}" [class]="editableEventMedia.mediaUrl || imagePreview ? 'd-flex flex-column justify-content-start' : 'd-flex flex-column justify-content-center'">
+  @if(editableEventMedia.mediaUrl || imagePreview) {
   <div [style]="{height: '340px'}">
-    <p-image [attr.for]="'event-media-'+editableEventMedia.index" [src]="editableEventMedia.mediaUrl" alt="Image"
+    <p-image [attr.for]="'event-media-'+editableEventMedia.mediaIndex" [src]="editableEventMedia.mediaUrl || imagePreview" alt="Image"
       width="580px" height="340px" [preview]="true" [imageStyle]="{borderRadius: '7px', verticalAlign: 'super'}"
-      [id]="editableEventMedia.index">
+      [id]="editableEventMedia.mediaIndex">
     </p-image>
   </div>
   }
-  <div [style]="{height: '40px', paddingTop: '10px'}" class="d-flex justify-content-center align-items-center">
-    <label [attr.for]="'event-media-'+editableEventMedia.index" pButton pRipple type="button"
-      [label]="editableEventMedia.index === 0 ? '+ cover': '+'"
+  <div [style]="{height: '40px', paddingTop: '20px'}" class="d-flex justify-content-center align-items-center">
+    <label [attr.for]="'event-media-'+editableEventMedia.mediaIndex" pButton pRipple type="button"
+      [label]="editableEventMedia.mediaIndex === 0 ? '+ cover': '+'"
       class="p-button-outlined p-button-rounded p-button-secondary" [style]="{height: '40px'}"
-      [pTooltip]="editableEventMedia.index === 0 ? 'add/replace cover':'add/replace photo'"></label>
-    <input type="file" readonly #eventMediaTemplate [id]="'event-media-'+editableEventMedia.index" name="file"
+      [pTooltip]="editableEventMedia.mediaIndex === 0 ? 'add/replace cover':'add/replace photo'"></label>
+    <input type="file" readonly #eventMediaTemplate [id]="'event-media-'+editableEventMedia.mediaIndex" name="file"
       accept="image/*" [style]="{display: 'none'}" (change)="onUpload($event)">
-    @if(editableEventMedia.mediaUrl) {
+    @if(imagePreview) {
     <button pButton pRipple type="button" icon="pi pi-times"
       class="p-button-rounded p-button-secondary p-button-outlined"
       [style]="{width: '40px', height: '40px', marginLeft: '10px'}" (click)="cancel()" pTooltip="cancel"></button>

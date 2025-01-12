@@ -1,10 +1,14 @@
-import { Injectable } from '@angular/core';
-import { environment } from '../../environment';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
+import { environment } from '../../environment';
+import {
+  EventMedia,
+  EventMediaRequest,
+  EventOverview,
+} from '../models/EventDetailObject';
 import { EventListDto } from '../models/EventListDto';
 import { SearchRequest } from '../models/SearchRequest';
-import { EventMedia, EventOverview } from '../models/EventDetailObject';
 
 @Injectable({
   providedIn: 'root',
@@ -47,4 +51,18 @@ export class EventService {
     );
   }
 
+  saveEventPhotos(
+    eventPhotos: File[],
+    eventMediaRequest: EventMediaRequest
+  ): Observable<EventMedia[]> {
+    const formData = new FormData();
+    eventPhotos.forEach((i) => {
+      formData.append('eventPhotos', i);
+    });
+    formData.append('eventMediaReqObject', JSON.stringify(eventMediaRequest));
+    return this.http.patch<EventMedia[]>(
+      `${this.baseUrl}api/event/event-photos`,
+      formData
+    );
+  }
 }
