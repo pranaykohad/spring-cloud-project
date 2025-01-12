@@ -12,13 +12,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.urbanShows.eventService.dto.EventListDto;
-import com.urbanShows.eventService.dto.EventMediaDto;
+import com.urbanShows.eventService.dto.EventMediaResponse;
+import com.urbanShows.eventService.dto.EventMediaReqObject;
+import com.urbanShows.eventService.dto.EventMediaRequest;
 import com.urbanShows.eventService.dto.EventOverviewDto;
 import com.urbanShows.eventService.dto.SearchFilter;
 import com.urbanShows.eventService.dto.SearchRequest;
+import com.urbanShows.eventService.entity.EventMedia;
 import com.urbanShows.eventService.enums.SearchOperator;
 import com.urbanShows.eventService.security.authService.AuthService;
 import com.urbanShows.eventService.security.enums.Role;
@@ -26,6 +34,7 @@ import com.urbanShows.eventService.security.util.Helper;
 import com.urbanShows.eventService.service.EventService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -74,10 +83,22 @@ public class EventController {
 	}
 
 	@GetMapping("event-photos")
-	public ResponseEntity<List<EventMediaDto>> getEventPhotos(@RequestParam long eventId,
+	public ResponseEntity<List<EventMediaResponse>> getEventPhotos(@RequestParam long eventId,
 			@RequestParam String organizer, HttpServletRequest httpServletRequest, Principal principal) {
 		authService.isLogginUserActive(Helper.extractJwt(httpServletRequest));
 		return ResponseEntity.ok(eventService.getEventPhotos(eventId, organizer));
+	}
+
+	@PatchMapping("event-photos")
+	public ResponseEntity<List<EventMediaResponse>> saveEventPhotos(
+			@RequestParam(required = false) List<MultipartFile> eventPhotos,
+			@RequestParam(required = false) String eventMediaReqObject, HttpServletRequest httpServletRequest,
+			Principal principal) throws JsonProcessingException {
+		final ObjectMapper objectMapper = new ObjectMapper();
+		final EventMediaRequest eventMediaRequest = objectMapper.readValue(eventMediaReqObject,
+				EventMediaRequest.class);
+		authService.validateLoggedinUserByOtp(Helper.extractJwt(httpServletRequest), eventMediaRequest.getOtp());
+		return ResponseEntity.ok(eventService.uploadEventMedia(eventPhotos, eventMediaRequest));
 	}
 
 }

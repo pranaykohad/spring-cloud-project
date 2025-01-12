@@ -2,6 +2,7 @@ package com.urbanShows.eventService.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,33 +14,90 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.urbanShows.eventService.azure.AzureBlobStorageService;
 import com.urbanShows.eventService.constant.TableConfig;
 import com.urbanShows.eventService.dto.ColumnConfigDto;
 import com.urbanShows.eventService.dto.EventDto;
 import com.urbanShows.eventService.dto.EventListDto;
-import com.urbanShows.eventService.dto.EventMediaDto;
+import com.urbanShows.eventService.dto.EventMediaReqObject;
+import com.urbanShows.eventService.dto.EventMediaRequest;
+import com.urbanShows.eventService.dto.EventMediaResponse;
 import com.urbanShows.eventService.dto.EventOverviewDto;
 import com.urbanShows.eventService.dto.EventPage;
 import com.urbanShows.eventService.dto.SearchRequest;
 import com.urbanShows.eventService.entity.Event;
+import com.urbanShows.eventService.entity.EventMedia;
 import com.urbanShows.eventService.enums.SortOrder;
 import com.urbanShows.eventService.mapper.GenericMapper;
 import com.urbanShows.eventService.repository.EventRepository;
-import com.urbanShows.eventService.security.authService.AuthService;
-import com.urbanShows.eventService.security.enums.Role;
 import com.urbanShows.eventService.security.exception.GenericException;
 
 import io.jsonwebtoken.lang.Arrays;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class EventService {
 
 	private final EventRepository eventRepository;
 	private final ModelMapper modelMapper;
-	private final AuthService authService;
+	private final AzureBlobStorageService azureBlobStorageService;
+
+	public List<EventMediaResponse> uploadEventMedia(List<MultipartFile> eventPhotos,
+			EventMediaRequest eventMediaRequest) {
+		final Optional<Event> byId = eventRepository.findById(eventMediaRequest.getEventId());
+		List<EventMedia> eventMediaList = new ArrayList<>();
+		if (byId.isPresent()) {
+			final Event event = byId.get();
+
+			if (!eventMediaRequest.getEventMediaReqObject().isEmpty()) {
+
+				final List<EventMedia> existingMediaList = event.getEventMediaList();
+				final List<EventMediaReqObject> newMediaList = eventMediaRequest.getEventMediaReqObject();
+
+				for (int i = 0; i < newMediaList.size(); i++) {
+
+					// save media in azure container
+					final String fileUrl = azureBlobStorageService.uploadFile(eventPhotos.get(i));
+
+					final EventMediaReqObject eventMediaReqObject = newMediaList.get(i);
+
+					// match and get media is already exist in database
+					final Optional<EventMedia> first = existingMediaList.stream()
+							.filter(j -> j.getMediaIndex() == eventMediaReqObject.getMediaIndex()).findFirst();
+
+					if (first.isPresent()) {
+						// if match then update existing object
+						final EventMedia existingEventMedia = first.get();
+						existingEventMedia.setMediaUrl(fileUrl);
+
+						// add updated media to event
+						event.getEventMediaList().add(existingEventMedia);
+
+					} else {
+						// else create a new object
+						final EventMedia newEventMedia = new EventMedia();
+						newEventMedia.setCoverMedia(eventMediaReqObject.isCoverMedia());
+						newEventMedia.setMediaIndex(eventMediaReqObject.getMediaIndex());
+						newEventMedia.setMediaUrl(fileUrl);
+
+						// add new media to event
+						event.getEventMediaList().add(newEventMedia);
+					}
+
+				}
+			}
+			final Event save = eventRepository.save(event);
+			eventMediaList = save.getEventMediaList();
+		}
+		final GenericMapper<EventMediaResponse, EventMedia> mapper = new GenericMapper<>(modelMapper,
+				EventMediaResponse.class, EventMedia.class);
+		return mapper.entityToDto(eventMediaList);
+	}
 
 	public EventListDto searchEvents(SearchRequest searchDto) {
 		final Pageable pageable = buildPage(searchDto);
@@ -58,21 +116,30 @@ public class EventService {
 		return mapper.entityToDto(event);
 	}
 
-	public List<EventMediaDto> getEventPhotos(long eventId, String organizer) {
+	public List<EventMediaResponse> getEventPhotos(long eventId, String organizer) {
 		final Event event = eventRepository.findByIdAndOrganizer(eventId, organizer);
 		if (event == null) {
 			throw new GenericException("Event not found or inaccessible");
 		}
-		final List<EventMediaDto> list = new ArrayList<>();
-		event.getEventPhotos().forEach(i -> {
-			final EventMediaDto object = new EventMediaDto();
-			object.setId(i.getId());
-			object.setEventId(event.getId());
-			object.setForCover(i.isForCover());
-			object.setMediaUrl(i.getMediaUrl());
-			list.add(object);
-		});
-		return list;
+		final List<EventMediaResponse> eventMediaList = new ArrayList<>();
+		final GenericMapper<EventMediaResponse, EventMedia> mapper = new GenericMapper<>(modelMapper,
+				EventMediaResponse.class, EventMedia.class);
+		eventMediaList.addAll(mapper.entityToDto(event.getEventMediaList()));
+
+		final List<Integer> existingIndexList = eventMediaList.stream().map(EventMediaResponse::getMediaIndex).toList();
+
+		for (int i = 0; i < 9; i++) {
+			if (!existingIndexList.contains(i)) {
+				final EventMediaResponse object = new EventMediaResponse();
+				object.setMediaIndex(i);
+				object.setCoverMedia(i == 0);
+				eventMediaList.add(object);
+			}
+		}
+
+		eventMediaList.sort(Comparator.comparingInt(EventMediaResponse::getMediaIndex));
+
+		return eventMediaList;
 	}
 
 	private Pageable buildPage(SearchRequest searchDto) {

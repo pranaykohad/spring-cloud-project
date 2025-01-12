@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
 
 import com.urbanShows.eventService.entity.Event;
+import com.urbanShows.eventService.entity.EventMedia;
 import com.urbanShows.eventService.entity.EventType;
 import com.urbanShows.eventService.repository.EventRepository;
 import com.urbanShows.eventService.repository.EventTypeRepository;
@@ -42,7 +44,7 @@ public class InsertEventDataSample {
 			"CHARITY EVENTS", "TRADE SHOWS", "BOOK SIGNINGS", "WINE TASTINGS", "YOGA RETREATS", "FESTIVALS" };
 
 	public void insertEventSampleDate() {
-		IntStream.range(1, 9).forEach(i -> {
+		IntStream.range(1, 99).forEach(i -> {
 			final Event event = new Event();
 			event.setEventTitle(eventTitle[i % eventTitle.length] + " #" + i);
 			event.setEventDescription(descriptions[i % descriptions.length]);
@@ -56,6 +58,28 @@ public class InsertEventDataSample {
 			String eventTypeId = eventTypeIds[i % eventTypeIds.length];
 			Optional<EventType> eventType = eventTypeRepository.findById(eventTypeId);
 			eventType.ifPresent(event::setEventType);
+			
+			final List<EventMedia> eventMediaList = new ArrayList<>();
+			
+			EventMedia eventMedia = new EventMedia();
+			eventMedia.setCoverMedia(false);
+			eventMedia.setMediaIndex(new Random().nextInt(9) + 1);
+			eventMedia.setMediaUrl("https://urbanshowsdevuser.blob.core.windows.net/event-media/eventTitle-3.jpeg");
+			eventMediaList.add(eventMedia);
+			
+			eventMedia = new EventMedia();
+			eventMedia.setCoverMedia(false);
+			eventMedia.setMediaIndex(new Random().nextInt(9) + 1);
+			eventMedia.setMediaUrl("https://urbanshowsdevuser.blob.core.windows.net/event-media/eventTitle-3.jpeg");
+			eventMediaList.add(eventMedia);
+			
+			eventMedia = new EventMedia();
+			eventMedia.setCoverMedia(false);
+			eventMedia.setMediaIndex(new Random().nextInt(9) + 1);
+			eventMedia.setMediaUrl("https://urbanshowsdevuser.blob.core.windows.net/event-media/eventTitle-3.jpeg");
+			eventMediaList.add(eventMedia);
+			
+			event.setEventMediaList(eventMediaList);
 
 			eventRepository.save(event);
 		});

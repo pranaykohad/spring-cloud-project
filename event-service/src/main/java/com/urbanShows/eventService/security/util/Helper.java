@@ -13,7 +13,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.urbanShows.eventService.azure.AzureConfig;
 import com.urbanShows.eventService.security.enums.Role;
+import com.urbanShows.eventService.security.exception.FileSizeExceedsException;
+import com.urbanShows.eventService.security.exception.InvalidFileFormatException;
 import com.urbanShows.eventService.security.exception.JwtParseException;
 
 import io.jsonwebtoken.Claims;
@@ -27,6 +30,23 @@ public class Helper {
 	private static final String SECRET = "5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437";
 
 	private Helper() {
+	}
+
+	public static String getFileNameWithoutTimeAndExtension(String fileName) {
+		final int dotIndex = fileName.lastIndexOf('.');
+		String newFileName = "";
+		newFileName = dotIndex > 0 ? fileName.substring(0, dotIndex) : fileName;
+		final int dashIndex = newFileName.lastIndexOf('-');
+		return dashIndex > 0 ? fileName.substring(0, dashIndex + 1) : fileName;
+	}
+
+	public static void validateBlob(String originalFileName, long fileSize) {
+		if (!isValidFormat(originalFileName)) {
+			throw new InvalidFileFormatException("File format is not correct: " + originalFileName);
+		}
+		if (!isFileSizeExceeds(fileSize)) {
+			throw new FileSizeExceedsException("File size exceeds: " + fileSize);
+		}
 	}
 
 	public static List<Role> getLoggedinUserRoles(Principal principal) {
@@ -93,6 +113,21 @@ public class Helper {
 
 	private static Role fromAuthority(String authority) {
 		return Role.valueOf(authority.replace("ROLE_", ""));
+	}
+
+	private static boolean isValidFormat(String fileName) {
+		final String fileExtension = getFileExtension(fileName);
+		return fileExtension != null && AzureConfig.VALID_IMAGE_FORMAT.contains(fileExtension.toLowerCase());
+	}
+
+	private static String getFileExtension(String fileName) {
+		int lastDotIndex = fileName.lastIndexOf('.');
+		return (lastDotIndex != -1 && lastDotIndex < fileName.length() - 1) ? fileName.substring(lastDotIndex + 1)
+				: null;
+	}
+
+	private static boolean isFileSizeExceeds(long size) {
+		return size < AzureConfig.MAX_IMAGE_SIZE;
 	}
 
 }

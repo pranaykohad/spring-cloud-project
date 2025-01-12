@@ -1,9 +1,12 @@
 package com.urbanShows.eventService.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -45,9 +48,10 @@ public class Event {
 	@ManyToOne
 	@JoinColumn(name = "event_type_id")
 	private EventType eventType;
-	
-	@OneToMany
-	private List<EventMedia> eventPhotos;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@JoinColumn(name = "event_id", referencedColumnName = "id")
+	private List<EventMedia> eventMediaList;
 //	
 //	private List<EventVenue> eventVenues;
 //	

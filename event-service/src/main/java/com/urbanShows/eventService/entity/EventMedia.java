@@ -22,6 +22,8 @@ public class EventMedia {
 
 	private String mediaUrl;
 
-	private boolean isForCover;
+	private boolean coverMedia;
+
+	private int mediaIndex;
 
 }

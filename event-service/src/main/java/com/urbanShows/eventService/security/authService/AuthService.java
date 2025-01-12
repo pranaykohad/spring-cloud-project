@@ -1,9 +1,5 @@
 package com.urbanShows.eventService.security.authService;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -12,10 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.urbanShows.eventService.security.dto.UserInternalInfo;
 import com.urbanShows.eventService.security.exception.ConnectionException;
 
@@ -101,7 +93,7 @@ public class AuthService {
 		headers.set("Authorization", "Bearer " + jwt);
 		return new HttpEntity<>(headers);
 	}
-	
+
 	private String extractMessage(String message) {
 		final String[] split = message.split(":");
 		return split[split.length - 1].replaceAll("[^a-zA-Z0-9 ]", "");
