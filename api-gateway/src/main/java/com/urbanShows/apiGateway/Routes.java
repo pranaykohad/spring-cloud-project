@@ -28,14 +28,7 @@ public class Routes {
 	@Value("${notification.service.url}")
 	private String notificationServiceUrl;
 
-	@Bean
-	RouterFunction<ServerResponse> userServiceRoute() {
-		return GatewayRouterFunctions.route("USER-SERVICE")
-				.route(RequestPredicates.path("api/user/**"), HandlerFunctions.http(userServiceUrl))
-				.filter(CircuitBreakerFilterFunctions.circuitBreaker("USER-SERVICE-CIRCUIT-BREAKER",
-						URI.create(USER_FALLBACK_ROUTE)))
-				.build();
-	}
+	
 
 	@Bean
 	RouterFunction<ServerResponse> eventServiceRoute() {
@@ -43,6 +36,15 @@ public class Routes {
 				.route(RequestPredicates.path("api/event/**"), HandlerFunctions.http(eventServiceUrl))
 				.filter(CircuitBreakerFilterFunctions.circuitBreaker("EVENT-SERVICE-CIRCUIT-BREAKER",
 						URI.create(EVENT_FALLBACK_ROUTE)))
+				.build();
+	}
+	
+	@Bean
+	RouterFunction<ServerResponse> userServiceRoute() {
+		return GatewayRouterFunctions.route("USER-SERVICE")
+				.route(RequestPredicates.path("api/user/**"), HandlerFunctions.http(userServiceUrl))
+				.filter(CircuitBreakerFilterFunctions.circuitBreaker("USER-SERVICE-CIRCUIT-BREAKER",
+						URI.create(USER_FALLBACK_ROUTE)))
 				.build();
 	}
 
