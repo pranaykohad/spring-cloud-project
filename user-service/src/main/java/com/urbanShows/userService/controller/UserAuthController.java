@@ -44,7 +44,7 @@ public class UserAuthController {
 
 	@PostMapping("login")
 	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody UserLoginDto systemUserLoginDto) {
-		final UserInfo existingSystemUser = systemUserService.isUserActive(systemUserLoginDto.getUserName());
+		final UserInfo existingSystemUser = systemUserService.getActiveExistingSystemUser(systemUserLoginDto.getUserName());
 		try {
 			// Extract spring authentication object
 			final Authentication authentication = authenticationManager
@@ -72,7 +72,7 @@ public class UserAuthController {
 		if (principal != null) {
 			final GenericMapper<UserInternalInfo, UserInfo> mapper = new GenericMapper<>(modelMapper,
 					UserInternalInfo.class, UserInfo.class);
-			final UserInfo userActive = systemUserService.isUserActive(principal.getName());
+			final UserInfo userActive = systemUserService.getActiveExistingSystemUser(principal.getName());
 			return ResponseEntity.ok(mapper.entityToDto(userActive));
 		}
 		throw new UnauthorizedException("Unauthorized access");

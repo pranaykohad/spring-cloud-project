@@ -34,7 +34,6 @@ import com.urbanShows.userService.exception.AccessDeniedException;
 import com.urbanShows.userService.exception.IncorrectOtpException;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.exception.UserAlreadyExistsException;
-import com.urbanShows.userService.exception.UserInactiveException;
 import com.urbanShows.userService.exception.UserNotFoundException;
 import com.urbanShows.userService.kafka.KafkaTopicEnums;
 import com.urbanShows.userService.kafka.MessageProducer;
@@ -81,8 +80,8 @@ public class UserService {
 		appUser.setProfilePicUrl(profilePicUrl);
 		userInfoRepository.save(appUser);
 	}
-	
-	public UserInfo authenticateSystemUserByOtp(String userName, String otp) {
+
+	public UserInfo validateActiveSystemUserByOtp(String userName, String otp) {
 		final UserInfo systemUser = userInfoRepository.findByUserNameAndOtpAndStatus(userName, otp, Status.ACTIVE);
 		if (systemUser == null) {
 			throw new IncorrectOtpException("OTP is not correct or expired or user is inactive");
@@ -90,19 +89,10 @@ public class UserService {
 		return systemUser;
 	}
 
-	public UserInfo getUserByUsernameAndOtp(String userName, String otp) {
+	public UserInfo validateInactiveSystemUserByOtp(String userName, String otp) {
 		final UserInfo systemUser = userInfoRepository.findByUserNameAndOtpAndStatus(userName, otp, Status.INACTIVE);
 		if (systemUser == null) {
 			throw new IncorrectOtpException("OTP is not correct or expired or user is inactive");
-		}
-		return systemUser;
-	}
-
-	public UserInfo authenticateSystemUserByPassword(String userName, String password) {
-		final UserInfo systemUser = userInfoRepository.findByUserNameAndPassword(userName,
-				passwordEncoder.encode(password.trim()));
-		if (systemUser == null) {
-			throw new AccessDeniedException("Username or password is not correct");
 		}
 		return systemUser;
 	}
@@ -167,7 +157,7 @@ public class UserService {
 	}
 
 	public void generateOtpForSystemUser(String userName, String device) {
-		final UserInfo systemUser = getExistingSystemUser(userName);
+		final UserInfo systemUser = getActiveExistingSystemUser(userName);
 		otpService.createAndSendOtp(systemUser, device);
 	}
 
@@ -219,28 +209,19 @@ public class UserService {
 		userInfoRepository.save(targetUserInfo);
 	}
 
-	public UserInfo isUserActive(String userName) {
-		final UserInfo existingSystemUser = getExistingSystemUser(userName);
-		if (existingSystemUser.getStatus().equals(Status.ACTIVE)) {
-			return existingSystemUser;
-		} else {
-			throw new UserInactiveException("The user is not active. Please contact the supervisor for assistance");
-		}
-	}
-
-	public UserInfo getExistingSystemUser(String userName) {
-		final UserInfo existingUser = userInfoRepository.findByUserName(userName);
+	public UserInfo getActiveExistingSystemUser(String userName) {
+		final UserInfo existingUser = userInfoRepository.findByUserNameAndStatus(userName, Status.ACTIVE);
 		if (existingUser == null) {
-			throw new UserNotFoundException("User doesnot exists in the system");
+			throw new UserNotFoundException("User doesnot exists/ inctive in the system");
 		}
 		return existingUser;
 	}
 
 	public boolean activateUser(String userName, String otp) {
-		final UserInfo userInfo = this.getUserByUsernameAndOtp(userName, otp);
+		final UserInfo userInfo = validateInactiveSystemUserByOtp(userName, otp);
 		return userInfo != null;
 	}
-
+	
 	private Pageable buildPage(SearchRequest searchDto) {
 		Pageable pageable = PageRequest.of(0, TableConfig.PAGE_SIZE);
 		if (StringUtils.hasText(searchDto.getSortColumn())) {

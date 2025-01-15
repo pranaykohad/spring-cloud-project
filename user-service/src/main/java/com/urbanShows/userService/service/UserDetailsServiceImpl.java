@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.urbanShows.userService.entity.AppUserInfo;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.enums.Role;
+import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.repository.AppUserInfoRepository;
 import com.urbanShows.userService.repository.UserInfoRepository;
 import com.urbanShows.userService.util.Helper;
@@ -37,7 +38,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			}
 			throw new UsernameNotFoundException("User not found with phone: " + id);
 		} else {
-			final UserInfo user = systemUserInfoRepo.findByUserName(id);
+			final UserInfo user = systemUserInfoRepo.findByUserNameAndStatus(id, Status.ACTIVE);
 			if (user != null) {
 				return buildUser(user.getUserName(), user.getPassword(), user.getRoles());
 			}

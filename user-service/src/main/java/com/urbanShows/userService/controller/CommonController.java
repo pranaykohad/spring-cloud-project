@@ -37,24 +37,18 @@ public class CommonController {
 			return ResponseEntity.ok(jwtService.validateTokenForUserName(
 					JwtHelper.extractUserNameAndToken(request).getRight(), principal.getName()));
 		}
-		throw new UnauthorizedException("Unauthorized access");
-	}
-
-	@GetMapping("is-user-active")
-	public ResponseEntity<Boolean> checkIsUserActive(Principal principal) {
-		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
-		return ResponseEntity.ok(existingUser != null);
+		return ResponseEntity.ok(false);
 	}
 
 	@GetMapping("is-valid-organizer")
 	public ResponseEntity<Boolean> isValidOrganizer(@RequestParam String userName, Principal principal) {
-		systemUserService.isUserActive(principal.getName());
+		systemUserService.getActiveExistingSystemUser(principal.getName());
 		return ResponseEntity.ok(systemUserService.isValidOrganizer(userName));
 	}
 
 	@GetMapping("username-otp-validation")
 	public ResponseEntity<Boolean> usernameAndOtpvalidation(@RequestParam String otp, Principal principal) {
-		final UserInfo currentUser = systemUserService.authenticateSystemUserByOtp(principal.getName(), otp);
+		final UserInfo currentUser = systemUserService.validateActiveSystemUserByOtp(principal.getName(), otp);
 		return ResponseEntity.ok(currentUser != null);
 	}
 

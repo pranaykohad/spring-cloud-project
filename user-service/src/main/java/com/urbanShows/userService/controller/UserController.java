@@ -44,7 +44,6 @@ public class UserController {
 
 	private final UserService systemUserService;
 	private final ModelMapper modelMapper;
-	private final AzureBlobStorageService azureBlobStorageService;
 
 	@DeleteMapping("remove")
 	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody UserInfoDto systemUser) {
@@ -54,21 +53,13 @@ public class UserController {
 
 	@GetMapping("generate-otp")
 	public void generateOtpForSystemUser(@RequestParam String userName, @RequestParam String device) {
+		// Generate OTP for active system user
 		systemUserService.generateOtpForSystemUser(userName, device);
 	}
 
-//	@PatchMapping("update-profile-pic")
-//	@PreAuthorize("hasAuthority('ROLE_SYSTEM_USER')")
-//	public ResponseEntity<Boolean> uploadSystemUserProfilePic(@RequestParam MultipartFile file,
-//			@RequestPart String userName, @RequestPart String otp) {
-//		final UserInfo systemUser = systemUserService.authenticateSystemUserByOtp(userName, otp);
-//		boolean uploadAppUserProfile = azureBlobStorageService.uploadSystemUserProfile(file, systemUser);
-//		return ResponseEntity.ok(uploadAppUserProfile);
-//	}
-
 	@GetMapping("loggedin-user-details")
 	public ResponseEntity<LoggedinUserDetails> getUserDetails(Principal principal) {
-		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
+		final UserInfo existingUser = systemUserService.getActiveExistingSystemUser(principal.getName());
 		final GenericMapper<LoggedinUserDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				LoggedinUserDetails.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
@@ -77,8 +68,7 @@ public class UserController {
 	@GetMapping("basic-details")
 	public ResponseEntity<UserBasicDetails> getUserBasicDetailsByUsername(@RequestParam String userName,
 			Principal principal) {
-		systemUserService.isUserActive(principal.getName());
-		final UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
+		final UserInfo existingUser = systemUserService.getActiveExistingSystemUser(userName);
 		final GenericMapper<UserBasicDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				UserBasicDetails.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
@@ -88,8 +78,8 @@ public class UserController {
 	public ResponseEntity<Boolean> udpateBacisUserDetails(@RequestParam String userName,
 			@RequestParam(required = false) MultipartFile profilePicFile,
 			@RequestParam(required = false) String displayName, Principal principal) {
-		final UserInfo currentUser = systemUserService.isUserActive(principal.getName());
-		final UserInfo targetUser = systemUserService.getExistingSystemUser(userName);
+		final UserInfo currentUser = systemUserService.getActiveExistingSystemUser(principal.getName());
+		final UserInfo targetUser = systemUserService.getActiveExistingSystemUser(userName);
 		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
 		final UserBasicDetails userBasicDetails = new UserBasicDetails();
 		userBasicDetails.setDisplayName(displayName);
@@ -100,8 +90,7 @@ public class UserController {
 	@GetMapping("secured-details")
 	public ResponseEntity<UserSecuredDetailsRes> getUserSecuredDetailsByUsername(@RequestParam String userName,
 			Principal principal) {
-		systemUserService.isUserActive(principal.getName());
-		final UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
+		final UserInfo existingUser = systemUserService.getActiveExistingSystemUser(userName);
 		final GenericMapper<UserSecuredDetailsRes, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				UserSecuredDetailsRes.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
@@ -110,9 +99,9 @@ public class UserController {
 	@PatchMapping("update-secured-details")
 	public ResponseEntity<Boolean> udpateSecuredUserDetails(@Valid @RequestBody UserSecuredDetailsReq securedDetails,
 			Principal principal) {
-		final UserInfo currentUser = systemUserService.authenticateSystemUserByOtp(principal.getName(),
+		final UserInfo currentUser = systemUserService.validateActiveSystemUserByOtp(principal.getName(),
 				securedDetails.getOtp());
-		final UserInfo targetUser = systemUserService.getExistingSystemUser(securedDetails.getUserName());
+		final UserInfo targetUser = systemUserService.getActiveExistingSystemUser(securedDetails.getUserName());
 		if (targetUser.getRoles().contains(Role.SUPER_ADMIN_USER)
 				&& securedDetails.getStatus().equals(com.urbanShows.userService.enums.Status.INACTIVE)) {
 			throw new UnauthorizedException("Super Admin users cannot be deactivated");
@@ -124,27 +113,21 @@ public class UserController {
 
 	@PostMapping("user-list")
 	public ResponseEntity<UserInfoRespone> getUsersList(@RequestBody SearchRequest searchRequest, Principal principal) {
-		systemUserService.isUserActive(principal.getName());
+		systemUserService.getActiveExistingSystemUser(principal.getName());
 		return ResponseEntity.ok(systemUserService.getSystemUsersList(searchRequest));
 	}
 
 	@GetMapping("activate-user")
 	public ResponseEntity<Boolean> activateUser(@RequestParam String userName, @RequestParam String otp,
 			Principal principal) {
-		systemUserService.isUserActive(principal.getName());
+		systemUserService.getActiveExistingSystemUser(principal.getName());
 		return ResponseEntity.ok(systemUserService.activateUser(userName, otp));
 	}
 
 	@GetMapping("organiser-list")
 	public ResponseEntity<List<String>> getOrganizerList(Principal principal) {
-		systemUserService.isUserActive(principal.getName());
+		systemUserService.getActiveExistingSystemUser(principal.getName());
 		return ResponseEntity.ok(systemUserService.getOrganizerList());
 	}
 
-//	@PatchMapping("event-photos")
-//	public ResponseEntity<String> saveEventPhoto(@RequestParam(required = false) MultipartFile file,
-//			HttpServletRequest httpServletRequest, Principal principal) {
-//		systemUserService.isUserActive(principal.getName());
-//		return ResponseEntity.ok(azureBlobStorageService.uploadUserProfile(file));
-//	}
 }

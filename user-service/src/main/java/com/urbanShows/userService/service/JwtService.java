@@ -26,6 +26,7 @@ public class JwtService {
 	private JwtTokenRepo jwtTokenRepo;
 	private UserDetailsServiceImpl userDetailsService;
 
+	// This EXPIRATION is just for storing expire date in database and not in jwt itself
 	private static final LocalDateTime EXPIRATION = LocalDateTime.now().plusHours(24);
 
 	public Boolean validateTokenForUserName(String token, String userName) {
@@ -66,6 +67,7 @@ public class JwtService {
 	private String createAndSaveToken(String id, Collection<? extends GrantedAuthority> collection) {
 		final String authoritiesString = collection.stream().map(GrantedAuthority::getAuthority)
 				.collect(Collectors.joining(","));
+		@SuppressWarnings("deprecation")
 		final String token = Jwts.builder().setSubject(id).setIssuedAt(new Date(System.currentTimeMillis()))
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 				.claim("authorities", authoritiesString).signWith(JwtHelper.getSignKey(), SignatureAlgorithm.HS256)
