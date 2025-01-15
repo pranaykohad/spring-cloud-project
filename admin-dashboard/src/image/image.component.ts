@@ -24,6 +24,7 @@ export class ImageComponent {
     if (value) {
       this._eventMedia = value;
       this.editableEventMedia = JSON.parse(JSON.stringify(value));
+      this.imagePreview = '';
     }
   }
 
@@ -92,12 +93,4 @@ export class ImageComponent {
     }
   }
 
-  cancel() {
-    this.editableEventMedia = JSON.parse(JSON.stringify(this.eventMedia));
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagePreview = reader.result as string;
-    };
-    reader.readAsDataURL(this.editableEventMedia.mediaFile);
-  }
 }

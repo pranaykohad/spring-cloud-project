@@ -6,21 +6,21 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { ImageComponent } from '../../../image/image.component';
+import { APP_ROUTES, LocalStorageKeys } from '../../../models/Enums';
 import {
   EventIdentifier,
   EventMedia,
   EventMediaReqObject,
   EventMediaRequest,
 } from '../../../models/EventDetailObject';
-import { EventService } from '../../../services/event.service';
-import { SharedModule } from '../../../shared/shared.module';
-import { OtpComponent } from '../../../popups/otp/otp.component';
 import { LoggedInUserDetails } from '../../../models/LoggedinUserDetails';
-import { APP_ROUTES, LocalStorageKeys } from '../../../models/Enums';
+import { OtpComponent } from '../../../popups/otp/otp.component';
+import { EventService } from '../../../services/event.service';
 import { LocalstorageService } from '../../../services/localstorage.service';
 import { ToastService } from '../../../services/toast.service';
-import { Router } from '@angular/router';
+import { SharedModule } from '../../../shared/shared.module';
 
 @Component({
   selector: 'app-event-photos',
@@ -46,6 +46,7 @@ export class EventPhotosComponent implements OnInit {
 
   eventPhotos!: EventMedia[];
   enableEventMediaSaveBtn: boolean = false;
+  isValidMediaUrl: boolean = true;
 
   otpComponent!: ComponentRef<OtpComponent>;
 
@@ -63,6 +64,50 @@ export class EventPhotosComponent implements OnInit {
     this.getBlankEventPhotos();
   }
 
+  removeAllEventPhotos() {
+    this.otpContainer.clear();
+    this.otpComponent = this.otpContainer.createComponent(OtpComponent);
+    this.otpComponent.instance.visible = true;
+    const loggedInUser: LoggedInUserDetails = this.localstorageService.getItem(
+      LocalStorageKeys.LOGGED_IN_USER_DETAILS
+    );
+    this.otpComponent.instance.userName = loggedInUser.userName;
+    this.otpComponent.instance.device = 'PHONE';
+    this.otpComponent.instance.otpEmiter.subscribe((res) => {
+      this.eventService
+        .removeAllEventPhotos(
+          this.eventIdentifier.id,
+          res,
+          this.eventIdentifier.organizer
+        )
+        .subscribe({
+          next: (res: EventMedia[]) => {
+            if (res.length) {
+              this.eventPhotos = res;
+              this.checkIsValidMediaUrl();
+              this.toastService.showSuccessToast(
+                'All event media are removed successfully'
+              );
+              this.router.navigate([
+                `${APP_ROUTES.EVENT_DETAILS}/${this.eventIdentifier.id}/${this.eventIdentifier.organizer}`,
+              ]);
+            } else {
+              this.toastService.showSuccessToast(
+                'All event media are not removed successfully'
+              );
+            }
+          },
+          error: (err: string) => {
+            this.otpComponent.instance.visible = false;
+          },
+          complete: () => {
+            this.otpComponent.instance.visible = false;
+            this.enableEventMediaSaveBtn = false;
+          },
+        });
+    });
+  }
+
   getBlankEventPhotos() {
     this.eventPhotos = [];
     for (let index = 0; index < 9; index++) {
@@ -73,6 +118,7 @@ export class EventPhotosComponent implements OnInit {
         mediaIndex: index,
       });
     }
+    this.checkIsValidMediaUrl();
   }
 
   getExistingEventPhotos() {
@@ -80,6 +126,7 @@ export class EventPhotosComponent implements OnInit {
       .getEventPhotos(this.eventIdentifier.id, this.eventIdentifier.organizer)
       .subscribe((res: EventMedia[]) => {
         this.eventPhotos = res;
+        this.checkIsValidMediaUrl();
       });
   }
 
@@ -145,6 +192,8 @@ export class EventPhotosComponent implements OnInit {
       this.eventService.saveEventPhotos(files, eventMediaRequest).subscribe({
         next: (res: EventMedia[]) => {
           if (res.length) {
+            this.eventPhotos = res;
+            this.checkIsValidMediaUrl();
             this.toastService.showSuccessToast(
               'Event photos are added/updated successfully'
             );
@@ -166,5 +215,9 @@ export class EventPhotosComponent implements OnInit {
         },
       });
     });
+  }
+
+  private checkIsValidMediaUrl() {
+    this.isValidMediaUrl = this.eventPhotos.some((i) => i.mediaUrl?.length);
   }
 }

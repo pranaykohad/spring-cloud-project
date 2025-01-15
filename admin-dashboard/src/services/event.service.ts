@@ -51,6 +51,20 @@ export class EventService {
     );
   }
 
+  removeAllEventPhotos(
+    eventId: number,
+    otp: string,
+    organizer: string
+  ): Observable<EventMedia[]> {
+    return this.http.delete<EventMedia[]>(
+      `${
+        this.baseUrl
+      }api/event/remove-all-event-photos?eventId=${eventId}&&otp=${otp}&&organizer=${encodeURIComponent(
+        organizer
+      )}`
+    );
+  }
+
   saveEventPhotos(
     eventPhotos: File[],
     eventMediaRequest: EventMediaRequest

@@ -59,7 +59,7 @@
 <div class="d-flex" style="padding-left: 10px;">
   <p-button label="Save Event Details" [raised]="true" severity="info" [style]="{marginRight: '15px'}"
     (click)="saveEventPhotos()" [disabled]="!enableEventMediaSaveBtn" />
-  <p-button label="Cancel" [raised]="true" severity="secondary" (click)="cancelEventPhotos()"
-    [disabled]="!enableEventMediaSaveBtn" />
+  <p-button label="Remove all event media" [raised]="true" severity="danger" (click)="removeAllEventPhotos()"
+    [disabled]="!isValidMediaUrl" />
 </div>
 <ng-container #otpContainer></ng-container>
