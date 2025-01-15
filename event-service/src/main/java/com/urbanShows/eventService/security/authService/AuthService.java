@@ -44,38 +44,38 @@ public class AuthService {
 		}
 	}
 
-	public UserInternalInfo getLoggedinAppUserInfo(String jwt) {
-		try {
-			final ResponseEntity<UserInternalInfo> exchange = restTemplate.exchange(
-					(userServiceUrl + "/api/user/app/auth/loggedin-app-user-info"), HttpMethod.GET,
-					buildHeaderEntity(jwt), UserInternalInfo.class);
-			return exchange.getBody();
-		} catch (Exception e) {
-			throw new ConnectionException(extractMessage(e.getMessage()));
-		}
-	}
+//	public UserInternalInfo getLoggedinAppUserInfo(String jwt) {
+//		try {
+//			final ResponseEntity<UserInternalInfo> exchange = restTemplate.exchange(
+//					(userServiceUrl + "/api/user/app/auth/loggedin-app-user-info"), HttpMethod.GET,
+//					buildHeaderEntity(jwt), UserInternalInfo.class);
+//			return exchange.getBody();
+//		} catch (Exception e) {
+//			throw new ConnectionException(extractMessage(e.getMessage()));
+//		}
+//	}
 
-	public UserInternalInfo getLoggedinSystemUserInfo(String jwt) {
-		try {
-			final ResponseEntity<UserInternalInfo> exchange = restTemplate.exchange(
-					(userServiceUrl + "/api/user/system/auth/loggedin-system-user-info"), HttpMethod.GET,
-					buildHeaderEntity(jwt), UserInternalInfo.class);
-			return exchange.getBody();
-		} catch (Exception e) {
-			throw new ConnectionException(extractMessage(e.getMessage()));
-		}
-	}
+//	public UserInternalInfo getLoggedinSystemUserInfo(String jwt) {
+//		try {
+//			final ResponseEntity<UserInternalInfo> exchange = restTemplate.exchange(
+//					(userServiceUrl + "/api/user/system/auth/loggedin-system-user-info"), HttpMethod.GET,
+//					buildHeaderEntity(jwt), UserInternalInfo.class);
+//			return exchange.getBody();
+//		} catch (Exception e) {
+//			throw new ConnectionException(extractMessage(e.getMessage()));
+//		}
+//	}
 
-	public boolean validateToken(String jwt) {
-		try {
-			final ResponseEntity<Boolean> isValidate = restTemplate.exchange(
-					(userServiceUrl + "/api/user/common/validate-token"), HttpMethod.GET, buildHeaderEntity(jwt),
-					Boolean.class);
-			return isValidate.getBody();
-		} catch (Exception e) {
-			throw new ConnectionException(extractMessage(e.getMessage()));
-		}
-	}
+//	public boolean validateToken(String jwt) {
+//		try {
+//			final ResponseEntity<Boolean> isValidate = restTemplate.exchange(
+//					(userServiceUrl + "/api/user/common/validate-token"), HttpMethod.GET, buildHeaderEntity(jwt),
+//					Boolean.class);
+//			return isValidate.getBody();
+//		} catch (Exception e) {
+//			throw new ConnectionException(extractMessage(e.getMessage()));
+//		}
+//	}
 
 	public boolean isLogginUserActive(String jwt) {
 		try {

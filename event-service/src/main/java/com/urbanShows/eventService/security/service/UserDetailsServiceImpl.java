@@ -18,48 +18,48 @@ import com.urbanShows.eventService.security.util.Helper;
 
 import jakarta.servlet.http.HttpServletRequest;
 
-@Service
-public class UserDetailsServiceImpl implements UserDetailsService {
-
-	@Autowired
-	private HttpServletRequest httpServletRequest;
-	
-	@Autowired
-	private AuthService authService;
-
-	@Override
-	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
-		if (Helper.isPhonenumber(id)) {
-			final String authHeader = httpServletRequest.getHeader("Authorization");
-			String token = null;
-			if (authHeader != null && authHeader.startsWith("Bearer ")) {
-				token = authHeader.substring(7);
-				id = Helper.extractUsername(token);
-				final UserInternalInfo userInfo = authService.getLoggedinAppUserInfo(token);
-				if (userInfo != null) {
-					return buildUser(userInfo.getPhone(), userInfo.getInternalPassword(), userInfo.getRoles());
-				}
-			}
-			throw new UsernameNotFoundException("User not found with phone: " + id);
-		} else {
-			final String authHeader = httpServletRequest.getHeader("Authorization");
-			String token = null;
-			if (authHeader != null && authHeader.startsWith("Bearer ")) {
-				token = authHeader.substring(7);
-				id = Helper.extractUsername(token);
-				final UserInternalInfo userInfo = authService.getLoggedinSystemUserInfo(token);
-				if (userInfo != null) {
-					return buildUser(userInfo.getUserName(), userInfo.getPassword(), userInfo.getRoles());
-				}
-			}
-			throw new UsernameNotFoundException("User not found with username: " + id);
-		}
-	}
-
-	private UserDetails buildUser(String userName, String password, List<Role> roles) {
-		final List<String> list = new ArrayList<>();
-		roles.forEach(i -> list.add(i.name()));
-		return User.builder().username(userName).password(password).roles(list.toArray(new String[0])).build();
-	}
-
-}
+//@Service
+//public class UserDetailsServiceImpl implements UserDetailsService {
+//
+//	@Autowired
+//	private HttpServletRequest httpServletRequest;
+//	
+//	@Autowired
+//	private AuthService authService;
+//
+//	@Override
+//	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+//		if (Helper.isPhonenumber(id)) {
+//			final String authHeader = httpServletRequest.getHeader("Authorization");
+//			String token = null;
+//			if (authHeader != null && authHeader.startsWith("Bearer ")) {
+//				token = authHeader.substring(7);
+//				id = Helper.extractUsername(token);
+//				final UserInternalInfo userInfo = authService.getLoggedinAppUserInfo(token);
+//				if (userInfo != null) {
+//					return buildUser(userInfo.getPhone(), userInfo.getInternalPassword(), userInfo.getRoles());
+//				}
+//			}
+//			throw new UsernameNotFoundException("User not found with phone: " + id);
+//		} else {
+//			final String authHeader = httpServletRequest.getHeader("Authorization");
+//			String token = null;
+//			if (authHeader != null && authHeader.startsWith("Bearer ")) {
+//				token = authHeader.substring(7);
+//				id = Helper.extractUsername(token);
+//				final UserInternalInfo userInfo = authService.getLoggedinSystemUserInfo(token);
+//				if (userInfo != null) {
+//					return buildUser(userInfo.getUserName(), userInfo.getPassword(), userInfo.getRoles());
+//				}
+//			}
+//			throw new UsernameNotFoundException("User not found with username: " + id);
+//		}
+//	}
+//
+//	private UserDetails buildUser(String userName, String password, List<Role> roles) {
+//		final List<String> list = new ArrayList<>();
+//		roles.forEach(i -> list.add(i.name()));
+//		return User.builder().username(userName).password(password).roles(list.toArray(new String[0])).build();
+//	}
+//
+//}

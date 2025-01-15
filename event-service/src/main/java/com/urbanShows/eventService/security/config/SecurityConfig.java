@@ -18,7 +18,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.urbanShows.eventService.security.filter.JwtAuthFilter;
-import com.urbanShows.eventService.security.service.UserDetailsServiceImpl;
 
 import lombok.AllArgsConstructor;
 
@@ -44,23 +43,23 @@ public class SecurityConfig {
 		return http.build();
 	}
 
-	@Bean
-	UserDetailsService userDetailsService() {
-		return new UserDetailsServiceImpl();
-	}
+//	@Bean
+//	UserDetailsService userDetailsService() {
+//		return new UserDetailsServiceImpl();
+//	}
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 
-	@Bean
-	AuthenticationProvider authenticationProvider() {
-		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-		authenticationProvider.setUserDetailsService(userDetailsService());
-		authenticationProvider.setPasswordEncoder(passwordEncoder());
-		return authenticationProvider;
-	}
+//	@Bean
+//	AuthenticationProvider authenticationProvider() {
+//		DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+//		authenticationProvider.setUserDetailsService(userDetailsService());
+//		authenticationProvider.setPasswordEncoder(passwordEncoder());
+//		return authenticationProvider;
+//	}
 
 	@Bean
 	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
