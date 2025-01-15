@@ -1,13 +1,13 @@
-import { LocalstorageService } from './../services/localstorage.service';
 import { Injectable } from '@angular/core';
 import {
+  ActivatedRouteSnapshot,
   CanActivate,
   Router,
-  ActivatedRouteSnapshot,
   RouterStateSnapshot,
 } from '@angular/router';
 import { APP_ROUTES, LocalStorageKeys } from '../models/Enums';
 import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
+import { LocalstorageService } from './../services/localstorage.service';
 
 @Injectable({
   providedIn: 'root',
