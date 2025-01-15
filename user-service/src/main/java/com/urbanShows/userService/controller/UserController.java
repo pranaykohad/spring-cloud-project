@@ -68,7 +68,7 @@ public class UserController {
 	@GetMapping("basic-details")
 	public ResponseEntity<UserBasicDetails> getUserBasicDetailsByUsername(@RequestParam String userName,
 			Principal principal) {
-		final UserInfo existingUser = systemUserService.getActiveExistingSystemUser(userName);
+		final UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
 		final GenericMapper<UserBasicDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				UserBasicDetails.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
@@ -79,7 +79,7 @@ public class UserController {
 			@RequestParam(required = false) MultipartFile profilePicFile,
 			@RequestParam(required = false) String displayName, Principal principal) {
 		final UserInfo currentUser = systemUserService.getActiveExistingSystemUser(principal.getName());
-		final UserInfo targetUser = systemUserService.getActiveExistingSystemUser(userName);
+		final UserInfo targetUser = systemUserService.getExistingSystemUser(userName);
 		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
 		final UserBasicDetails userBasicDetails = new UserBasicDetails();
 		userBasicDetails.setDisplayName(displayName);
@@ -90,7 +90,7 @@ public class UserController {
 	@GetMapping("secured-details")
 	public ResponseEntity<UserSecuredDetailsRes> getUserSecuredDetailsByUsername(@RequestParam String userName,
 			Principal principal) {
-		final UserInfo existingUser = systemUserService.getActiveExistingSystemUser(userName);
+		final UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
 		final GenericMapper<UserSecuredDetailsRes, UserInfo> mapper = new GenericMapper<>(modelMapper,
 				UserSecuredDetailsRes.class, UserInfo.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
@@ -101,7 +101,7 @@ public class UserController {
 			Principal principal) {
 		final UserInfo currentUser = systemUserService.validateActiveSystemUserByOtp(principal.getName(),
 				securedDetails.getOtp());
-		final UserInfo targetUser = systemUserService.getActiveExistingSystemUser(securedDetails.getUserName());
+		final UserInfo targetUser = systemUserService.getExistingSystemUser(securedDetails.getUserName());
 		if (targetUser.getRoles().contains(Role.SUPER_ADMIN_USER)
 				&& securedDetails.getStatus().equals(com.urbanShows.userService.enums.Status.INACTIVE)) {
 			throw new UnauthorizedException("Super Admin users cannot be deactivated");

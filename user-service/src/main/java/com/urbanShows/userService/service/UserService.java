@@ -209,6 +209,14 @@ public class UserService {
 		userInfoRepository.save(targetUserInfo);
 	}
 
+	public UserInfo getExistingSystemUser(String userName) {
+		final UserInfo existingUser = userInfoRepository.findByUserName(userName);
+		if (existingUser == null) {
+			throw new UserNotFoundException("User doesnot exists in the system");
+		}
+		return existingUser;
+	}
+
 	public UserInfo getActiveExistingSystemUser(String userName) {
 		final UserInfo existingUser = userInfoRepository.findByUserNameAndStatus(userName, Status.ACTIVE);
 		if (existingUser == null) {
@@ -221,7 +229,7 @@ public class UserService {
 		final UserInfo userInfo = validateInactiveSystemUserByOtp(userName, otp);
 		return userInfo != null;
 	}
-	
+
 	private Pageable buildPage(SearchRequest searchDto) {
 		Pageable pageable = PageRequest.of(0, TableConfig.PAGE_SIZE);
 		if (StringUtils.hasText(searchDto.getSortColumn())) {
