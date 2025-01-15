@@ -288,16 +288,24 @@ export class ProfileComponent implements OnInit {
     this.otpComponent.instance.userName = this.userName;
     this.otpComponent.instance.device = device;
     this.otpComponent.instance.otpEmiter.subscribe((otp) => {
-      this.userService.activateUser(this.userName, otp).subscribe((res) => {
-        if (device === 'EMAIL') {
-          this.editSecuredDetails.emailValidated = true;
-          this.toastService.showSuccessToast("Opt is send on client's email");
-        } else {
-          this.editSecuredDetails.phoneValidated = true;
-          this.toastService.showSuccessToast("Opt is send on client's phone");
-        }
-        this.enableSecuredUpdateBtn = true;
-        this.otpComponent.instance.visible = false;
+      this.userService.activateUser(this.userName, otp).subscribe({
+        next: (res) => {
+          if (device === 'EMAIL') {
+            this.editSecuredDetails.emailValidated = true;
+            this.toastService.showSuccessToast("Opt is send on client's email");
+          } else {
+            this.editSecuredDetails.phoneValidated = true;
+            this.toastService.showSuccessToast("Opt is send on client's phone");
+          }
+          this.enableSecuredUpdateBtn = true;
+          this.otpComponent.instance.visible = false;
+        },
+        error: (err: string) => {
+          this.otpComponent.instance.visible = false;
+        },
+        complete: () => {
+          this.otpComponent.instance.visible = false;
+        },
       });
     });
   }
