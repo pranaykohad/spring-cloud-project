@@ -2,10 +2,12 @@ package com.urbanShows.eventService.controller;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -72,13 +74,13 @@ public class EventController {
 	public ResponseEntity<Long> saveEventOverview(@RequestBody EventOverviewDto eventOverview,
 			HttpServletRequest httpServletRequest, Principal principal) {
 		final String jwt = JwtHelper.extractJwt(httpServletRequest);
-		
+
 		// Validate token before changing anything in system
 		authService.validateToken(jwt);
-		
+
 		// Is the organizer active
 		authService.isOrganizerActive(jwt, eventOverview.getOrganizer());
-		
+
 		// Validate loggedin user by OTP
 		authService.validateLoggedinUserByOtp(jwt, eventOverview.getOtp());
 		return ResponseEntity.ok(eventService.saveEventOverview(eventOverview));
@@ -91,20 +93,35 @@ public class EventController {
 	}
 
 	@PatchMapping("event-photos")
-	public ResponseEntity<List<EventMediaResponse>> saveEventPhotos(
+	public ResponseEntity<Set<EventMediaResponse>> saveEventPhotos(
 			@RequestParam(required = false) List<MultipartFile> eventPhotos,
 			@RequestParam(required = false) String eventMediaReqObject, HttpServletRequest httpServletRequest,
 			Principal principal) throws JsonProcessingException {
 		final String jwt = JwtHelper.extractJwt(httpServletRequest);
-		
+
 		// Validate token before changing anything in system
 		authService.validateToken(jwt);
-		
+
 		final ObjectMapper objectMapper = new ObjectMapper();
 		final EventMediaRequest eventMediaRequest = objectMapper.readValue(eventMediaReqObject,
 				EventMediaRequest.class);
+
+		// Validate loggedin user by OTP
 		authService.validateLoggedinUserByOtp(JwtHelper.extractJwt(httpServletRequest), eventMediaRequest.getOtp());
 		return ResponseEntity.ok(eventService.uploadEventMedia(eventPhotos, eventMediaRequest));
+	}
+
+	@DeleteMapping("remove-all-event-photos")
+	public ResponseEntity<List<EventMediaResponse>> removeAllEventPhotos(@RequestParam long eventId,
+			@RequestParam String organizer, @RequestParam String otp, HttpServletRequest httpServletRequest,
+			Principal principal) {
+
+		// Validate token before changing anything in system
+		authService.validateToken(JwtHelper.extractJwt(httpServletRequest));
+
+		// Validate loggedin user by OTP
+		authService.validateLoggedinUserByOtp(JwtHelper.extractJwt(httpServletRequest), otp);
+		return ResponseEntity.ok(eventService.removeAllEventMedia(eventId, organizer));
 	}
 
 }

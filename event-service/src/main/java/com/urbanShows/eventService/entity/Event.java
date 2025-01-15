@@ -3,6 +3,7 @@ package com.urbanShows.eventService.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -51,7 +52,7 @@ public class Event {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinColumn(name = "event_id", referencedColumnName = "id")
-	private List<EventMedia> eventMediaList;
+	private Set<EventMedia> eventMediaList;
 //	
 //	private List<EventVenue> eventVenues;
 //	

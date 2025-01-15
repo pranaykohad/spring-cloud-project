@@ -2,9 +2,11 @@ package com.urbanShows.eventService.testingData;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.springframework.stereotype.Component;
@@ -59,7 +61,7 @@ public class InsertEventDataSample {
 			Optional<EventType> eventType = eventTypeRepository.findById(eventTypeId);
 			eventType.ifPresent(event::setEventType);
 			
-			final List<EventMedia> eventMediaList = new ArrayList<>();
+			final Set<EventMedia> eventMediaList = new HashSet<>();
 			
 			EventMedia eventMedia = new EventMedia();
 			eventMedia.setCoverMedia(false);

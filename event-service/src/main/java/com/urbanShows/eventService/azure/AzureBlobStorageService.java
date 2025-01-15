@@ -1,6 +1,11 @@
 package com.urbanShows.eventService.azure;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,6 +59,21 @@ public class AzureBlobStorageService {
 		}
 	}
 
+	public void deleteFileFromContainer(List<String> mediaUrlList) {
+		mediaUrlList.forEach(mediaUrl -> {
+			URI uri;
+			try {
+				uri = new URI(mediaUrl);
+				Path path = Paths.get(uri.getPath());
+				String blobName = path.getFileName().toString();
+				blobContainerClient.getBlobClient(blobName).delete();
+			} catch (URISyntaxException e) {
+				log.error("Error deleting blob: {} from container: {}", mediaUrl, blobContainerClient.getBlobContainerName());
+			}
+
+		});
+	}
+
 	private String uploadFileInContainer(MultipartFile file) {
 		final String mediaFileName = file.getOriginalFilename();
 		final BlobClient blobClient = blobContainerClient.getBlobClient(mediaFileName);
@@ -65,8 +85,9 @@ public class AzureBlobStorageService {
 
 			for (BlobItem blobItem : blobList) {
 				final String blobName = blobItem.getName();
-				
-				// Check in new media file name and existing blob name are same and delete blob from container
+
+				// Check in new media file name and existing blob name are same and delete blob
+				// from container
 				if (Helper.getFileNameWithoutTimeAndExtension(blobName)
 						.equals(Helper.getFileNameWithoutTimeAndExtension(mediaFileName))) {
 					blobContainerClient.getBlobClient(blobName).delete();
@@ -75,7 +96,7 @@ public class AzureBlobStorageService {
 				}
 
 			}
-			
+
 			// Upload new blob in container and return the url
 			blobClient.upload(file.getInputStream(), file.getSize(), true);
 			return blobClient.getBlobUrl();

@@ -3,8 +3,11 @@ package com.urbanShows.eventService.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -13,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,6 +35,7 @@ import com.urbanShows.eventService.entity.Event;
 import com.urbanShows.eventService.entity.EventMedia;
 import com.urbanShows.eventService.enums.SortOrder;
 import com.urbanShows.eventService.mapper.GenericMapper;
+import com.urbanShows.eventService.repository.EventMediaRepository;
 import com.urbanShows.eventService.repository.EventRepository;
 import com.urbanShows.eventService.security.exception.GenericException;
 
@@ -46,17 +51,49 @@ public class EventService {
 	private final EventRepository eventRepository;
 	private final ModelMapper modelMapper;
 	private final AzureBlobStorageService azureBlobStorageService;
+	private final EventMediaRepository eventMediaRepository;
 
-	public List<EventMediaResponse> uploadEventMedia(List<MultipartFile> eventPhotos,
+	@Transactional
+	public List<EventMediaResponse> removeAllEventMedia(long eventId, String organizer) {
+		final Event event = eventRepository.findByIdAndOrganizer(eventId, organizer);
+		if (event == null) {
+			throw new GenericException("Event not found or inaccessible");
+		}
+		final Set<EventMedia> eventMediaList = event.getEventMediaList();
+
+		// Create media url list that need to delete from Azure
+		List<String> mediaUrlList = eventMediaList.stream().filter(i -> StringUtils.hasText(i.getMediaUrl()))
+				.map(EventMedia::getMediaUrl).toList();
+
+		final List<EventMediaResponse> eventMediaResponseList = new ArrayList<>();
+		if (!mediaUrlList.isEmpty()) {
+			azureBlobStorageService.deleteFileFromContainer(mediaUrlList);
+
+			// Delete event media associate with event id
+			eventMediaRepository.deleteByEventId(eventId);
+
+			// Make 9 blank event media and send as response
+			for (int i = 0; i < 9; i++) {
+				final EventMediaResponse object = new EventMediaResponse();
+				object.setMediaIndex(i);
+				object.setCoverMedia(i == 0);
+				eventMediaResponseList.add(object);
+			}
+
+		}
+		return eventMediaResponseList;
+	}
+
+	public Set<EventMediaResponse> uploadEventMedia(List<MultipartFile> eventPhotos,
 			EventMediaRequest eventMediaRequest) {
 		final Optional<Event> byId = eventRepository.findById(eventMediaRequest.getEventId());
-		List<EventMedia> eventMediaList = new ArrayList<>();
+		Set<EventMedia> eventMediaList = new HashSet<>();
 		if (byId.isPresent()) {
 			final Event event = byId.get();
 
 			if (!eventMediaRequest.getEventMediaReqObject().isEmpty()) {
 
-				final List<EventMedia> existingMediaList = event.getEventMediaList();
+				final Set<EventMedia> existingMediaList = event.getEventMediaList();
 				final List<EventMediaReqObject> newMediaList = eventMediaRequest.getEventMediaReqObject();
 
 				for (int i = 0; i < newMediaList.size(); i++) {
@@ -96,7 +133,11 @@ public class EventService {
 		}
 		final GenericMapper<EventMediaResponse, EventMedia> mapper = new GenericMapper<>(modelMapper,
 				EventMediaResponse.class, EventMedia.class);
-		return mapper.entityToDto(eventMediaList);
+		
+		// Sort set based on media index
+		final Set<EventMediaResponse> sortedEvents = new TreeSet<>(Comparator.comparing(EventMediaResponse::getMediaIndex));
+		sortedEvents.addAll(mapper.entityToDto(eventMediaList));
+		return sortedEvents;
 	}
 
 	public EventListDto searchEvents(SearchRequest searchDto) {
