@@ -1,6 +1,7 @@
 package com.urbanShows.userService.controller;
 
 import java.security.Principal;
+import java.util.ArrayList;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,8 @@ import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.AppUserService;
 import com.urbanShows.userService.service.JwtService;
+import com.urbanShows.userService.util.Helper;
+import com.urbanShows.userService.util.JwtHelper;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -41,10 +44,18 @@ public class AppUserAuthController {
 	}
 
 	@PostMapping("login")
-	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody AppUserLoginReqDto appUserLoginReqDto) {
+	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody AppUserLoginReqDto appUserLoginReqDto,
+			Principal principal) {
+
+		// Authenticate user by phone and OTP
 		appUserService.authenticateAppUserByOtp(appUserLoginReqDto.getPhone(), appUserLoginReqDto.getOtp());
-		final String tokenForAppUser = jwtService.generateTokenForAppUser(appUserLoginReqDto.getPhone());
+
+		// Check is user exists and extract List<authority>
 		final AppUserInfo existingAppUser = appUserService.getExistingAppUser(appUserLoginReqDto.getPhone());
+
+		// Create, save and add JWT token in response
+		final String tokenForAppUser = jwtService.generateTokenForAppUser(appUserLoginReqDto.getPhone(),
+				JwtHelper.rolesToAuthorities(existingAppUser.getRoles()));
 		final GenericMapper<UserResponseDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper,
 				UserResponseDto.class, AppUserInfo.class);
 		final UserResponseDto apppUserResponseDto = mapper.entityToDto(existingAppUser);
@@ -54,7 +65,7 @@ public class AppUserAuthController {
 
 	@GetMapping("loggedin-app-user-info")
 	public ResponseEntity<UserInternalInfo> getLoggedinAppUserInfo(Principal principal) {
-		if(principal != null) {
+		if (principal != null) {
 			final GenericMapper<UserInternalInfo, AppUserInfo> mapper = new GenericMapper<>(modelMapper,
 					UserInternalInfo.class, AppUserInfo.class);
 			final AppUserInfo userActive = appUserService.getExistingAppUser(principal.getName());

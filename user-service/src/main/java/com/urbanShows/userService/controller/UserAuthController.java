@@ -46,11 +46,14 @@ public class UserAuthController {
 	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody UserLoginDto systemUserLoginDto) {
 		final UserInfo existingSystemUser = systemUserService.isUserActive(systemUserLoginDto.getUserName());
 		try {
+			// Extract spring authentication object
 			final Authentication authentication = authenticationManager
 					.authenticate(new UsernamePasswordAuthenticationToken(systemUserLoginDto.getUserName(),
 							systemUserLoginDto.getPassword()));
 			if (authentication.isAuthenticated()) {
-				final String jwtToken = jwtService.saveAndSendJwtTokenForSystemUser(systemUserLoginDto.getUserName());
+				
+				// Create, save and add JWT token in response
+				final String jwtToken = jwtService.saveAndSendJwtTokenForSystemUser(systemUserLoginDto.getUserName(), authentication.getAuthorities());
 				final GenericMapper<UserResponseDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
 						UserResponseDto.class, UserInfo.class);
 				final UserResponseDto systemUserResponseDto = mapper.entityToDto(existingSystemUser);

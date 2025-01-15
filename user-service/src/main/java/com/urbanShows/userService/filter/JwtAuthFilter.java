@@ -12,6 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.UserDetailsServiceImpl;
 import com.urbanShows.userService.util.Helper;
+import com.urbanShows.userService.util.JwtHelper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,7 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		String id = null;
 		if (authHeader != null && authHeader.startsWith("Bearer ")) {
 			token = authHeader.substring(7);
-			id = Helper.extractUsername(token);
+			id = JwtHelper.extractUsername(token);
 		}
 
 		if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {

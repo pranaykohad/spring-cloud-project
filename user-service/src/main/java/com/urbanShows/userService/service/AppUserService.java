@@ -42,6 +42,7 @@ public class AppUserService {
 		final AppUserInfo appUser = mapper.dtoToEntity(appUserDto);
 		appUser.setRoles(List.of(Role.APP_USER));
 		appUser.setInternalPassword(AuthTokenAndPasswordUtil.generatorPassword());
+		appUser.setStatus(Status.ACTIVE);
 		appUserInfoRepo.save(appUser);
 		otpService.createOtpForAppUser(appUser);
 		log.info("App User {} with phone is register in the system ", appUserDto.getDisplayName(),

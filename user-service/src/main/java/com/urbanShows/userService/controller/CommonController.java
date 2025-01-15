@@ -1,7 +1,6 @@
 package com.urbanShows.userService.controller;
 
 import java.security.Principal;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,11 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanShows.userService.entity.UserInfo;
-import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.UserService;
-import com.urbanShows.userService.util.Helper;
+import com.urbanShows.userService.util.JwtHelper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -29,15 +27,15 @@ public class CommonController {
 
 	@GetMapping("logout")
 	public ResponseEntity<Boolean> logout(HttpServletRequest request) {
-		jwtService.invalidateToken(Helper.extractUserNameAndToken(request).getRight());
+		jwtService.invalidateToken(JwtHelper.extractUserNameAndToken(request).getRight());
 		return ResponseEntity.ok(true);
 	}
-	
+
 	@GetMapping("validate-token")
 	public ResponseEntity<Boolean> findByToken(Principal principal, HttpServletRequest request) {
-		if(principal != null) {
-			return ResponseEntity.ok(jwtService.validateTokenForUserName(Helper.extractUserNameAndToken(request).getRight()
-					, principal.getName()));
+		if (principal != null) {
+			return ResponseEntity.ok(jwtService.validateTokenForUserName(
+					JwtHelper.extractUserNameAndToken(request).getRight(), principal.getName()));
 		}
 		throw new UnauthorizedException("Unauthorized access");
 	}
@@ -47,7 +45,7 @@ public class CommonController {
 		final UserInfo existingUser = systemUserService.isUserActive(principal.getName());
 		return ResponseEntity.ok(existingUser != null);
 	}
-	
+
 	@GetMapping("is-valid-organizer")
 	public ResponseEntity<Boolean> isValidOrganizer(@RequestParam String userName, Principal principal) {
 		systemUserService.isUserActive(principal.getName());
@@ -57,7 +55,7 @@ public class CommonController {
 	@GetMapping("username-otp-validation")
 	public ResponseEntity<Boolean> usernameAndOtpvalidation(@RequestParam String otp, Principal principal) {
 		final UserInfo currentUser = systemUserService.authenticateSystemUserByOtp(principal.getName(), otp);
-		return ResponseEntity.ok(currentUser != null); 
+		return ResponseEntity.ok(currentUser != null);
 	}
-	
+
 }
