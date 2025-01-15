@@ -14,11 +14,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.urbanShows.eventService.security.exception.ConnectionException;
 import com.urbanShows.eventService.security.exception.GenericException;
 import com.urbanShows.eventService.security.exception.ServiceUnavailableException;
+import com.urbanShows.eventService.security.exception.UnauthorizedException;
 
 import io.jsonwebtoken.security.SignatureException;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+	
+	@ExceptionHandler(UnauthorizedException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public ResponseEntity<Map<String, String>> handleUnauthorizedException(UnauthorizedException ex) {
+		return new ResponseEntity<>(buildErrorMap(ex), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 
 	@ExceptionHandler(GenericException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

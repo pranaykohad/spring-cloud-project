@@ -53,19 +53,18 @@ public class EventController {
 			HttpServletRequest httpServletRequest, Principal principal) {
 		final String jwt = JwtHelper.extractJwt(httpServletRequest);
 		final List<Role> loggedinUserRoles = JwtHelper.getLoggedinUserRoles(jwt);
-		final String userName = JwtHelper.extractUsername(jwt);
+		final String loggedinUserName = JwtHelper.extractUsername(jwt);
 		if (loggedinUserRoles.contains(Role.ORGANIZER_USER)) {
-			final SearchFilter searchFilter = new SearchFilter("organizer", userName, null, SearchOperator.EQUALS);
+			final SearchFilter searchFilter = new SearchFilter("organizer", loggedinUserName, null,
+					SearchOperator.EQUALS);
 			searchDto.getSearchFilters().add(searchFilter);
 		}
-		authService.isLogginUserActive(jwt);
 		return ResponseEntity.ok(eventService.searchEvents(searchDto));
 	}
 
 	@GetMapping("event-overview")
 	public ResponseEntity<EventOverviewDto> getEventOverview(@RequestParam long eventId, @RequestParam String organizer,
 			HttpServletRequest httpServletRequest, Principal principal) {
-		authService.isLogginUserActive(JwtHelper.extractJwt(httpServletRequest));
 		return ResponseEntity.ok(eventService.getEventOverview(eventId, organizer));
 	}
 
@@ -73,7 +72,14 @@ public class EventController {
 	public ResponseEntity<Long> saveEventOverview(@RequestBody EventOverviewDto eventOverview,
 			HttpServletRequest httpServletRequest, Principal principal) {
 		final String jwt = JwtHelper.extractJwt(httpServletRequest);
+		
+		// Validate token before changing anything in system
+		authService.validateToken(jwt);
+		
+		// Is the organizer active
 		authService.isOrganizerActive(jwt, eventOverview.getOrganizer());
+		
+		// Validate loggedin user by OTP
 		authService.validateLoggedinUserByOtp(jwt, eventOverview.getOtp());
 		return ResponseEntity.ok(eventService.saveEventOverview(eventOverview));
 	}
@@ -81,7 +87,6 @@ public class EventController {
 	@GetMapping("event-photos")
 	public ResponseEntity<List<EventMediaResponse>> getEventPhotos(@RequestParam long eventId,
 			@RequestParam String organizer, HttpServletRequest httpServletRequest, Principal principal) {
-		authService.isLogginUserActive(JwtHelper.extractJwt(httpServletRequest));
 		return ResponseEntity.ok(eventService.getEventPhotos(eventId, organizer));
 	}
 
@@ -90,6 +95,11 @@ public class EventController {
 			@RequestParam(required = false) List<MultipartFile> eventPhotos,
 			@RequestParam(required = false) String eventMediaReqObject, HttpServletRequest httpServletRequest,
 			Principal principal) throws JsonProcessingException {
+		final String jwt = JwtHelper.extractJwt(httpServletRequest);
+		
+		// Validate token before changing anything in system
+		authService.validateToken(jwt);
+		
 		final ObjectMapper objectMapper = new ObjectMapper();
 		final EventMediaRequest eventMediaRequest = objectMapper.readValue(eventMediaReqObject,
 				EventMediaRequest.class);

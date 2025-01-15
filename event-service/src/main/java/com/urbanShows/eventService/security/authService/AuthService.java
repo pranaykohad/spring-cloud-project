@@ -1,5 +1,8 @@
 package com.urbanShows.eventService.security.authService;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.urbanShows.eventService.security.dto.UserInternalInfo;
 import com.urbanShows.eventService.security.exception.ConnectionException;
+import com.urbanShows.eventService.security.exception.UnauthorizedException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -66,23 +70,16 @@ public class AuthService {
 //		}
 //	}
 
-//	public boolean validateToken(String jwt) {
-//		try {
-//			final ResponseEntity<Boolean> isValidate = restTemplate.exchange(
-//					(userServiceUrl + "/api/user/common/validate-token"), HttpMethod.GET, buildHeaderEntity(jwt),
-//					Boolean.class);
-//			return isValidate.getBody();
-//		} catch (Exception e) {
-//			throw new ConnectionException(extractMessage(e.getMessage()));
-//		}
-//	}
-
-	public boolean isLogginUserActive(String jwt) {
+	public boolean validateToken(String jwt) {
 		try {
 			final ResponseEntity<Boolean> isValidate = restTemplate.exchange(
-					(userServiceUrl + "/api/user/common/is-user-active"), HttpMethod.GET, buildHeaderEntity(jwt),
+					(userServiceUrl + "/api/user/common/validate-token"), HttpMethod.GET, buildHeaderEntity(jwt),
 					Boolean.class);
-			return isValidate.getBody();
+			if (Boolean.TRUE.equals(isValidate.getBody())) {
+				return Boolean.TRUE;
+			} else {
+				throw new UnauthorizedException("Unauthorized access");
+			}
 		} catch (Exception e) {
 			throw new ConnectionException(extractMessage(e.getMessage()));
 		}
@@ -95,7 +92,16 @@ public class AuthService {
 	}
 
 	private String extractMessage(String message) {
-		final String[] split = message.split(":");
+
+		final String regex = "<error>(.*?)</error>";
+		final Pattern pattern = Pattern.compile(regex);
+		final Matcher matcher = pattern.matcher(message);
+		String errorMessage = message;
+		if (matcher.find()) {
+			errorMessage = matcher.group(1);
+		}
+		
+		final String[] split = errorMessage.split(":");
 		return split[split.length - 1].replaceAll("[^a-zA-Z0-9 ]", "");
 	}
 
