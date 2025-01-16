@@ -1,14 +1,15 @@
 import { LocalstorageService } from './../services/localstorage.service';
 import {
+  ChangeDetectorRef,
   Component,
   ComponentRef,
   OnInit,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { MessageService } from '../behaviorSubject/message.service';
-import { APP_ROUTES, LocalStorageKeys, Msg } from '../models/Enums';
+import { LocalStorageKeys, Msg } from '../models/Enums';
 import { Status } from '../models/Status';
 import {
   UserBasicDetails,
@@ -96,13 +97,18 @@ export class ProfileComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.userName = this.activatedRoute.snapshot.params['userName'];
-    this.loggedInUser = this.localstorageService.getItem(
-      LocalStorageKeys.LOGGED_IN_USER_DETAILS
-    );
-    this.blockSelfChanges = this.loggedInUser.userName === this.userName;
-    this.getUserBasicDetails();
-    this.getUserSecuredDetails();
+    this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+      const userName = params.get('userName');
+      if (userName !== null) {
+        this.userName = userName;
+        this.loggedInUser = this.localstorageService.getItem(
+          LocalStorageKeys.LOGGED_IN_USER_DETAILS
+        );
+        this.blockSelfChanges = this.loggedInUser.userName === this.userName;
+        this.getUserBasicDetails();
+        this.getUserSecuredDetails();
+      }
+    });
   }
 
   onStatusChenge(value: boolean) {
@@ -163,11 +169,16 @@ export class ProfileComponent implements OnInit {
         return;
       }
 
+      const timestamp = new Date()
+        .toISOString()
+        .replace(/[-:.]/g, '')
+        .slice(0, 15);
+
       this.newUserBasicDetails.profilePicFile = new File(
         [file],
-        `${this.oldUserBasicDetails.userName}-profile-pic.${file.name
-          .split('.')
-          .pop()}`,
+        `${
+          this.oldUserBasicDetails.userName
+        }-profile-pic-${timestamp}.${file.name.split('.').pop()}`,
         {
           type: file.type,
         }
