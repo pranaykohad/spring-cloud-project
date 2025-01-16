@@ -9,7 +9,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, finalize, Observable, throwError } from 'rxjs';
 import { MessageService } from '../behaviorSubject/message.service';
-import { LocalStorageKeys } from '../models/Enums';
+import { APP_ROUTES, LocalStorageKeys } from '../models/Enums';
 import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 import { LocalstorageService } from '../services/localstorage.service';
 import { ToastService } from '../services/toast.service';
@@ -54,7 +54,12 @@ export class AuthInterceptor implements HttpInterceptor {
     });
     return next.handle(clonedReq).pipe(
       catchError((error) => {
-        this.toastService.showErrorToast(error.error.error);
+        if (error.error.error === 'Unauthorized access. Please log in.') {
+          this.toastService.showErrorToast(error.error.error);
+          this.router.navigate([APP_ROUTES.LOGIN]);
+        } else {
+          this.toastService.showErrorToast(error.error.error);
+        }
         return throwError(() => error);
       }),
       finalize(() => {

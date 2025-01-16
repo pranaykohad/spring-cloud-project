@@ -6,9 +6,9 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from '../behaviorSubject/message.service';
-import { LocalStorageKeys, Msg } from '../models/Enums';
+import { APP_ROUTES, LocalStorageKeys, Msg } from '../models/Enums';
 import { Status } from '../models/Status';
 import {
   UserBasicDetails,
@@ -91,7 +91,8 @@ export class ProfileComponent implements OnInit {
     private messageService: MessageService,
     private userService: UserService,
     private activatedRoute: ActivatedRoute,
-    private localstorageService: LocalstorageService
+    private localstorageService: LocalstorageService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {

@@ -2,19 +2,19 @@
   @if(newUserBasicDetails) {
   <p-card header="Profile section" [style]="{passingTop: '0px'}">
     <div class="d-flex m-2">
-      <div class="d-flex align-items-center" style="margin-right: 60px;">
+      <div class="d-flex align-items-center col-3">
         <div class="label-label-margin-right">Username:</div>
         <div>
           <div class="disable-div">{{newUserBasicDetails.userName}}</div>
         </div>
       </div>
-      <div class="d-flex align-items-center" style="margin-right: 60px;">
+      <div class="d-flex align-items-center col-3">
         <div class="label-label-margin-right">User Roles:</div>
         <div>
           <div class="disable-div">{{userSecuredDetails && userSecuredDetails.roles}}</div>
         </div>
       </div>
-      <div class="d-flex align-items-center">
+      <div class="d-flex align-items-center col-3">
         <div class="label-label-margin-right">Created At:</div>
         <div>
           <div class="disable-div">{{newUserBasicDetails.createdAt | date: 'medium'}}</div>
@@ -119,7 +119,8 @@
             <div class="d-flex align-items-center div-margin-buttom">
               <div class="label-margin-right-cnf-pass">Phone validation status:</div>
               <div>
-                <i [pTooltip]="userSecuredDetails.phoneValidated ? 'Validatation done' : 'Validatation pending'" [ngClass]="userSecuredDetails.phoneValidated ? 'pi pi-check-square active-check': 'pi pi-times inactive-check'"></i>
+                <i [pTooltip]="userSecuredDetails.phoneValidated ? 'Validatation done' : 'Validatation pending'"
+                  [ngClass]="userSecuredDetails.phoneValidated ? 'pi pi-check-square active-check': 'pi pi-times inactive-check'"></i>
               </div>
             </div>
           </div>
