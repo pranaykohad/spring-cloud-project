@@ -35,6 +35,7 @@ export class NavbarComponent {
     if (value) {
       this.loggedInUserRoles = new Set(value.roles);
       this.setMegaPanel();
+      this.setUserMenu();
     }
   }
 
@@ -51,6 +52,8 @@ export class NavbarComponent {
   navbarModel!: MegaMenuItem[];
 
   private _loggedInUserDetails!: LoggedInUserDetails;
+
+  userModel!: MegaMenuItem[];
 
   model: MenuItem[] = [
     {
@@ -121,6 +124,43 @@ export class NavbarComponent {
         this.router.navigate([APP_ROUTES.LOGIN]);
       }
     });
+  }
+
+  private setUserMenu() {
+    this.userModel = [
+      {
+        label: `<div class="d-flex flex-column align-items-start pointer-cursor">
+                  <div>${this.loggedInUserDetails.displayName}</div>
+                  <div>${this.loggedInUserDetails.roles}</div>
+                </div>`,
+        items: [
+          [
+            {
+              items: [
+                {
+                  label: 'Profile',
+                  command: () => {
+                    this.openSection('profile');
+                  },
+                },
+                {
+                  label: 'Setting',
+                  command: () => {
+                    this.openSection('setting');
+                  },
+                },
+                {
+                  label: 'Logout',
+                  command: () => {
+                    this.logout();
+                  },
+                },
+              ],
+            },
+          ],
+        ],
+      },
+    ];
   }
 
   private setMegaPanel() {

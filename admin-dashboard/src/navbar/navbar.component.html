@@ -5,7 +5,7 @@
   <div class="d-flex justify-content-end col-8">
     <p-megaMenu [model]="navbarModel" id="nav-bar-menu" (mouseleave)="onMouseLeave(megamenu)" #megamenu />
   </div>
-  <div class="col-2 d-flex justify-content-end self-align-end">
+  <div class="col-2 d-flex justify-content-end self-align-end align-items-center">
     <div>
       @if (loggedInUserDetails && loggedInUserDetails!.profilePicUrl) {
       <img src="{{loggedInUserDetails.profilePicUrl}}" class="user-profile-img" alt="profile" />
@@ -13,16 +13,11 @@
       <span class="user-profile-img">no img</span>
       }
     </div>
-    <div #test class="font-Quicksand-SemiBold p-2 d-flex justify-content-center align-items-center user-name"
+    <div #test class="font-Quicksand-SemiBold d-flex justify-content-center align-items-center user-name"
       style="margin-right: 15px;">
-      <span (click)="menu.toggle($event)" class="d-flex flex-column align-items-start pointer-cursor">
-        <div>
-          {{loggedInUserDetails && loggedInUserDetails.displayName}}
-        </div>
-        <div style="font-size: small" class="align-self-end">{{loggedInUserDetails && loggedInUserDetails.roles}}
-        </div>
+      <span class="d-flex flex-column align-items-start pointer-cursor">
+        <p-megaMenu [model]="userModel" id="user-bar-menu" (mouseleave)="onMouseLeave(usermodel)" #usermodel />
       </span>
-      <p-menu #menu [model]="model" [popup]="true" [styleClass]="'d-flex'" id="user-menu" [appendTo]="'body'" />
     </div>
   </div>
 </div>

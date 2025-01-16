@@ -101,10 +101,26 @@ input {
   }
 }
 
+#user-bar-menu .p-megamenu {
+  padding-top: 0px;
+}
+
 #nav-bar-menu {
   height: 50px;
   border-radius: 0px;
   border: 0px;
+  background-color: #ff9980;
+  .p-menuitem-link {
+    text-decoration: none;
+    border-radius: 0px;
+  }
+}
+
+#user-bar-menu {
+  height: 50px;
+  border-radius: 0px;
+  border: 0px;
+  background-color: #ff9980;
   .p-menuitem-link {
     text-decoration: none;
     border-radius: 0px;
@@ -225,7 +241,7 @@ input {
 
 .p-highlight {
   color: black;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .p-datatable .p-sortable-column.p-highlight .p-sortable-column-icon {
@@ -245,34 +261,20 @@ input {
   display: none;
 }
 
-#nav-bar-menu {
-  background-color: #ff9980;
-}
-
 .p-menuitem-active {
   background-color: #ff9980;
 }
 
 .p-megamenu .p-menuitem > .p-menuitem-content {
   border-radius: 0;
+  border: 1px;
+  display: flex;
 }
 
 .p-megamenu-panel {
   border-radius: 0;
   border: 1px solid lightgrey;
 }
-
-// .p-accordion-header-link {
-//   position: static;
-// }
-
-// .p-tabview-nav-container {
-//   position: static;
-// }
-
-// .p-tabview-nav-link {
-//   position: static;
-// }
 
 .inactive-check {
   color: red;
@@ -322,10 +324,6 @@ input {
   transition: background-color 0.3s ease;
 }
 
-// .ng-trigger-overlayAnimation{
-//   z-index: 999999999999;
-// }
-
-// .p-menu-overlay {
-//   z-index: 999999999;
-// }
+.p-menuitem-link {
+  padding: 10px;
+}
