@@ -220,7 +220,7 @@ public class UserService {
 	public UserInfo getActiveExistingSystemUser(String userName) {
 		final UserInfo existingUser = userInfoRepository.findByUserNameAndStatus(userName, Status.ACTIVE);
 		if (existingUser == null) {
-			throw new UserNotFoundException("User doesnot exists/ inctive in the system");
+			throw new UserNotFoundException("User inctive/doesnot exists in the system");
 		}
 		return existingUser;
 	}

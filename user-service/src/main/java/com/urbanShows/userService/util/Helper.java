@@ -9,12 +9,12 @@ public class Helper {
 	private Helper() {
 	}
 
-	public static String getFileNameWithoutExtension(String fileName) {
+	public static String getFileNameWithoutTimeAndExtension(String fileName) {
 		final int dotIndex = fileName.lastIndexOf('.');
-		if (dotIndex > 0) {
-			return fileName.substring(0, dotIndex);
-		}
-		return "";
+		String newFileName = "";
+		newFileName = dotIndex > 0 ? fileName.substring(0, dotIndex) : fileName;
+		final int dashIndex = newFileName.lastIndexOf('-');
+		return dashIndex > 0 ? fileName.substring(0, dashIndex + 1) : fileName;
 	}
 
 	public static boolean isPhonenumber(String phone) {

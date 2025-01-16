@@ -60,15 +60,15 @@ public class AzureBlobStorageService {
 		try {
 			// Extract blob list from azure container with same name
 			final ListBlobsOptions listOption = new ListBlobsOptions();
-			listOption.setPrefix(Helper.getFileNameWithoutExtension(mediaFileName));
+			listOption.setPrefix(Helper.getFileNameWithoutTimeAndExtension(mediaFileName));
 			final PagedIterable<BlobItem> blobList = blobContainerClient.listBlobs(listOption, null, null);
 
 			for (BlobItem blobItem : blobList) {
 				final String blobName = blobItem.getName();
 				
 				// Check in new media file name and existing blob name are same and delete blob from container
-				if (Helper.getFileNameWithoutExtension(blobName)
-						.equals(Helper.getFileNameWithoutExtension(mediaFileName))) {
+				if (Helper.getFileNameWithoutTimeAndExtension(blobName)
+						.equals(Helper.getFileNameWithoutTimeAndExtension(mediaFileName))) {
 					blobContainerClient.getBlobClient(blobName).delete();
 					log.info("Blob: {} is deleted from conatiner: {}", blobName,
 							blobContainerClient.getBlobContainerName());
