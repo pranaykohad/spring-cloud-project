@@ -44,7 +44,7 @@ public class UserAuthController {
 
 	@PostMapping("login")
 	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody UserLoginDto systemUserLoginDto) {
-		final UserInfo existingSystemUser = systemUserService.getActiveExistingSystemUser(systemUserLoginDto.getUserName());
+		final UserInfo existingSystemUser = systemUserService.getExistingSystemUser(systemUserLoginDto.getUserName());
 		try {
 			// Extract spring authentication object
 			final Authentication authentication = authenticationManager

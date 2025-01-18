@@ -148,11 +148,11 @@ public class UserService {
 	}
 
 	public boolean udpateSecuredUserDetails(UserSecuredDetailsReq securedDetailsReq, UserInfo targetUser,
-			String loggedInUserName) {
+			UserInfo currentUser) {
 		final GenericMapper<UserSecuredDetailsReq, UserInfoDto> mapper = new GenericMapper<>(modelMapper,
 				UserSecuredDetailsReq.class, UserInfoDto.class);
 		final UserInfoDto dtoToEntity = mapper.dtoToEntity(securedDetailsReq);
-		updateSecuredUserDetails(dtoToEntity, targetUser, loggedInUserName);
+		updateSecuredUserDetails(dtoToEntity, targetUser, currentUser);
 		return true;
 	}
 
@@ -181,8 +181,8 @@ public class UserService {
 		return true;
 	}
 
-	private void updateSecuredUserDetails(UserInfoDto newUserInfo, UserInfo targetUserInfo, String loggedInUserName) {
-		if (!loggedInUserName.equals(targetUserInfo.getUserName())) {
+	private void updateSecuredUserDetails(UserInfoDto newUserInfo, UserInfo targetUserInfo, UserInfo currentUserInfo) {
+		if (!currentUserInfo.getUserName().equals(targetUserInfo.getUserName())) {
 			targetUserInfo
 					.setStatus(!newUserInfo.getStatus().equals(targetUserInfo.getStatus()) ? newUserInfo.getStatus()
 							: targetUserInfo.getStatus());
@@ -205,6 +205,14 @@ public class UserService {
 			targetUserInfo.setEmail(newUserInfo.getEmail());
 			targetUserInfo.setEmailValidated(false);
 			targetUserInfo.setStatus(Status.INACTIVE);
+		}
+		
+		// for super admin all validations are true
+		if (targetUserInfo.getRoles().contains(Role.SUPER_ADMIN_USER)
+				&& currentUserInfo.getRoles().contains(Role.SUPER_ADMIN_USER)) {
+			targetUserInfo.setStatus(Status.ACTIVE);
+			targetUserInfo.setPhoneValidated(true);
+			targetUserInfo.setEmailValidated(true); 
 		}
 		userInfoRepository.save(targetUserInfo);
 	}

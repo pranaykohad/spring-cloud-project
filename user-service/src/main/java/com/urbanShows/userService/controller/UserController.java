@@ -27,6 +27,7 @@ import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSecuredDetailsRes;
 import com.urbanShows.userService.entity.UserInfo;
 import com.urbanShows.userService.enums.Role;
+import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.UserService;
@@ -103,12 +104,12 @@ public class UserController {
 				securedDetails.getOtp());
 		final UserInfo targetUser = systemUserService.getExistingSystemUser(securedDetails.getUserName());
 		if (targetUser.getRoles().contains(Role.SUPER_ADMIN_USER)
-				&& securedDetails.getStatus().equals(com.urbanShows.userService.enums.Status.INACTIVE)) {
-			throw new UnauthorizedException("Super Admin users cannot be deactivated");
-		}
+				&& !currentUser.getRoles().contains(Role.SUPER_ADMIN_USER)) {
+			throw new UnauthorizedException("You cannot perform this operation");
+		} 
 		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
 		return ResponseEntity
-				.ok(systemUserService.udpateSecuredUserDetails(securedDetails, targetUser, principal.getName()));
+				.ok(systemUserService.udpateSecuredUserDetails(securedDetails, targetUser, currentUser));
 	}
 
 	@PostMapping("user-list")
@@ -120,7 +121,7 @@ public class UserController {
 	@GetMapping("activate-user")
 	public ResponseEntity<Boolean> activateUser(@RequestParam String userName, @RequestParam String otp,
 			Principal principal) {
-		systemUserService.getActiveExistingSystemUser(principal.getName());
+		systemUserService.getExistingSystemUser(principal.getName());
 		return ResponseEntity.ok(systemUserService.activateUser(userName, otp));
 	}
 

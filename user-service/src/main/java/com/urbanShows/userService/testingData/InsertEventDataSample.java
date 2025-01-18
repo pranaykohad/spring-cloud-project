@@ -50,14 +50,14 @@ public class InsertEventDataSample {
 			userInfo.setEmail(userNames[i % userNames.length] + "@gmail.com");
 			userInfo.setPhone(phoneNumbers[i % phoneNumbers.length]);
 			userInfo.setDisplayName(userNames[i % userNames.length] + " #" + i);
-			Random random = new Random();
-			Role randomRole = Role.values()[random.nextInt(Role.values().length)];
+			final Random random = new Random();
+			final Role randomRole = Role.values()[random.nextInt(Role.values().length)];
 			userInfo.setRoles(List.of(randomRole));
 			userInfo.setCreatedAt(LocalDateTime.now());
 			userInfo.setStatus(Status.INACTIVE);
 			userInfo.setOtp(otps[i % otps.length]);
 			userInfo.setOtpTimeStamp(LocalDateTime.now());
-
+			
 			userInfoRepository.save(userInfo);
 		});
 
