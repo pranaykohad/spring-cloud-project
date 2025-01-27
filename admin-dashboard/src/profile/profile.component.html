@@ -113,7 +113,7 @@
                 </div>
                 <p-button label="Send OTP to phone" icon="pi pi-phone" styleClass="p-button-sm success-btn"
                   class="otp-btn-left-mar" [style]="{width: '200px'}" (click)="loadOtpForActivation('PHONE')"
-                  [disabled]="editSecuredDetails.phoneValidated"></p-button>
+                  [disabled]="blockSelfChanges || editSecuredDetails.phoneValidated"></p-button>
               </div>
             </div>
             <div class="d-flex align-items-center div-margin-buttom">
@@ -135,7 +135,7 @@
                 </div>
                 <p-button label="Send OTP to email" icon="pi pi-envelope" styleClass="p-button-sm success-btn"
                   class="otp-btn-left-mar" [style]="{width: '200px'}" (click)="loadOtpForActivation('EMAIL')"
-                  [disabled]="editSecuredDetails.emailValidated"></p-button>
+                  [disabled]="blockSelfChanges || editSecuredDetails.emailValidated"></p-button>
               </div>
             </div>
             <div class="d-flex align-items-center div-margin-buttom">
