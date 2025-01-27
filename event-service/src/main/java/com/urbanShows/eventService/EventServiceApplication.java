@@ -60,7 +60,7 @@ public class EventServiceApplication {
 
 	private void addInitialData() {
 //		insertEventDataSample.insertEventTypeSampleDate();
-//		insertEventDataSample.insertEventSampleDate();s
+//		insertEventDataSample.insertEventSampleDate();
 		
 	}
 
