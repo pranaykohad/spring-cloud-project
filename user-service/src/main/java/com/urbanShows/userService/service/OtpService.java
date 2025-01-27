@@ -27,7 +27,7 @@ public class OtpService {
 		existingAppUser.setOtp(AuthTokenAndPasswordUtil.generateAuthToken());
 		existingAppUser.setOtpTimeStamp(LocalDateTime.now());
 		appUserInfoRepo.save(existingAppUser);
-		sendOtpToPhone(existingAppUser.getPhone(), existingAppUser.getOtp());
+		sendOtpToDevice(existingAppUser.getPhone(), existingAppUser.getOtp());
 	}
 
 	public void createAndSendOtp(UserInfo userInfo, String device) {
@@ -35,15 +35,15 @@ public class OtpService {
 		userInfo.setOtpTimeStamp(LocalDateTime.now());
 		userRepo.save(userInfo);
 		if (device.equals("EMAIL")) {
-			sendOtpToPhone(userInfo.getEmail(), userInfo.getOtp());
+			sendOtpToDevice(userInfo.getEmail(), userInfo.getOtp());
 		} else {
-			sendOtpToPhone(userInfo.getPhone(), userInfo.getOtp());
+			sendOtpToDevice(userInfo.getPhone(), userInfo.getOtp());
 		}
 
 	}
 
-	private void sendOtpToPhone(String phone, String otp) {
-		final OtpkafkaDto otpkafkaDto = new OtpkafkaDto(phone, otp);
+	private void sendOtpToDevice(String device, String otp) {
+		final OtpkafkaDto otpkafkaDto = new OtpkafkaDto(device, otp);
 		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
 	}
 
