@@ -16,9 +16,7 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
         data: {
           roles: [
-            'SYSTEM_USER',
             'ADMIN_USER',
-            'SUPPORT_USER',
             'SUPER_ADMIN_USER',
             'ORGANIZER_USER',
           ],
@@ -31,9 +29,7 @@ export const routes: Routes = [
             canActivate: [AuthGuard],
             data: {
               roles: [
-                'SYSTEM_USER',
                 'ADMIN_USER',
-                'SUPPORT_USER',
                 'SUPER_ADMIN_USER',
                 'ORGANIZER_USER',
               ],

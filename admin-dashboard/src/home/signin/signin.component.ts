@@ -21,20 +21,8 @@ import { APP_ROUTES } from '../../models/Enums';
 export class SigninComponent implements OnInit {
   roleList: Role[] = [
     {
-      name: 'SYSTEM_USER',
-      value: 'SYSTEM_USER',
-    },
-    {
       name: 'ADMIN_USER',
       value: 'ADMIN_USER',
-    },
-    {
-      name: 'SUPER_ADMIN_USER',
-      value: 'SUPER_ADMIN_USER',
-    },
-    {
-      name: 'SUPPORT_USER',
-      value: 'SUPPORT_USER',
     },
     {
       name: 'ORGANIZER_USER',
