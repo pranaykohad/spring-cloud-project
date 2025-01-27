@@ -111,7 +111,7 @@ export class ProfileComponent implements OnInit {
     });
   }
 
-  onStatusChenge(value: boolean) {
+  onStatusChange(value: boolean) {
     if (this.blockSelfChanges) {
       return;
     }

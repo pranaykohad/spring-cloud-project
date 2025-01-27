@@ -151,7 +151,7 @@
             <div class="d-flex flex-column">
               <p-floatLabel>
                 <div class="d-flex flex-row">
-                  <p-inputSwitch [(ngModel)]="status" (onChange)="onStatusChenge($event.checked)"
+                  <p-inputSwitch [(ngModel)]="status" (onChange)="onStatusChange($event.checked)"
                     [disabled]="blockSelfChanges || !editSecuredDetails.phoneValidated || !editSecuredDetails.emailValidated"></p-inputSwitch>
                   <div style="margin-left: 10px;">{{editSecuredDetails.status}}</div>
                 </div>
