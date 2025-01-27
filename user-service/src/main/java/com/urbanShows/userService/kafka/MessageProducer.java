@@ -30,7 +30,7 @@ public class MessageProducer {
 			final CompletableFuture<SendResult<String, String>> send = stringTemplate.send(kafkaTopic, jsonString);
 			send.whenComplete((res, exp) -> log.info("Kafka message send successfully"));
 		} catch (JsonProcessingException e) {
-			log.error("Error while sending OTP to phone: {}", otpkafkaDto.getPhone());
+			log.error("Error while sending OTP to device: {}", otpkafkaDto.getDevice());
 		}
 	}
 
