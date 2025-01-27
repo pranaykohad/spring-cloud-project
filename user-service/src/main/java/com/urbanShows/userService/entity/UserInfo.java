@@ -26,25 +26,25 @@ public class UserInfo {
 	private String password;
 
 	private String email;
-	
+
 	private String displayName;
 
 	private List<Role> roles;
 
 	private String phone;
-	
+
 	private String profilePicUrl;
-	
+
 	private String otp;
-	
+
 	private LocalDateTime otpTimeStamp;
-	
+
 	private LocalDateTime createdAt;
-	
+
 	private Status status;
-	
+
 	private boolean phoneValidated;
-	
+
 	private boolean emailValidated;
-	
+
 }

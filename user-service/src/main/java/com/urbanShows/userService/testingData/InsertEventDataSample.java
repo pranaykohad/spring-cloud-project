@@ -52,6 +52,9 @@ public class InsertEventDataSample {
 			userInfo.setDisplayName(userNames[i % userNames.length] + " #" + i);
 			final Random random = new Random();
 			final Role randomRole = Role.values()[random.nextInt(Role.values().length)];
+			if(randomRole.equals(Role.SUPER_ADMIN_USER)) {
+				return;
+			}
 			userInfo.setRoles(List.of(randomRole));
 			userInfo.setCreatedAt(LocalDateTime.now());
 			userInfo.setStatus(Status.INACTIVE);
@@ -60,7 +63,25 @@ public class InsertEventDataSample {
 			
 			userInfoRepository.save(userInfo);
 		});
-
+		
+	}
+	
+	public void insertUserUserAdminDate() {
+		final List<UserInfo> usersByRoles = userInfoRepository.findByRoles(List.of(Role.SUPER_ADMIN_USER));
+		if(usersByRoles.isEmpty()) {
+			final UserInfo userInfo = new UserInfo();
+			userInfo.setUserName("pranay");
+			userInfo.setPassword(passwordEncoder.encode("pranay"));
+			userInfo.setEmail("pranay@gmail.com");
+			userInfo.setPhone("9096987233");
+			userInfo.setDisplayName("Pranay Kohad");
+			userInfo.setRoles(List.of(Role.SUPER_ADMIN_USER));
+			userInfo.setCreatedAt(LocalDateTime.now());
+			userInfo.setStatus(Status.ACTIVE);
+			userInfo.setOtp("111111");
+			userInfo.setOtpTimeStamp(LocalDateTime.now());
+			userInfoRepository.save(userInfo);
+		}
 	}
 
 }

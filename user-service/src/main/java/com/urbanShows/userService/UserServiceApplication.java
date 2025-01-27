@@ -61,7 +61,8 @@ public class UserServiceApplication {
 	}
  
 	private void addInitialData() {
-//		insertEventDataSample.insertUserSampleDate();		
+//		insertEventDataSample.insertUserSampleDate();
+		insertEventDataSample.insertUserUserAdminDate();
 	}
 
 }
