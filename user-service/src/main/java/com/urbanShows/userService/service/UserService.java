@@ -181,7 +181,8 @@ public class UserService {
 		return true;
 	}
 
-	private boolean updateSecuredUserDetails(UserInfoDto newUserInfo, UserInfo targetUserInfo, UserInfo currentUserInfo) {
+	private boolean updateSecuredUserDetails(UserInfoDto newUserInfo, UserInfo targetUserInfo,
+			UserInfo currentUserInfo) {
 		boolean markForLoggedOut = false;
 		if (!currentUserInfo.getUserName().equals(targetUserInfo.getUserName())) {
 			targetUserInfo
@@ -198,26 +199,34 @@ public class UserService {
 		if (newUserInfo.isEmailValidated()) {
 			targetUserInfo.setEmailValidated(true);
 		}
-		if (StringUtils.hasText(newUserInfo.getPhone()) && !targetUserInfo.getPhone().equals(newUserInfo.getPhone())) {
+		if (!isSelfChange(targetUserInfo.getUserName(), currentUserInfo.getUserName())
+				&& StringUtils.hasText(newUserInfo.getPhone())
+				&& !targetUserInfo.getPhone().equals(newUserInfo.getPhone())) {
 			targetUserInfo.setPhone(newUserInfo.getPhone());
 			targetUserInfo.setPhoneValidated(false);
 			targetUserInfo.setStatus(Status.INACTIVE);
 		}
-		if (StringUtils.hasText(newUserInfo.getEmail()) && !targetUserInfo.getEmail().equals(newUserInfo.getEmail())) {
+		if (!isSelfChange(targetUserInfo.getUserName(), currentUserInfo.getUserName())
+				&& StringUtils.hasText(newUserInfo.getEmail())
+				&& !targetUserInfo.getEmail().equals(newUserInfo.getEmail())) {
 			targetUserInfo.setEmail(newUserInfo.getEmail());
 			targetUserInfo.setEmailValidated(false);
 			targetUserInfo.setStatus(Status.INACTIVE);
 		}
-		
+
 		// for super admin all validations are true
 		if (targetUserInfo.getRoles().contains(Role.SUPER_ADMIN_USER)
 				&& currentUserInfo.getRoles().contains(Role.SUPER_ADMIN_USER)) {
 			targetUserInfo.setStatus(Status.ACTIVE);
 			targetUserInfo.setPhoneValidated(true);
-			targetUserInfo.setEmailValidated(true); 
+			targetUserInfo.setEmailValidated(true);
 		}
 		userInfoRepository.save(targetUserInfo);
 		return markForLoggedOut;
+	}
+
+	private boolean isSelfChange(String targetUserName, String currentUserName) {
+		return targetUserName.equals(currentUserName);
 	}
 
 	public UserInfo getExistingSystemUser(String userName) {

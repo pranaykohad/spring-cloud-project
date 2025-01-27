@@ -115,7 +115,7 @@ public class UserController {
 		if(udpateSecuredUserDetails) {
 			jwtService.invalidateToken(JwtHelper.extractUserNameAndToken(request).getRight());
 		}
-		return ResponseEntity.ok(udpateSecuredUserDetails);
+		return ResponseEntity.ok(true);
 	}
 
 	@PostMapping("user-list")
