@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class OtpkafkaDto {
 
-	private String phone;
+	private String device;
 
 	private String otp;
 
