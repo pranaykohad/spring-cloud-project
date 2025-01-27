@@ -7,6 +7,8 @@ import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.Status;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -41,6 +43,7 @@ public class UserInfo {
 
 	private LocalDateTime createdAt;
 
+	@Enumerated(EnumType.STRING)
 	private Status status;
 
 	private boolean phoneValidated;
