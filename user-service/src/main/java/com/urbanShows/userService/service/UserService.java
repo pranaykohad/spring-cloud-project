@@ -152,8 +152,7 @@ public class UserService {
 		final GenericMapper<UserSecuredDetailsReq, UserInfoDto> mapper = new GenericMapper<>(modelMapper,
 				UserSecuredDetailsReq.class, UserInfoDto.class);
 		final UserInfoDto dtoToEntity = mapper.dtoToEntity(securedDetailsReq);
-		updateSecuredUserDetails(dtoToEntity, targetUser, currentUser);
-		return true;
+		return updateSecuredUserDetails(dtoToEntity, targetUser, currentUser);
 	}
 
 	public void generateOtpForSystemUser(String userName, String device) {
@@ -191,7 +190,7 @@ public class UserService {
 		}
 		if (StringUtils.hasText(newUserInfo.getPassword())) {
 			targetUserInfo.setPassword(passwordEncoder.encode(newUserInfo.getPassword()));
-			markForLoggedOut = true;
+			markForLoggedOut = isSelfChange(targetUserInfo.getUserName(), currentUserInfo.getUserName());
 		}
 		if (newUserInfo.isPhoneValidated()) {
 			targetUserInfo.setPhoneValidated(true);
@@ -199,16 +198,12 @@ public class UserService {
 		if (newUserInfo.isEmailValidated()) {
 			targetUserInfo.setEmailValidated(true);
 		}
-		if (!isSelfChange(targetUserInfo.getUserName(), currentUserInfo.getUserName())
-				&& StringUtils.hasText(newUserInfo.getPhone())
-				&& !targetUserInfo.getPhone().equals(newUserInfo.getPhone())) {
+		if (StringUtils.hasText(newUserInfo.getPhone()) && !targetUserInfo.getPhone().equals(newUserInfo.getPhone())) {
 			targetUserInfo.setPhone(newUserInfo.getPhone());
 			targetUserInfo.setPhoneValidated(false);
 			targetUserInfo.setStatus(Status.INACTIVE);
 		}
-		if (!isSelfChange(targetUserInfo.getUserName(), currentUserInfo.getUserName())
-				&& StringUtils.hasText(newUserInfo.getEmail())
-				&& !targetUserInfo.getEmail().equals(newUserInfo.getEmail())) {
+		if (StringUtils.hasText(newUserInfo.getEmail()) && !targetUserInfo.getEmail().equals(newUserInfo.getEmail())) {
 			targetUserInfo.setEmail(newUserInfo.getEmail());
 			targetUserInfo.setEmailValidated(false);
 			targetUserInfo.setStatus(Status.INACTIVE);
