@@ -181,7 +181,8 @@ public class UserService {
 		return true;
 	}
 
-	private void updateSecuredUserDetails(UserInfoDto newUserInfo, UserInfo targetUserInfo, UserInfo currentUserInfo) {
+	private boolean updateSecuredUserDetails(UserInfoDto newUserInfo, UserInfo targetUserInfo, UserInfo currentUserInfo) {
+		boolean markForLoggedOut = false;
 		if (!currentUserInfo.getUserName().equals(targetUserInfo.getUserName())) {
 			targetUserInfo
 					.setStatus(!newUserInfo.getStatus().equals(targetUserInfo.getStatus()) ? newUserInfo.getStatus()
@@ -189,6 +190,7 @@ public class UserService {
 		}
 		if (StringUtils.hasText(newUserInfo.getPassword())) {
 			targetUserInfo.setPassword(passwordEncoder.encode(newUserInfo.getPassword()));
+			markForLoggedOut = true;
 		}
 		if (newUserInfo.isPhoneValidated()) {
 			targetUserInfo.setPhoneValidated(true);
@@ -215,6 +217,7 @@ public class UserService {
 			targetUserInfo.setEmailValidated(true); 
 		}
 		userInfoRepository.save(targetUserInfo);
+		return markForLoggedOut;
 	}
 
 	public UserInfo getExistingSystemUser(String userName) {

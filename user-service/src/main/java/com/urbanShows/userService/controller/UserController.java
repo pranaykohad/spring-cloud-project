@@ -30,7 +30,9 @@ import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
+import com.urbanShows.userService.service.JwtService;
 import com.urbanShows.userService.service.UserService;
+import com.urbanShows.userService.util.JwtHelper;
 import com.urbanShows.userService.util.RolesUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +46,7 @@ import lombok.AllArgsConstructor;
 public class UserController {
 
 	private final UserService systemUserService;
+	private final JwtService jwtService;
 	private final ModelMapper modelMapper;
 
 	@DeleteMapping("remove")
@@ -99,7 +102,7 @@ public class UserController {
 
 	@PatchMapping("update-secured-details")
 	public ResponseEntity<Boolean> udpateSecuredUserDetails(@Valid @RequestBody UserSecuredDetailsReq securedDetails,
-			Principal principal) {
+			Principal principal, HttpServletRequest request) {
 		final UserInfo currentUser = systemUserService.validateActiveSystemUserByOtp(principal.getName(),
 				securedDetails.getOtp());
 		final UserInfo targetUser = systemUserService.getExistingSystemUser(securedDetails.getUserName());
@@ -108,8 +111,11 @@ public class UserController {
 			throw new UnauthorizedException("You cannot perform this operation");
 		} 
 		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
-		return ResponseEntity
-				.ok(systemUserService.udpateSecuredUserDetails(securedDetails, targetUser, currentUser));
+		final boolean udpateSecuredUserDetails = systemUserService.udpateSecuredUserDetails(securedDetails, targetUser, currentUser);
+		if(udpateSecuredUserDetails) {
+			jwtService.invalidateToken(JwtHelper.extractUserNameAndToken(request).getRight());
+		}
+		return ResponseEntity.ok(udpateSecuredUserDetails);
 	}
 
 	@PostMapping("user-list")
