@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://api-gateway.default.svc.cluster.local:8083/'
+  apiUrl: 'http://localhost:8083/'
 };
