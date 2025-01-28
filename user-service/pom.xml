@@ -106,11 +106,11 @@
 	      <artifactId>micrometer-tracing-bridge-brave</artifactId>
 	    </dependency>
 	    
-	    <!-- Grafana stack 5 - To send trace id to loki -->
+	    <!-- Grafana stack 5 - To send trace id to loki 
 	     <dependency>
 	      <groupId>io.zipkin.reporter2</groupId>
 	      <artifactId>zipkin-reporter-brave</artifactId>
-	    </dependency>
+	    </dependency> -->
 	    
 	    <!-- Grafana stack 6 - To trace database calls -->
 		<dependency>

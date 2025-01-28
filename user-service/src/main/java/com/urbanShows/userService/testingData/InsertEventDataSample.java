@@ -79,6 +79,8 @@ public class InsertEventDataSample {
 			userInfo.setCreatedAt(LocalDateTime.now());
 			userInfo.setStatus(Status.ACTIVE);
 			userInfo.setOtp("111111");
+			userInfo.setPhoneValidated(true);
+			userInfo.setEmailValidated(true);
 			userInfo.setOtpTimeStamp(LocalDateTime.now());
 			userInfoRepository.save(userInfo);
 		}
