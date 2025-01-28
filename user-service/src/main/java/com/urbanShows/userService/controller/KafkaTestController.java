@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanShows.userService.kafka.KafkaTopicEnums;
 import com.urbanShows.userService.kafka.MessageProducer;
+import com.urbanShows.userService.kafka.OtpkafkaDto;
 
 import lombok.AllArgsConstructor;
 
@@ -20,7 +21,8 @@ public class KafkaTestController {
 
 	@GetMapping("send")
 	public ResponseEntity<Boolean> sendMsg(@RequestParam String msg) {
-		kafkaPub.sendStringMessage(KafkaTopicEnums.USER_LOGGED_IN.name(), msg);
+		final OtpkafkaDto otpkafkaDto = new OtpkafkaDto("EMAIL", "123456");
+		kafkaPub.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
 		return ResponseEntity.ok(true);
 	}
 
