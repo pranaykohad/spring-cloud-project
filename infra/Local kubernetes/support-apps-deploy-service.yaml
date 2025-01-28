@@ -3,17 +3,17 @@ kind: ConfigMap
 metadata:
   name: common-config
 data:
-  LOKI_URL: "http://loki.default.svc.cluster.local:3100/loki/api/v1/push"
-  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://tempo.default.svc.cluster.local:9411"
-  USER_SERVICE_URL: "http://user-service.default.svc.cluster.local:8081"
-  EVENT_SERVICE_URL: "http://event-service.default.svc.cluster.local:8082"
-  API_GATEWAY: "http://api-gateway.default.svc.cluster.local:8083"
-  NOTIFICATION_SERVICE_URL: "http://notification-service.default.svc.cluster.local:8084"
+  LOKI_URL: "http://loki:3100/loki/api/v1/push"
+  MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: "http://tempo:9411"
+  USER_SERVICE_URL: "http://user-service:8081"
+  EVENT_SERVICE_URL: "http://event-service:8082"
+  API_GATEWAY: "http://api-gateway:8083"
+  NOTIFICATION_SERVICE_URL: "http://notification-service:8084"
   SPRING_PROFILES_ACTIVE: "dev"
-  SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS: "broker.default.svc.cluster.local:29092"
-  SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS: "broker.default.svc.cluster.local:29092"
-  SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL: "http://schema-registry.default.svc.cluster.local:8081"
-  SPRING_KAFKA_CONSUMER_PROPERTIES_SCHEMA_REGISTRY_URL: "http://schema-registry.default.svc.cluster.local:8081"
+  SPRING_KAFKA_PRODUCER_BOOTSTRAP-SERVERS: "broker:29092"
+  SPRING_KAFKA_CONSUMER_BOOTSTRAP-SERVERS: "broker:29092"
+  SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
+  SPRING_KAFKA_CONSUMER_PROPERTIES_SCHEMA_REGISTRY_URL: "http://schema-registry:8081"
 ---  
 apiVersion: apps/v1
 kind: Deployment
