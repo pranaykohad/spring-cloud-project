@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  //apiUrl: 'https://api.urbanshows.in/'
-  apiUrl: 'http://localhost:8083/'
+  apiUrl: 'https://api-gateway.urbanshows.in/'
+  //apiUrl: 'http://localhost:8083/'
 };
