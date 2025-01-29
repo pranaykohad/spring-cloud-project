@@ -17,7 +17,7 @@ public class SendOtpMessageListener {
 		final ObjectMapper objectMapper = new ObjectMapper();
 		try {
 			OtpkafkaDto otpkafkaDto = objectMapper.readValue(otpkafkaDtoStr, OtpkafkaDto.class);
-			log.info("Send OTP to device: {}", otpkafkaDto.getDevice(), otpkafkaDto.getOtp());
+			log.info("Send OTP to device: {}, otp: {}", otpkafkaDto.getDevice(), otpkafkaDto.getOtp());
 		} catch (JsonProcessingException e) {
 			log.error("Error while parsing message: {}", e);
 		}
