@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../environment';
 import { UserInfoRespone } from '../models/UserInfoListObject';
 import {
   UserBasicDetails,
@@ -9,6 +8,7 @@ import {
   UserSecuredDetailsRes,
 } from '../models/UserUpdateRequest';
 import { SearchRequest } from '../models/SearchRequest';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',

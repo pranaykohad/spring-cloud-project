@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../environment';
+import { environment } from '../../environments/environment';
 import { SystemUserLoginRequest } from '../models/SystemUserLoginRequest';
 import { LoggedInUserDetails } from '../models/LoggedinUserDetails';
 import { SystemUserSigninRequest } from '../models/SystemUserSigninRequest';
