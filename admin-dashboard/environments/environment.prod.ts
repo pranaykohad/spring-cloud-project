@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://api-gateway:8083/'
+  apiUrl: 'http://api-gateway.urbanshows.in/'
 };
