@@ -1,5 +1,7 @@
 package com.urbanShows.userService;
 
+import java.util.Comparator;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,10 +35,10 @@ public class UserServiceApplication {
 
 	@Value("${springdoc.swagger-ui.path}")
 	private String swaggerPath;
-	
+
 	@Value("${event.service.url}")
 	private String eventServiceUrl;
-	
+
 	@Value("${spring.kafka.producer.bootstrap-servers}")
 	private String kafkaConsumerServer;
 
@@ -46,8 +48,8 @@ public class UserServiceApplication {
 
 	@PostConstruct
 	public void postConstruct() {
-		log.info("User Service is started on port: {}, swagger URL: {}" , port , swaggerPath);
-		log.info("Event Service URL: {}, Kafka Consumer URL: {}" , eventServiceUrl , kafkaConsumerServer);
+		log.info("User Service is started on port: {}, swagger URL: {}", port, swaggerPath);
+		log.info("Event Service URL: {}, Kafka Consumer URL: {}", eventServiceUrl, kafkaConsumerServer);
 		final String[] activeProfiles = environment.getActiveProfiles();
 		if (activeProfiles.length == 0) {
 			log.info("No active profile is set.");
@@ -59,10 +61,10 @@ public class UserServiceApplication {
 		}
 		addInitialData();
 	}
- 
+
 	private void addInitialData() {
 //		insertEventDataSample.insertUserSampleDate();
-		insertEventDataSample.insertUserUserAdminDate();
+//		insertEventDataSample.insertUserUserAdminDate();
 	}
 
 }

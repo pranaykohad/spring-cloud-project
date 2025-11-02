@@ -28,7 +28,7 @@ import lombok.AllArgsConstructor;
 public class AppUserController {
 
 	private final AppUserService appUserService;
-	private final AzureBlobStorageService azureBlobStorageService;
+//	private final AzureBlobStorageService azureBlobStorageService;
 	private final ModelMapper modelMapper;
 
 	@GetMapping

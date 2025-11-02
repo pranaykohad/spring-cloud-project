@@ -19,7 +19,7 @@ import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
+//@Service
 @AllArgsConstructor
 @Slf4j
 public class AzureBlobStorageService {

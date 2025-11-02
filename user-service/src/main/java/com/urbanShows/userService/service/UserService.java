@@ -54,7 +54,7 @@ public class UserService {
 	private final PasswordEncoder passwordEncoder;
 	private final MessageProducer messageProducer;
 	private final OtpService otpService;
-	private final AzureBlobStorageService azureBlobStorageService;
+//	private final AzureBlobStorageService azureBlobStorageService;
 
 	public List<String> getOrganizerList() {
 		final List<UserInfo> systemUserList = userInfoRepository.findByRolesAndStatus(List.of(Role.ORGANIZER_USER),
@@ -165,20 +165,20 @@ public class UserService {
 		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
 	}
 
-	public boolean udpateBasicUserDetails(UserBasicDetails basicDetails, UserInfo targetUser) {
-		targetUser.setDisplayName(StringUtils.hasText(basicDetails.getDisplayName())
-				&& !targetUser.getDisplayName().equals(basicDetails.getDisplayName())
-						? basicDetails.getDisplayName().trim()
-						: targetUser.getDisplayName());
-
-		if (basicDetails.getProfilePicFile() != null) {
-			final String fileUrl = azureBlobStorageService.uploadFile(basicDetails.getProfilePicFile());
-			uploadSystemUserProfilePicUrl(targetUser, fileUrl);
-		}
-
-		userInfoRepository.save(targetUser);
-		return true;
-	}
+//	public boolean udpateBasicUserDetails(UserBasicDetails basicDetails, UserInfo targetUser) {
+//		targetUser.setDisplayName(StringUtils.hasText(basicDetails.getDisplayName())
+//				&& !targetUser.getDisplayName().equals(basicDetails.getDisplayName())
+//						? basicDetails.getDisplayName().trim()
+//						: targetUser.getDisplayName());
+//
+//		if (basicDetails.getProfilePicFile() != null) {
+//			final String fileUrl = azureBlobStorageService.uploadFile(basicDetails.getProfilePicFile());
+//			uploadSystemUserProfilePicUrl(targetUser, fileUrl);
+//		}
+//
+//		userInfoRepository.save(targetUser);
+//		return true;
+//	}
 
 	private boolean updateSecuredUserDetails(UserInfoDto newUserInfo, UserInfo targetUserInfo,
 			UserInfo currentUserInfo) {

@@ -78,18 +78,18 @@ public class UserController {
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
-	@PatchMapping("update-basic-details")
-	public ResponseEntity<Boolean> udpateBacisUserDetails(@RequestParam String userName,
-			@RequestParam(required = false) MultipartFile profilePicFile,
-			@RequestParam(required = false) String displayName, Principal principal) {
-		final UserInfo currentUser = systemUserService.getActiveExistingSystemUser(principal.getName());
-		final UserInfo targetUser = systemUserService.getExistingSystemUser(userName);
-		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
-		final UserBasicDetails userBasicDetails = new UserBasicDetails();
-		userBasicDetails.setDisplayName(displayName);
-		userBasicDetails.setProfilePicFile(profilePicFile);
-		return ResponseEntity.ok(systemUserService.udpateBasicUserDetails(userBasicDetails, targetUser));
-	}
+//	@PatchMapping("update-basic-details")
+//	public ResponseEntity<Boolean> udpateBacisUserDetails(@RequestParam String userName,
+//			@RequestParam(required = false) MultipartFile profilePicFile,
+//			@RequestParam(required = false) String displayName, Principal principal) {
+//		final UserInfo currentUser = systemUserService.getActiveExistingSystemUser(principal.getName());
+//		final UserInfo targetUser = systemUserService.getExistingSystemUser(userName);
+//		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
+//		final UserBasicDetails userBasicDetails = new UserBasicDetails();
+//		userBasicDetails.setDisplayName(displayName);
+//		userBasicDetails.setProfilePicFile(profilePicFile);
+//		return ResponseEntity.ok(systemUserService.udpateBasicUserDetails(userBasicDetails, targetUser));
+//	}
 
 	@GetMapping("secured-details")
 	public ResponseEntity<UserSecuredDetailsRes> getUserSecuredDetailsByUsername(@RequestParam String userName,

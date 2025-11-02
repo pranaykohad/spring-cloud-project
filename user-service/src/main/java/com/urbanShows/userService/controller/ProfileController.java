@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ProfileController {
 
-	private final AzureBlobStorageService azureBlobStorageService;
+//	private final AzureBlobStorageService azureBlobStorageService;
 
 //	@GetMapping("download")
 //	public ResponseEntity<byte[]> downloadFile() {
@@ -28,15 +28,15 @@ public class ProfileController {
 //		return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
 //	}
 
-	@GetMapping("download")
-	public ResponseEntity<AttachmentDto> downloadFile() {
-		final byte[] fileData = azureBlobStorageService.downloadFile("screenshot.jpg");
-		final AttachmentDto attachment = new AttachmentDto();
-		attachment.setFileContent(fileData);
-		attachment.setFilename("screenshot.jpg");
-		attachment.setMediaType(MediaType.IMAGE_PNG);
-		return new ResponseEntity<>(attachment, HttpStatus.OK);
-	}
+//	@GetMapping("download")
+//	public ResponseEntity<AttachmentDto> downloadFile() {
+//		final byte[] fileData = azureBlobStorageService.downloadFile("screenshot.jpg");
+//		final AttachmentDto attachment = new AttachmentDto();
+//		attachment.setFileContent(fileData);
+//		attachment.setFilename("screenshot.jpg");
+//		attachment.setMediaType(MediaType.IMAGE_PNG);
+//		return new ResponseEntity<>(attachment, HttpStatus.OK);
+//	}
 
 //	@PatchMapping("update-profile-pic")
 //	public ResponseEntity<String> uploadAppUserProfilePic(@RequestParam MultipartFile file,

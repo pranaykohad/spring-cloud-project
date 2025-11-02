@@ -10,19 +10,19 @@ import org.springframework.web.filter.CorsFilter;
 
 // Uncomment this to enable direct calls from angular app
 
-//@Configuration
-//public class CorsConfig {
-//
-//	@Bean
-//	CorsFilter corsFilter() {
-//		final CorsConfiguration config = new CorsConfiguration();
-//		config.setAllowedOrigins(Arrays.asList("http://localhost:8083", "http://localhost:4200"));
-//		config.setAllowedMethods(Arrays.asList("*"));
-//		config.setAllowedHeaders(Arrays.asList("*"));
-//		config.setAllowCredentials(true);
-//		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//		source.registerCorsConfiguration("/**", config);
-//		return new CorsFilter(source);
-//	}
-//
-//}
+@Configuration
+public class CorsConfig {
+
+	@Bean
+	CorsFilter corsFilter() {
+		final CorsConfiguration config = new CorsConfiguration();
+		config.setAllowedOrigins(Arrays.asList("http://localhost:8083", "http://localhost:4200"));
+		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+		config.setAllowedHeaders(Arrays.asList("*"));
+		config.setAllowCredentials(true);
+		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", config);
+		return new CorsFilter(source);
+	}
+
+}
