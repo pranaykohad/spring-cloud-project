@@ -19,28 +19,28 @@ import org.springframework.web.filter.OncePerRequestFilter;
  * from calling the API. For stronger protection, require authentication or
  * network-level restrictions.
  */
-@Component
-@Order(Ordered.HIGHEST_PRECEDENCE)
-public class OriginValidationFilter extends OncePerRequestFilter {
-
-    private static final Set<String> ALLOWED_ORIGINS = Set.of(
-    		"http://localhost:8081",
-            "http://localhost:8083",
-            "http://localhost:4200"
-    );
-
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
-
-        String origin = request.getHeader("Origin");
-
-        // If there's no Origin header, treat it as a non-browser direct call and reject.
-        if (origin == null || !ALLOWED_ORIGINS.contains(origin)) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden origin");
-            return;
-        }
-
-        filterChain.doFilter(request, response);
-    }
-}
+//@Component
+//@Order(Ordered.HIGHEST_PRECEDENCE)
+//public class OriginValidationFilter extends OncePerRequestFilter {
+//
+//    private static final Set<String> ALLOWED_ORIGINS = Set.of(
+//    		"http://localhost:8081",
+//            "http://localhost:8083",
+//            "http://localhost:4200"
+//    );
+//
+//    @Override
+//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+//            throws ServletException, IOException {
+//
+//        String origin = request.getHeader("Origin");
+//
+//        // If there's no Origin header, treat it as a non-browser direct call and reject.
+//        if (origin == null || !ALLOWED_ORIGINS.contains(origin)) {
+//            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Forbidden origin");
+//            return;
+//        }
+//
+//        filterChain.doFilter(request, response);
+//    }
+//}

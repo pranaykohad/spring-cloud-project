@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.urbanShows.userService.azure.AzureBlobStorageService;
+//import com.urbanShows.userService.azure.AzureBlobStorageService;
 import com.urbanShows.userService.dto.LoggedinUserDetails;
 import com.urbanShows.userService.dto.SearchRequest;
 import com.urbanShows.userService.dto.UserBasicDetails;

@@ -1,14 +1,21 @@
 package com.urbanShows.userService.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.urbanShows.userService.azure.AzureBlobStorageService;
+import com.urbanShows.userService.aws.AwsS3Service;
+//import com.urbanShows.userService.azure.AzureBlobStorageService;
 import com.urbanShows.userService.dto.AttachmentDto;
+import com.urbanShows.userService.exception.UserNotFoundException;
 
 import lombok.AllArgsConstructor;
 
@@ -51,6 +58,25 @@ public class ProfileController {
 //			throw new UserNotFoundException("User doesnot exists in the system");
 //		}
 //		return new ResponseEntity<>(url, HttpStatus.OK);
+//	}
+	
+	private final AwsS3Service awsS3Service;
+	
+	@PatchMapping("update-profile-pic")
+	public ResponseEntity<String> uploadAppUserProfilePic(@RequestParam MultipartFile file,
+			@RequestPart(required = false) String phoneNumber, @RequestPart(required = false) String userName,
+			@RequestPart String otp, @RequestPart String role) {
+		String url = awsS3Service.uploadFile(file);
+		return new ResponseEntity<>(url, HttpStatus.OK);
+	}
+	
+//	@GetMapping("download")
+//	public ResponseEntity<byte[]> downloadFile() {
+//		byte[] fileData = awsS3Service.downloadFile("screenshot.jpg");
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=screenshot.jpg");
+//		headers.setContentType(MediaType.IMAGE_PNG);
+//		return new ResponseEntity<>(fileData, headers, HttpStatus.OK);
 //	}
 
 }

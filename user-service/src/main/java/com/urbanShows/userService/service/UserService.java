@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.urbanShows.userService.azure.AzureBlobStorageService;
+//import com.urbanShows.userService.azure.AzureBlobStorageService;
 import com.urbanShows.userService.constants.TableConfig;
 import com.urbanShows.userService.dto.ColumnConfigDto;
 import com.urbanShows.userService.dto.SearchRequest;
@@ -31,6 +32,7 @@ import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.SortOrder;
 import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.exception.AccessDeniedException;
+import com.urbanShows.userService.exception.GenericException;
 import com.urbanShows.userService.exception.IncorrectOtpException;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.exception.UserAlreadyExistsException;
@@ -136,7 +138,12 @@ public class UserService {
 	public UserInfoRespone getSystemUsersList(SearchRequest searchRequest) {
 		final Pageable pageable = buildPage(searchRequest);
 		final Specification<UserInfo> spec = UserSpecification.buildSpecification(searchRequest.getSearchFilters());
-		final Page<UserInfo> list = userInfoRepository.findAll(spec, pageable);
+		Page<UserInfo> list = new PageImpl<>(new ArrayList<>());
+		try {
+			list = userInfoRepository.findAll(spec, pageable);
+		} catch (Exception e){
+			throw new GenericException("Error in fetching user list");
+		}
 		return pageableEventResponse(list, spec, searchRequest.getCurrentPage());
 	}
 
