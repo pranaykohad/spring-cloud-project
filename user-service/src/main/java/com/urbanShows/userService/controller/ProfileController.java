@@ -1,11 +1,16 @@
 package com.urbanShows.userService.controller;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -23,6 +28,7 @@ import lombok.AllArgsConstructor;
 @RequestMapping("api/user/profile")
 @AllArgsConstructor
 public class ProfileController {
+	
 
 //	private final AzureBlobStorageService azureBlobStorageService;
 
@@ -65,9 +71,18 @@ public class ProfileController {
 	@PatchMapping("update-profile-pic")
 	public ResponseEntity<String> uploadAppUserProfilePic(@RequestParam MultipartFile file,
 			@RequestPart(required = false) String phoneNumber, @RequestPart(required = false) String userName,
-			@RequestPart String otp, @RequestPart String role) {
+			@RequestPart(required = false) String otp, @RequestPart(required = false) String role) {
 		String url = awsS3Service.uploadFile(file);
 		return new ResponseEntity<>(url, HttpStatus.OK);
+	}
+	
+	@GetMapping("download/{fileName}")
+	public ResponseEntity<byte[]> downloadFile(@PathVariable String fileName) {
+		byte[] data = awsS3Service.downloadFile(fileName);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(data);
 	}
 	
 //	@GetMapping("download")
