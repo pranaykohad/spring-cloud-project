@@ -168,10 +168,18 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 		
-		<dependency>
+		<!--<dependency>
 		    <groupId>com.azure</groupId>
 		    <artifactId>azure-storage-blob</artifactId>
 		    <version>12.22.0</version>
+		</dependency> -->
+		
+		<!-- https://mvnrepository.com/artifact/software.amazon.awssdk/s3 -->
+		<dependency>
+		    <groupId>software.amazon.awssdk</groupId>
+		    <artifactId>s3</artifactId>
+		    <version>2.37.2</version>
+		    <scope>compile</scope>
 		</dependency>
 		
 		<dependency>

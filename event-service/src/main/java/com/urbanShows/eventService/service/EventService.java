@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.urbanShows.eventService.azure.AzureBlobStorageService;
+//import com.urbanShows.eventService.azure.AzureBlobStorageService;
 import com.urbanShows.eventService.constant.TableConfig;
 import com.urbanShows.eventService.dto.ColumnConfigDto;
 import com.urbanShows.eventService.dto.EventDto;
@@ -50,7 +50,7 @@ public class EventService {
 
 	private final EventRepository eventRepository;
 	private final ModelMapper modelMapper;
-	private final AzureBlobStorageService azureBlobStorageService;
+//	private final AzureBlobStorageService azureBlobStorageService;
 	private final EventMediaRepository eventMediaRepository;
 
 	@Transactional
@@ -67,7 +67,7 @@ public class EventService {
 
 		final List<EventMediaResponse> eventMediaResponseList = new ArrayList<>();
 		if (!mediaUrlList.isEmpty()) {
-			azureBlobStorageService.deleteFileFromContainer(mediaUrlList);
+//			azureBlobStorageService.deleteFileFromContainer(mediaUrlList);
 
 			// Delete event media associate with event id
 			eventMediaRepository.deleteByEventId(eventId);
@@ -99,7 +99,7 @@ public class EventService {
 				for (int i = 0; i < newMediaList.size(); i++) {
 
 					// save media in azure container
-					final String fileUrl = azureBlobStorageService.uploadFile(eventPhotos.get(i));
+//					final String fileUrl = azureBlobStorageService.uploadFile(eventPhotos.get(i));
 
 					final EventMediaReqObject eventMediaReqObject = newMediaList.get(i);
 
@@ -110,7 +110,7 @@ public class EventService {
 					if (first.isPresent()) {
 						// if match then update existing object
 						final EventMedia existingEventMedia = first.get();
-						existingEventMedia.setMediaUrl(fileUrl);
+//						existingEventMedia.setMediaUrl(fileUrl);
 
 						// add updated media to event
 						event.getEventMediaList().add(existingEventMedia);
@@ -120,7 +120,7 @@ public class EventService {
 						final EventMedia newEventMedia = new EventMedia();
 						newEventMedia.setCoverMedia(eventMediaReqObject.isCoverMedia());
 						newEventMedia.setMediaIndex(eventMediaReqObject.getMediaIndex());
-						newEventMedia.setMediaUrl(fileUrl);
+//						newEventMedia.setMediaUrl(fileUrl);
 
 						// add new media to event
 						event.getEventMediaList().add(newEventMedia);

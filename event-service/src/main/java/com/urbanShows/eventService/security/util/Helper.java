@@ -1,8 +1,6 @@
 package com.urbanShows.eventService.security.util;
 
-import com.urbanShows.eventService.azure.AzureConfig;
-import com.urbanShows.eventService.security.exception.FileSizeExceedsException;
-import com.urbanShows.eventService.security.exception.InvalidFileFormatException;
+//import com.urbanShows.eventService.azure.AzureConfig;
 
 public class Helper {
 
@@ -17,14 +15,14 @@ public class Helper {
 		return dashIndex > 0 ? fileName.substring(0, dashIndex + 1) : fileName;
 	}
 
-	public static void validateBlob(String originalFileName, long fileSize) {
-		if (!isValidFormat(originalFileName)) {
-			throw new InvalidFileFormatException("File format is not correct: " + originalFileName);
-		}
-		if (!isFileSizeExceeds(fileSize)) {
-			throw new FileSizeExceedsException("File size exceeds: " + fileSize);
-		}
-	}
+//	public static void validateBlob(String originalFileName, long fileSize) {
+//		if (!isValidFormat(originalFileName)) {
+//			throw new InvalidFileFormatException("File format is not correct: " + originalFileName);
+//		}
+//		if (!isFileSizeExceeds(fileSize)) {
+//			throw new FileSizeExceedsException("File size exceeds: " + fileSize);
+//		}
+//	}
 
 //	public static List<Role> getLoggedinUserRoles(Principal principal) {
 //		if (principal instanceof Authentication authentication) {
@@ -43,10 +41,10 @@ public class Helper {
 //		return claims.get("roles", List.class);
 //	}
 
-	private static boolean isValidFormat(String fileName) {
-		final String fileExtension = getFileExtension(fileName);
-		return fileExtension != null && AzureConfig.VALID_IMAGE_FORMAT.contains(fileExtension.toLowerCase());
-	}
+//	private static boolean isValidFormat(String fileName) {
+//		final String fileExtension = getFileExtension(fileName);
+//		return fileExtension != null && AzureConfig.VALID_IMAGE_FORMAT.contains(fileExtension.toLowerCase());
+//	}
 
 	private static String getFileExtension(String fileName) {
 		int lastDotIndex = fileName.lastIndexOf('.');
@@ -54,8 +52,8 @@ public class Helper {
 				: null;
 	}
 
-	private static boolean isFileSizeExceeds(long size) {
-		return size < AzureConfig.MAX_IMAGE_SIZE;
-	}
+//	private static boolean isFileSizeExceeds(long size) {
+//		return size < AzureConfig.MAX_IMAGE_SIZE;
+//	}
 
 }
