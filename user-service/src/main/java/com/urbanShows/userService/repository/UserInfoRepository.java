@@ -29,7 +29,7 @@ public interface UserInfoRepository extends JpaRepository<SystemUser, String>, J
 
 	SystemUser findByUserNameAndOtpAndStatus(String userName, String otp, Status status);
 
-	@Query("SELECT a FROM UserInfo a WHERE a.otpTimeStamp < :otpTimeStamp")
+	@Query("SELECT a FROM SystemUser a WHERE a.otpTimeStamp < :otpTimeStamp")
 	List<SystemUser> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
 
 	List<SystemUser> findByRoles(List<Role> list);

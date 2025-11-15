@@ -23,11 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceApplication {
 
 	private final Environment environment;
-	private final TestDataUtil insertEventDataSample;
+	private final TestDataUtil testDataUtil;
 
-	UserServiceApplication(Environment environment, TestDataUtil insertEventDataSample) {
+	UserServiceApplication(Environment environment, TestDataUtil testDataUtil) {
 		this.environment = environment;
-		this.insertEventDataSample = insertEventDataSample;
+		this.testDataUtil = testDataUtil;
 	}
 
 	@Value("${server.port}")

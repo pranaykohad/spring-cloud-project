@@ -22,7 +22,7 @@ public interface AppUserRepository extends JpaRepository<AppUser, String> {
 
 	AppUser findByPhoneAndOtp(String phone, String otp);
 
-	@Query("SELECT a FROM AppUserInfo a WHERE a.otpTimeStamp < :otpTimeStamp")
+	@Query("SELECT a FROM AppUser a WHERE a.otpTimeStamp < :otpTimeStamp")
 	List<AppUser> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
 
 }
