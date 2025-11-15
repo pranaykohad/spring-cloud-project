@@ -8,21 +8,21 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.urbanShows.userService.entity.AppUserInfo;
+import com.urbanShows.userService.entity.AppUser;
 
 import io.micrometer.observation.annotation.Observed;
 
 @Repository
 @Observed
-public interface AppUserInfoRepository extends JpaRepository<AppUserInfo, String> {
+public interface AppUserRepository extends JpaRepository<AppUser, String> {
 
-	AppUserInfo findByPhone(String phone);
+	AppUser findByPhone(String phone);
 
 	void deleteByPhone(String phone);
 
-	AppUserInfo findByPhoneAndOtp(String phone, String otp);
+	AppUser findByPhoneAndOtp(String phone, String otp);
 
 	@Query("SELECT a FROM AppUserInfo a WHERE a.otpTimeStamp < :otpTimeStamp")
-	List<AppUserInfo> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
+	List<AppUser> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
 
 }

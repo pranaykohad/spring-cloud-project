@@ -1,4 +1,4 @@
-package com.urbanShows.userService.controller;
+package com.urbanShows.userService.controller.common;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,7 +30,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class ProfileController {
 	
-
+	private final AwsS3Service awsS3Service;
 //	private final AzureBlobStorageService azureBlobStorageService;
 
 //	@GetMapping("download")
@@ -66,15 +67,7 @@ public class ProfileController {
 //		return new ResponseEntity<>(url, HttpStatus.OK);
 //	}
 	
-	private final AwsS3Service awsS3Service;
 	
-	@PatchMapping("update-profile-pic")
-	public ResponseEntity<String> uploadAppUserProfilePic(@RequestParam MultipartFile file,
-			@RequestPart(required = false) String phoneNumber, @RequestPart(required = false) String userName,
-			@RequestPart(required = false) String otp, @RequestPart(required = false) String role) {
-		String url = awsS3Service.uploadFile(file);
-		return new ResponseEntity<>(url, HttpStatus.OK);
-	}
 	
 	@GetMapping("download/{fileName}")
 	public ResponseEntity<byte[]> downloadFile(@PathVariable String fileName) {
@@ -83,6 +76,15 @@ public class ProfileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(data);
+	}
+	
+	@DeleteMapping("delete/{fileName}")
+	public ResponseEntity<String> deleteFile(@PathVariable String fileName) {
+		final String response = awsS3Service.deleteFile(fileName);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(response);
 	}
 	
 //	@GetMapping("download")

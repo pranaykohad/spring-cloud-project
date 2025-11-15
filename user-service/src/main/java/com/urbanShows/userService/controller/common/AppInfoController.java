@@ -1,4 +1,4 @@
-package com.urbanShows.userService.controller;
+package com.urbanShows.userService.controller.common;
 
 import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("api/user/app-info")
 @AllArgsConstructor
-public class UserAppInfo {
+public class AppInfoController {
 
 	private final Environment environment;
 

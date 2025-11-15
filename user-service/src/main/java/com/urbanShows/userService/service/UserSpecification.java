@@ -6,7 +6,7 @@ import org.hibernate.query.sqm.PathElementException;
 import org.springframework.data.jpa.domain.Specification;
 
 import com.urbanShows.userService.dto.SearchFilter;
-import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.entity.SystemUser;
 import com.urbanShows.userService.exception.GenericException;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -15,7 +15,7 @@ import jakarta.persistence.criteria.Root;
 
 public class UserSpecification {
 
-	public static Specification<UserInfo> buildSpecification(List<SearchFilter> filterList) {
+	public static Specification<SystemUser> buildSpecification(List<SearchFilter> filterList) {
 		return (root, query, criteriaBuilder) -> {
 			Predicate predicate = criteriaBuilder.conjunction();
 
@@ -29,7 +29,7 @@ public class UserSpecification {
 		};
 	}
 
-	private static Predicate buildPredicate(SearchFilter criteria, Root<UserInfo> root, CriteriaBuilder criteriaBuilder) {
+	private static Predicate buildPredicate(SearchFilter criteria, Root<SystemUser> root, CriteriaBuilder criteriaBuilder) {
 		final String key = criteria.getKey();
 		final Object value = criteria.getValue();
 

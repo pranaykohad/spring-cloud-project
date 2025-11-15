@@ -12,11 +12,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.urbanShows.userService.entity.AppUserInfo;
-import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.entity.AppUser;
+import com.urbanShows.userService.entity.SystemUser;
 import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.Status;
-import com.urbanShows.userService.repository.AppUserInfoRepository;
+import com.urbanShows.userService.repository.AppUserRepository;
 import com.urbanShows.userService.repository.UserInfoRepository;
 import com.urbanShows.userService.util.Helper;
 
@@ -27,18 +27,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	private UserInfoRepository systemUserInfoRepo;
 
 	@Autowired
-	private AppUserInfoRepository appUserInfoRepo;
+	private AppUserRepository appUserInfoRepo;
 
 	@Override
 	public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
 		if (Helper.isPhonenumber(id)) {
-			final AppUserInfo user = appUserInfoRepo.findByPhone(id);
+			final AppUser user = appUserInfoRepo.findByPhone(id);
 			if (user != null) {
 				return buildUser(user.getPhone(), user.getInternalPassword(), user.getRoles());
 			}
 			throw new UsernameNotFoundException("User not found with phone: " + id);
 		} else {
-			final UserInfo user = systemUserInfoRepo.findByUserNameAndStatus(id, Status.ACTIVE);
+			final SystemUser user = systemUserInfoRepo.findByUserNameAndStatus(id, Status.ACTIVE);
 			if (user != null) {
 				return buildUser(user.getUserName(), user.getPassword(), user.getRoles());
 			}

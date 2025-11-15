@@ -1,4 +1,4 @@
-package com.urbanShows.userService.controller;
+package com.urbanShows.userService.controller.common;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

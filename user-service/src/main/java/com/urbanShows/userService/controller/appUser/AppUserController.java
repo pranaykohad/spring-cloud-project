@@ -1,4 +1,4 @@
-package com.urbanShows.userService.controller;
+package com.urbanShows.userService.controller.appUser;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.urbanShows.userService.aws.AwsS3Service;
 //import com.urbanShows.userService.azure.AzureBlobStorageService;
-import com.urbanShows.userService.dto.AppUserInfoDto;
-import com.urbanShows.userService.entity.AppUserInfo;
+import com.urbanShows.userService.dto.AppUserDto;
+import com.urbanShows.userService.entity.AppUser;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.AppUserService;
 
@@ -28,27 +29,27 @@ import lombok.AllArgsConstructor;
 public class AppUserController {
 
 	private final AppUserService appUserService;
-//	private final AzureBlobStorageService azureBlobStorageService;
+	private final AwsS3Service awsS3Service;
 	private final ModelMapper modelMapper;
 
 	@GetMapping
-	public ResponseEntity<AppUserInfoDto> getAppUser(@RequestParam String phone) {
-		final AppUserInfo existingAppUser = appUserService.getExistingAppUser(phone);
-		final GenericMapper<AppUserInfoDto, AppUserInfo> mapper = new GenericMapper<>(modelMapper, AppUserInfoDto.class,
-				AppUserInfo.class);
+	public ResponseEntity<AppUserDto> getAppUser(@RequestParam String phone) {
+		final AppUser existingAppUser = appUserService.getExistingAppUser(phone);
+		final GenericMapper<AppUserDto, AppUser> mapper = new GenericMapper<>(modelMapper, AppUserDto.class,
+				AppUser.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingAppUser));
 	}
 
-	@PatchMapping("udpate")
+	@PatchMapping("edit")
 	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
-	public ResponseEntity<AppUserInfoDto> udpateUser(@Valid @RequestBody AppUserInfoDto appUserDto) {
-		final AppUserInfo appUser = appUserService.authenticateAppUserByOtp(appUserDto.getPhone(), appUserDto.getOtp());
-		return ResponseEntity.ok(appUserService.udpate(appUser, appUserDto));
+	public ResponseEntity<AppUserDto> editAppUser(@Valid @RequestBody AppUserDto appUserDto) {
+		final AppUser appUser = appUserService.authenticateAppUserByOtp(appUserDto.getPhone(), appUserDto.getOtp());
+		return ResponseEntity.ok(appUserService.editAppUser(appUser, appUserDto));
 	}
 
-	@DeleteMapping("remove")
+	@DeleteMapping("delete")
 	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
-	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody AppUserInfoDto appUserDto) {
+	public ResponseEntity<Boolean> deleteAppUser(@Valid @RequestBody AppUserDto appUserDto) {
 		appUserService.authenticateAppUserByOtp(appUserDto.getPhone(), appUserDto.getOtp());
 		appUserService.deleteAppUser(appUserDto);
 		return ResponseEntity.ok(true);
@@ -57,16 +58,17 @@ public class AppUserController {
 	@GetMapping("generate-otp")
 	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
 	public void generateOtp(@RequestParam String phone) {
-		appUserService.generateOtpForAppUser(phone);
+		appUserService.generateOtp(phone);
 	}
-//
-//	@PatchMapping("update-profile-pic")
-//	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
-//	public ResponseEntity<Boolean> uploadAppUserProfilePic(@RequestParam MultipartFile file,
-//			@RequestPart String phone, @RequestPart String otp) {
-//		final AppUserInfo appUser = appUserService.authenticateAppUserByOtp(phone, otp);
-//		boolean uploadAppUserProfile = azureBlobStorageService.uploadAppUserProfile(file, appUser);
-//		return ResponseEntity.ok(uploadAppUserProfile);
-//	}
+
+	@PatchMapping("update-profile-pic")
+	@PreAuthorize("hasAuthority('ROLE_APP_USER')")
+	public ResponseEntity<Boolean> uploadAppUserProfilePic(@RequestParam MultipartFile file,
+			@RequestPart String phone, @RequestPart String otp) {
+		final AppUser appUser = appUserService.authenticateAppUserByOtp(phone, otp);
+		String url = awsS3Service.uploadFile(file);
+		appUserService.uploadAppUserProfile(appUser, url);
+		return ResponseEntity.ok(true);
+	}
 
 }

@@ -21,17 +21,15 @@ import org.springframework.util.StringUtils;
 import com.urbanShows.userService.constants.TableConfig;
 import com.urbanShows.userService.dto.ColumnConfigDto;
 import com.urbanShows.userService.dto.SearchRequest;
-import com.urbanShows.userService.dto.UserBasicDetails;
-import com.urbanShows.userService.dto.UserInfoDto;
-import com.urbanShows.userService.dto.UserInfoRespone;
+import com.urbanShows.userService.dto.SystemUserInfoDto;
+import com.urbanShows.userService.dto.SystemUserInfoRespone;
+import com.urbanShows.userService.dto.SystemUserRegisterDto;
 import com.urbanShows.userService.dto.UserPage;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
-import com.urbanShows.userService.dto.UserSigninDto;
-import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.entity.SystemUser;
 import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.SortOrder;
 import com.urbanShows.userService.enums.Status;
-import com.urbanShows.userService.exception.AccessDeniedException;
 import com.urbanShows.userService.exception.GenericException;
 import com.urbanShows.userService.exception.IncorrectOtpException;
 import com.urbanShows.userService.exception.UnauthorizedException;
@@ -49,72 +47,82 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class UserService {
+public class SystemUserService {
 
 	private final UserInfoRepository userInfoRepository;
 	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
 	private final MessageProducer messageProducer;
 	private final OtpService otpService;
-//	private final AzureBlobStorageService azureBlobStorageService;
 
 	public List<String> getOrganizerList() {
-		final List<UserInfo> systemUserList = userInfoRepository.findByRolesAndStatus(List.of(Role.ORGANIZER_USER),
+		final List<SystemUser> systemUserList = userInfoRepository.findByRolesAndStatus(List.of(Role.ORGANIZER_USER),
 				Status.ACTIVE);
 		if (!systemUserList.isEmpty()) {
-			return systemUserList.stream().map(UserInfo::getUserName).toList();
+			log.info("Organizer list fetched successfully");
+			return systemUserList.stream().map(SystemUser::getUserName).toList();
 		}
+		log.error("No organizer found");
 		throw new UserNotFoundException("user not found");
 	}
 
 	public Boolean isValidOrganizer(String userName) {
-		final UserInfo systemUserList = userInfoRepository.findByUserNameAndRolesAndStatus(userName,
+		final SystemUser systemUserList = userInfoRepository.findByUserNameAndRolesAndStatus(userName,
 				List.of(Role.ORGANIZER_USER), Status.ACTIVE);
 		if (systemUserList == null) {
+			log.error("No organizer found with userName: {}", userName);
 			throw new UserNotFoundException("user not found");
 		}
+		log.info("Valid organizer found with userName: {}", userName);
 		return systemUserList != null;
 	}
 
-	public void uploadProfilePicUrl(UserInfoDto systemUserDto, String profilePicUrl) {
-		final UserInfo appUser = new UserInfo();
+	public void uploadProfilePicUrl(SystemUserInfoDto systemUserDto, String profilePicUrl) {
+		final SystemUser appUser = new SystemUser();
 		appUser.setUserName(systemUserDto.getUserName());
 		appUser.setProfilePicUrl(profilePicUrl);
 		userInfoRepository.save(appUser);
+		log.info("Profile picture uploaded for user: {}", systemUserDto.getUserName());
 	}
 
-	public UserInfo validateActiveSystemUserByOtp(String userName, String otp) {
-		final UserInfo systemUser = userInfoRepository.findByUserNameAndOtpAndStatus(userName, otp, Status.ACTIVE);
+	public SystemUser validateActiveSystemUserByOtp(String userName, String otp) {
+		final SystemUser systemUser = userInfoRepository.findByUserNameAndOtpAndStatus(userName, otp, Status.ACTIVE);
 		if (systemUser == null) {
+			log.error("Invalid OTP for user: {}", userName);
 			throw new IncorrectOtpException("OTP is not correct or expired or user is inactive");
 		}
+		log.info("OTP validated successfully for user: {}", userName);
 		return systemUser;
 	}
 
-	public UserInfo validateInactiveSystemUserByOtp(String userName, String otp) {
-		final UserInfo systemUser = userInfoRepository.findByUserNameAndOtpAndStatus(userName, otp, Status.INACTIVE);
+	public SystemUser validateInactiveSystemUserByOtp(String userName, String otp) {
+		final SystemUser systemUser = userInfoRepository.findByUserNameAndOtpAndStatus(userName, otp, Status.INACTIVE);
 		if (systemUser == null) {
+			log.error("Invalid OTP for user: {}", userName);
 			throw new IncorrectOtpException("OTP is not correct or expired or user is inactive");
 		}
+		log.info("OTP validated successfully for user: {}", userName);
 		return systemUser;
 	}
 
-	public void uploadSystemUserProfilePicUrl(UserInfo systemUser, String profilePicUrl) {
+	public void uploadSystemUserProfilePicUrl(SystemUser systemUser, String profilePicUrl) {
 		systemUser.setProfilePicUrl(profilePicUrl);
 		userInfoRepository.save(systemUser);
 	}
 
-	public Boolean addSystemUser(UserSigninDto systemUserSigninDto) {
+	public Boolean registerSystemUser(SystemUserRegisterDto systemUserSigninDto) {
 		if (systemUserSigninDto.getRoles().contains(Role.SUPER_ADMIN_USER)) {
-			final List<UserInfo> usersByRoles = userInfoRepository.findByRoles(systemUserSigninDto.getRoles());
+			final List<SystemUser> usersByRoles = userInfoRepository.findByRoles(systemUserSigninDto.getRoles());
 			if (!usersByRoles.isEmpty()) {
+				log.error("Super admin user registration attempt blocked");
 				throw new UnauthorizedException("You are not authorized to perform this operation");
 			}
 		}
 		if (userInfoRepository.existsById(systemUserSigninDto.getUserName())) {
+			log.error("User registration failed. User already exists: {}", systemUserSigninDto.getUserName());
 			throw new UserAlreadyExistsException("User already exists in the system");
 		}
-		final UserInfo systemUser = new UserInfo();
+		final SystemUser systemUser = new SystemUser();
 		final List<Role> roleList = new ArrayList<>();
 		roleList.addAll(systemUserSigninDto.getRoles());
 		systemUser.setRoles(roleList);
@@ -135,41 +143,35 @@ public class UserService {
 		return true;
 	}
 
-	public UserInfoRespone getSystemUsersList(SearchRequest searchRequest) {
+	public SystemUserInfoRespone getSystemUsersList(SearchRequest searchRequest) {
 		final Pageable pageable = buildPage(searchRequest);
-		final Specification<UserInfo> spec = UserSpecification.buildSpecification(searchRequest.getSearchFilters());
-		Page<UserInfo> list = new PageImpl<>(new ArrayList<>());
+		final Specification<SystemUser> spec = UserSpecification.buildSpecification(searchRequest.getSearchFilters());
+		Page<SystemUser> list = new PageImpl<>(new ArrayList<>());
 		try {
 			list = userInfoRepository.findAll(spec, pageable);
-		} catch (Exception e){
+			log.info("User list fetched successfully");
+		} catch (Exception e) {
+			log.error("Error in fetching user list: {}", e.getMessage());
 			throw new GenericException("Error in fetching user list");
 		}
 		return pageableEventResponse(list, spec, searchRequest.getCurrentPage());
 	}
 
 	@Transactional
-	public void deleteSystemUserByUserName(UserInfoDto systemUserDto) {
-		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class,
-				UserInfo.class);
+	public void deleteSystemUserByUserName(SystemUserInfoDto systemUserDto) {
+		final GenericMapper<SystemUserInfoDto, SystemUser> mapper = new GenericMapper<>(modelMapper,
+				SystemUserInfoDto.class, SystemUser.class);
 		userInfoRepository.delete(mapper.dtoToEntity(systemUserDto));
+		log.info("System user {} deleted successfully", systemUserDto.getUserName());
 	}
 
-	public boolean udpateSecuredUserDetails(UserSecuredDetailsReq securedDetailsReq, UserInfo targetUser,
-			UserInfo currentUser) {
-		final GenericMapper<UserSecuredDetailsReq, UserInfoDto> mapper = new GenericMapper<>(modelMapper,
-				UserSecuredDetailsReq.class, UserInfoDto.class);
-		final UserInfoDto dtoToEntity = mapper.dtoToEntity(securedDetailsReq);
-		return updateSecuredUserDetails(dtoToEntity, targetUser, currentUser);
-	}
-
-	public void generateOtpForSystemUser(String userName, String device) {
-		final UserInfo systemUser = getActiveExistingSystemUser(userName);
-		otpService.createAndSendOtp(systemUser, device);
-	}
-
-	public void sendOtpToPhone(String phone, String otp) {
-		final OtpkafkaDto otpkafkaDto = new OtpkafkaDto(phone, otp);
-		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
+	public boolean udpateSecuredUserDetails(UserSecuredDetailsReq securedDetailsReq, SystemUser targetUser,
+			SystemUser currentUser) {
+		final GenericMapper<UserSecuredDetailsReq, SystemUserInfoDto> mapper = new GenericMapper<>(modelMapper,
+				UserSecuredDetailsReq.class, SystemUserInfoDto.class);
+		final SystemUserInfoDto dtoToEntity = mapper.dtoToEntity(securedDetailsReq);
+		log.info("Updating secured details for user: {}", targetUser.getUserName());
+		return updateSecuredDetails(dtoToEntity, targetUser, currentUser);
 	}
 
 //	public boolean udpateBasicUserDetails(UserBasicDetails basicDetails, UserInfo targetUser) {
@@ -187,68 +189,89 @@ public class UserService {
 //		return true;
 //	}
 
-	private boolean updateSecuredUserDetails(UserInfoDto newUserInfo, UserInfo targetUserInfo,
-			UserInfo currentUserInfo) {
-		boolean markForLoggedOut = false;
-		if (!currentUserInfo.getUserName().equals(targetUserInfo.getUserName())) {
-			targetUserInfo
-					.setStatus(!newUserInfo.getStatus().equals(targetUserInfo.getStatus()) ? newUserInfo.getStatus()
-							: targetUserInfo.getStatus());
+	public void generateOtpForSystemUser(String userName, String device) {
+		final SystemUser systemUser = getActiveExistingSystemUser(userName);
+		otpService.createAndSendOtp(systemUser, device);
+		log.info("OTP generated and sent for user: {}", userName);
+	}
+
+	public void sendOtpToPhone(String phone, String otp) {
+		final OtpkafkaDto otpkafkaDto = new OtpkafkaDto(phone, otp);
+		messageProducer.sendOtpMessage(KafkaTopicEnums.SEND_OTP_TO_USER.name(), otpkafkaDto);
+		log.info("OTP message sent to Kafka for phone: {}", phone);
+	}
+
+	private boolean updateSecuredDetails(SystemUserInfoDto newUser, SystemUser existingUser, SystemUser loggedInUser) {
+		boolean shouldLoggedOut = false;
+		if (!isSelfChange(existingUser.getUserName(), loggedInUser.getUserName())) {
+			Status newStatus = !newUser.getStatus().equals(existingUser.getStatus()) ? newUser.getStatus()
+					: existingUser.getStatus();
+			existingUser.setStatus(newStatus);
+			log.info("User {} status changed to {}", existingUser.getUserName(), newStatus);
 		}
-		if (StringUtils.hasText(newUserInfo.getPassword())) {
-			targetUserInfo.setPassword(passwordEncoder.encode(newUserInfo.getPassword()));
-			markForLoggedOut = isSelfChange(targetUserInfo.getUserName(), currentUserInfo.getUserName());
+		if (StringUtils.hasText(newUser.getPassword())) {
+			existingUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+			shouldLoggedOut = isSelfChange(existingUser.getUserName(), loggedInUser.getUserName());
+			log.info("User {} password updated", existingUser.getUserName());
 		}
-		if (newUserInfo.isPhoneValidated()) {
-			targetUserInfo.setPhoneValidated(true);
+		if (newUser.isPhoneValidated()) {
+			existingUser.setPhoneValidated(true);
+			log.info("User {} phone validated", existingUser.getUserName());
 		}
-		if (newUserInfo.isEmailValidated()) {
-			targetUserInfo.setEmailValidated(true);
+		if (newUser.isEmailValidated()) {
+			existingUser.setEmailValidated(true);
+			log.info("User {} email validated", existingUser.getUserName());
 		}
-		if (StringUtils.hasText(newUserInfo.getPhone()) && !targetUserInfo.getPhone().equals(newUserInfo.getPhone())) {
-			targetUserInfo.setPhone(newUserInfo.getPhone());
-			targetUserInfo.setPhoneValidated(false);
-			targetUserInfo.setStatus(Status.INACTIVE);
+		if (StringUtils.hasText(newUser.getPhone()) && !existingUser.getPhone().equals(newUser.getPhone())) {
+			existingUser.setPhone(newUser.getPhone());
+			existingUser.setPhoneValidated(false);
+			existingUser.setStatus(Status.INACTIVE);
+			log.info("User {} phone number changed, validation reset", existingUser.getUserName());
 		}
-		if (StringUtils.hasText(newUserInfo.getEmail()) && !targetUserInfo.getEmail().equals(newUserInfo.getEmail())) {
-			targetUserInfo.setEmail(newUserInfo.getEmail());
-			targetUserInfo.setEmailValidated(false);
-			targetUserInfo.setStatus(Status.INACTIVE);
+		if (StringUtils.hasText(newUser.getEmail()) && !existingUser.getEmail().equals(newUser.getEmail())) {
+			existingUser.setEmail(newUser.getEmail());
+			existingUser.setEmailValidated(false);
+			existingUser.setStatus(Status.INACTIVE);
+			log.info("User {} email changed, validation reset", existingUser.getUserName());
 		}
 
 		// for super admin all validations are true
-		if (targetUserInfo.getRoles().contains(Role.SUPER_ADMIN_USER)
-				&& currentUserInfo.getRoles().contains(Role.SUPER_ADMIN_USER)) {
-			targetUserInfo.setStatus(Status.ACTIVE);
-			targetUserInfo.setPhoneValidated(true);
-			targetUserInfo.setEmailValidated(true);
+		if (existingUser.getRoles().contains(Role.SUPER_ADMIN_USER)
+				&& loggedInUser.getRoles().contains(Role.SUPER_ADMIN_USER)) {
+			existingUser.setStatus(Status.ACTIVE);
+			existingUser.setPhoneValidated(true);
+			existingUser.setEmailValidated(true);
+			log.info("Super admin user {} validations set to true", existingUser.getUserName());
 		}
-		userInfoRepository.save(targetUserInfo);
-		return markForLoggedOut;
+		userInfoRepository.save(existingUser);
+		log.info("Secured details updated for user: {}", existingUser.getUserName());
+		return shouldLoggedOut;
 	}
 
-	private boolean isSelfChange(String targetUserName, String currentUserName) {
-		return targetUserName.equals(currentUserName);
+	private boolean isSelfChange(String targetUserName, String loggedInUserName) {
+		return targetUserName.equals(loggedInUserName);
 	}
 
-	public UserInfo getExistingSystemUser(String userName) {
-		final UserInfo existingUser = userInfoRepository.findByUserName(userName);
+	public SystemUser getExistingSystemUser(String userName) {
+		final SystemUser existingUser = userInfoRepository.findByUserName(userName);
 		if (existingUser == null) {
+			log.error("User not found: {}", userName);
 			throw new UserNotFoundException("User doesnot exists in the system");
 		}
 		return existingUser;
 	}
 
-	public UserInfo getActiveExistingSystemUser(String userName) {
-		final UserInfo existingUser = userInfoRepository.findByUserNameAndStatus(userName, Status.ACTIVE);
+	public SystemUser getActiveExistingSystemUser(String userName) {
+		final SystemUser existingUser = userInfoRepository.findByUserNameAndStatus(userName, Status.ACTIVE);
 		if (existingUser == null) {
+			log.error("Active user not found: {}", userName);
 			throw new UserNotFoundException("User inctive/doesnot exists in the system");
 		}
 		return existingUser;
 	}
 
 	public boolean activateUser(String userName, String otp) {
-		final UserInfo userInfo = validateInactiveSystemUserByOtp(userName, otp);
+		final SystemUser userInfo = validateInactiveSystemUserByOtp(userName, otp);
 		return userInfo != null;
 	}
 
@@ -263,11 +286,11 @@ public class UserService {
 		return pageable;
 	}
 
-	private UserInfoRespone pageableEventResponse(Page<UserInfo> pagedEventList, Specification<UserInfo> spec,
+	private SystemUserInfoRespone pageableEventResponse(Page<SystemUser> pagedEventList, Specification<SystemUser> spec,
 			int currentPage) {
-		final GenericMapper<UserInfoDto, UserInfo> mapper = new GenericMapper<>(modelMapper, UserInfoDto.class,
-				UserInfo.class);
-		final UserInfoRespone eventDtoList = new UserInfoRespone();
+		final GenericMapper<SystemUserInfoDto, SystemUser> mapper = new GenericMapper<>(modelMapper,
+				SystemUserInfoDto.class, SystemUser.class);
+		final SystemUserInfoRespone eventDtoList = new SystemUserInfoRespone();
 		final ColumnConfigDto columnConfig = new ColumnConfigDto(TableConfig.USER_COlUMNS);
 		eventDtoList.setColumnConfig(columnConfig);
 		eventDtoList.setUserInfoList(mapper.entityToDto(pagedEventList.getContent()));
@@ -275,7 +298,7 @@ public class UserService {
 		return eventDtoList;
 	}
 
-	private UserPage buildEventPage(Specification<UserInfo> spec, int currentPage, int currentRecordSize) {
+	private UserPage buildEventPage(Specification<SystemUser> spec, int currentPage, int currentRecordSize) {
 		final UserPage eventPage = new UserPage();
 		final int filteredCount = getEventCount(spec);
 		eventPage.setTotalPages((int) Math.ceil((double) filteredCount / TableConfig.PAGE_SIZE));
@@ -286,13 +309,15 @@ public class UserService {
 		final int rowStartIndex = currentPage * TableConfig.PAGE_SIZE;
 		eventPage.setRowStartIndex(rowStartIndex + 1);
 		eventPage.setRowEndIndex(rowStartIndex + currentRecordSize);
-		eventPage
-				.setDisplayPagesIndex(generateDisplayPagesIndex(eventPage.getTotalPages(), eventPage.getCurrentPage()));
-
+		eventPage.setDisplayPagesIndex(getDisplayPagesIndex(eventPage.getTotalPages(), eventPage.getCurrentPage()));
 		return eventPage;
 	}
 
-	private List<Integer> generateDisplayPagesIndex(int totalPages, int currentPage) {
+	private int getEventCount(Specification<SystemUser> spec) {
+		return spec != null ? (int) userInfoRepository.count(spec) : (int) userInfoRepository.count();
+	}
+
+	private List<Integer> getDisplayPagesIndex(int totalPages, int currentPage) {
 		List<Integer> displayPagesIndex = new ArrayList<>();
 
 		if (totalPages <= 0 || currentPage < 0 || currentPage >= totalPages) {
@@ -307,10 +332,6 @@ public class UserService {
 			}
 		}
 		return displayPagesIndex;
-	}
-
-	private int getEventCount(Specification<UserInfo> spec) {
-		return spec != null ? (int) userInfoRepository.count(spec) : (int) userInfoRepository.count();
 	}
 
 }

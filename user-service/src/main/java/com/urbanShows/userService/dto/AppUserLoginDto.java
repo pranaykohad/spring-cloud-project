@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AppUserLoginReqDto {
+public class AppUserLoginDto {
 
 	@NotNull(message = "Phone cannot be null")
 	@Pattern(regexp = "^[6-9]\\d{9}$", message = "Invalid mobile number")

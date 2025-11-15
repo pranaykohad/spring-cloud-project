@@ -1,4 +1,4 @@
-package com.urbanShows.userService.controller;
+package com.urbanShows.userService.controller.systemUser;
 
 import java.security.Principal;
 import java.util.List;
@@ -18,20 +18,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 //import com.urbanShows.userService.azure.AzureBlobStorageService;
-import com.urbanShows.userService.dto.LoggedinUserDetails;
+import com.urbanShows.userService.dto.SystemUserDto;
 import com.urbanShows.userService.dto.SearchRequest;
-import com.urbanShows.userService.dto.UserBasicDetails;
-import com.urbanShows.userService.dto.UserInfoDto;
-import com.urbanShows.userService.dto.UserInfoRespone;
+import com.urbanShows.userService.dto.SystemUserBasicDto;
+import com.urbanShows.userService.dto.SystemUserInfoDto;
+import com.urbanShows.userService.dto.SystemUserInfoRespone;
 import com.urbanShows.userService.dto.UserSecuredDetailsReq;
 import com.urbanShows.userService.dto.UserSecuredDetailsRes;
-import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.entity.SystemUser;
 import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
-import com.urbanShows.userService.service.UserService;
+import com.urbanShows.userService.service.SystemUserService;
 import com.urbanShows.userService.util.JwtHelper;
 import com.urbanShows.userService.util.RolesUtil;
 
@@ -42,15 +42,15 @@ import lombok.AllArgsConstructor;
 @RestController
 @RequestMapping("api/user/system")
 @AllArgsConstructor
-@PreAuthorize("hasAnyAuthority('ROLE_SYSTEM_USER', 'ROLE_SUPER_ADMIN_USER', 'ROLE_ORGANIZER_USER', 'ROLE_ADMIN_USER')")
-public class UserController {
+@PreAuthorize("hasAnyAuthority('ROLE_SYSTEM_USER', 'ROLE_SUPER_ADMIN_USER', 'ROLE_ORGANIZER_USER', 'ROLE_SYSTEM_USER')")
+public class SystemUserController {
 
-	private final UserService systemUserService;
+	private final SystemUserService systemUserService;
 	private final JwtService jwtService;
 	private final ModelMapper modelMapper;
 
 	@DeleteMapping("remove")
-	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody UserInfoDto systemUser) {
+	public ResponseEntity<Boolean> deleteUser(@Valid @RequestBody SystemUserInfoDto systemUser) {
 		systemUserService.deleteSystemUserByUserName(systemUser);
 		return ResponseEntity.ok(true);
 	}
@@ -62,19 +62,19 @@ public class UserController {
 	}
 
 	@GetMapping("loggedin-user-details")
-	public ResponseEntity<LoggedinUserDetails> getUserDetails(Principal principal) {
-		final UserInfo existingUser = systemUserService.getActiveExistingSystemUser(principal.getName());
-		final GenericMapper<LoggedinUserDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
-				LoggedinUserDetails.class, UserInfo.class);
+	public ResponseEntity<SystemUserDto> getUserDetails(Principal principal) {
+		final SystemUser existingUser = systemUserService.getActiveExistingSystemUser(principal.getName());
+		final GenericMapper<SystemUserDto, SystemUser> mapper = new GenericMapper<>(modelMapper,
+				SystemUserDto.class, SystemUser.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
 	@GetMapping("basic-details")
-	public ResponseEntity<UserBasicDetails> getUserBasicDetailsByUsername(@RequestParam String userName,
+	public ResponseEntity<SystemUserBasicDto> getUserBasicDetailsByUsername(@RequestParam String userName,
 			Principal principal) {
-		final UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
-		final GenericMapper<UserBasicDetails, UserInfo> mapper = new GenericMapper<>(modelMapper,
-				UserBasicDetails.class, UserInfo.class);
+		final SystemUser existingUser = systemUserService.getExistingSystemUser(userName);
+		final GenericMapper<SystemUserBasicDto, SystemUser> mapper = new GenericMapper<>(modelMapper,
+				SystemUserBasicDto.class, SystemUser.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
@@ -94,18 +94,18 @@ public class UserController {
 	@GetMapping("secured-details")
 	public ResponseEntity<UserSecuredDetailsRes> getUserSecuredDetailsByUsername(@RequestParam String userName,
 			Principal principal) {
-		final UserInfo existingUser = systemUserService.getExistingSystemUser(userName);
-		final GenericMapper<UserSecuredDetailsRes, UserInfo> mapper = new GenericMapper<>(modelMapper,
-				UserSecuredDetailsRes.class, UserInfo.class);
+		final SystemUser existingUser = systemUserService.getExistingSystemUser(userName);
+		final GenericMapper<UserSecuredDetailsRes, SystemUser> mapper = new GenericMapper<>(modelMapper,
+				UserSecuredDetailsRes.class, SystemUser.class);
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
 	@PatchMapping("update-secured-details")
 	public ResponseEntity<Boolean> udpateSecuredUserDetails(@Valid @RequestBody UserSecuredDetailsReq securedDetails,
 			Principal principal, HttpServletRequest request) {
-		final UserInfo currentUser = systemUserService.validateActiveSystemUserByOtp(principal.getName(),
+		final SystemUser currentUser = systemUserService.validateActiveSystemUserByOtp(principal.getName(),
 				securedDetails.getOtp());
-		final UserInfo targetUser = systemUserService.getExistingSystemUser(securedDetails.getUserName());
+		final SystemUser targetUser = systemUserService.getExistingSystemUser(securedDetails.getUserName());
 		if (targetUser.getRoles().contains(Role.SUPER_ADMIN_USER)
 				&& !currentUser.getRoles().contains(Role.SUPER_ADMIN_USER)) {
 			throw new UnauthorizedException("You cannot perform this operation");
@@ -119,7 +119,7 @@ public class UserController {
 	}
 
 	@PostMapping("user-list")
-	public ResponseEntity<UserInfoRespone> getUsersList(@RequestBody SearchRequest searchRequest, Principal principal) {
+	public ResponseEntity<SystemUserInfoRespone> getUsersList(@RequestBody SearchRequest searchRequest, Principal principal) {
 		systemUserService.getActiveExistingSystemUser(principal.getName());
 		return ResponseEntity.ok(systemUserService.getSystemUsersList(searchRequest));
 	}

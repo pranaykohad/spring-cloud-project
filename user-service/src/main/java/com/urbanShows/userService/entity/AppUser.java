@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AppUserInfo {
+public class AppUser {
 
 	@Id
 	private String phone;

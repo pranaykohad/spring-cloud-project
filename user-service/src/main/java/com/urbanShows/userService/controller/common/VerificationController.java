@@ -1,4 +1,4 @@
-package com.urbanShows.userService.controller;
+package com.urbanShows.userService.controller.common;
 
 import java.security.Principal;
 
@@ -8,28 +8,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.urbanShows.userService.entity.UserInfo;
-import com.urbanShows.userService.exception.UnauthorizedException;
+import com.urbanShows.userService.entity.SystemUser;
 import com.urbanShows.userService.service.JwtService;
-import com.urbanShows.userService.service.UserService;
+import com.urbanShows.userService.service.SystemUserService;
 import com.urbanShows.userService.util.JwtHelper;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("api/user/common")
+@RequestMapping("api/user/verification")
 @AllArgsConstructor
-public class CommonController {
+public class VerificationController {
 
 	private final JwtService jwtService;
-	private final UserService systemUserService;
-
-	@GetMapping("logout")
-	public ResponseEntity<Boolean> logout(HttpServletRequest request) {
-		jwtService.invalidateToken(JwtHelper.extractUserNameAndToken(request).getRight());
-		return ResponseEntity.ok(true);
-	}
+	private final SystemUserService systemUserService;
 
 	@GetMapping("validate-token")
 	public ResponseEntity<Boolean> findByToken(Principal principal, HttpServletRequest request) {
@@ -40,16 +33,22 @@ public class CommonController {
 		return ResponseEntity.ok(false);
 	}
 
-	@GetMapping("is-valid-organizer")
-	public ResponseEntity<Boolean> isValidOrganizer(@RequestParam String userName, Principal principal) {
+	@GetMapping("validate-organizer")
+	public ResponseEntity<Boolean> validateOrganizer(@RequestParam String userName, Principal principal) {
 		systemUserService.getActiveExistingSystemUser(principal.getName());
 		return ResponseEntity.ok(systemUserService.isValidOrganizer(userName));
 	}
 
-	@GetMapping("username-otp-validation")
+	@GetMapping("authorize-user")
 	public ResponseEntity<Boolean> usernameAndOtpvalidation(@RequestParam String otp, Principal principal) {
-		final UserInfo currentUser = systemUserService.validateActiveSystemUserByOtp(principal.getName(), otp);
+		final SystemUser currentUser = systemUserService.validateActiveSystemUserByOtp(principal.getName(), otp);
 		return ResponseEntity.ok(currentUser != null);
+	}
+	
+	@GetMapping("logout")
+	public ResponseEntity<Boolean> logout(HttpServletRequest request) {
+		jwtService.invalidateToken(JwtHelper.extractUserNameAndToken(request).getRight());
+		return ResponseEntity.ok(true);
 	}
 
 }

@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSigninDto {
+public class SystemUserRegisterDto {
 
 	@NotNull(message = "Username cannot be null")
 	private String userName;

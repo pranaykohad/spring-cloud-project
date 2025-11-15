@@ -8,7 +8,7 @@ import java.util.stream.IntStream;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.entity.SystemUser;
 import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.Status;
 import com.urbanShows.userService.repository.UserInfoRepository;
@@ -17,8 +17,8 @@ import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
-public class InsertEventDataSample {
-	
+public class TestDataUtil {
+
 	private final PasswordEncoder passwordEncoder;
 
 	private final String[] userNames = { "Aarav", "Vivaan", "Aditya", "Vihaan", "Arjun", "Sai", "Aryan", "Kabir",
@@ -40,19 +40,18 @@ public class InsertEventDataSample {
 
 	private UserInfoRepository userInfoRepository;
 
-	public void insertUserSampleDate() {
+	public void insertSystemUserTestData() {
 
 		IntStream.range(1, 105).forEach(i -> {
-			final UserInfo userInfo = new UserInfo();
-
+			final SystemUser userInfo = new SystemUser();
+			final Random random = new Random();
 			userInfo.setUserName(userNames[i % userNames.length] + " #" + i);
 			userInfo.setPassword(passwordEncoder.encode(userNames[i % userNames.length] + " #" + i));
 			userInfo.setEmail(userNames[i % userNames.length] + "@gmail.com");
 			userInfo.setPhone(phoneNumbers[i % phoneNumbers.length]);
 			userInfo.setDisplayName(userNames[i % userNames.length] + " #" + i);
-			final Random random = new Random();
 			final Role randomRole = Role.values()[random.nextInt(Role.values().length)];
-			if(randomRole.equals(Role.SUPER_ADMIN_USER)) {
+			if (randomRole.equals(Role.SUPER_ADMIN_USER)) {
 				return;
 			}
 			userInfo.setRoles(List.of(randomRole));
@@ -60,16 +59,15 @@ public class InsertEventDataSample {
 			userInfo.setStatus(Status.INACTIVE);
 			userInfo.setOtp(otps[i % otps.length]);
 			userInfo.setOtpTimeStamp(LocalDateTime.now());
-			
 			userInfoRepository.save(userInfo);
 		});
-		
+
 	}
-	
-	public void insertUserUserAdminDate() {
-		final List<UserInfo> usersByRoles = userInfoRepository.findByRoles(List.of(Role.SUPER_ADMIN_USER));
-		if(usersByRoles.isEmpty()) {
-			final UserInfo userInfo = new UserInfo();
+
+	public void insertSuperAdminData() {
+		final List<SystemUser> usersByRoles = userInfoRepository.findByRoles(List.of(Role.SUPER_ADMIN_USER));
+		if (usersByRoles.isEmpty()) {
+			final SystemUser userInfo = new SystemUser();
 			userInfo.setUserName("pranay");
 			userInfo.setPassword(passwordEncoder.encode("pranay"));
 			userInfo.setEmail("pranay@gmail.com");

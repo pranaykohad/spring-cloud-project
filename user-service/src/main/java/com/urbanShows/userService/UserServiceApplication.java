@@ -10,7 +10,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-import com.urbanShows.userService.testingData.InsertEventDataSample;
+import com.urbanShows.userService.testingData.TestDataUtil;
 
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +23,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceApplication {
 
 	private final Environment environment;
-	private final InsertEventDataSample insertEventDataSample;
+	private final TestDataUtil insertEventDataSample;
 
-	UserServiceApplication(Environment environment, InsertEventDataSample insertEventDataSample) {
+	UserServiceApplication(Environment environment, TestDataUtil insertEventDataSample) {
 		this.environment = environment;
 		this.insertEventDataSample = insertEventDataSample;
 	}
@@ -63,8 +63,8 @@ public class UserServiceApplication {
 	}
 
 	private void addInitialData() {
-//		insertEventDataSample.insertUserSampleDate();
-//		insertEventDataSample.insertUserUserAdminDate();
+//		insertEventDataSample.insertSystemUserTestData();
+//		insertEventDataSample.insertSuperAdminData();
 	}
 
 }

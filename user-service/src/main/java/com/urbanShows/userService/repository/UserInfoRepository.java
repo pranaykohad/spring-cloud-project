@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.entity.SystemUser;
 import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.Status;
 
@@ -17,26 +17,25 @@ import io.micrometer.observation.annotation.Observed;
 
 @Repository
 @Observed
-public interface UserInfoRepository extends JpaRepository<UserInfo, String>, JpaSpecificationExecutor<UserInfo> {
+public interface UserInfoRepository extends JpaRepository<SystemUser, String>, JpaSpecificationExecutor<SystemUser> {
 	
-	
-	UserInfo findByUserName(String userName);
+	SystemUser findByUserName(String userName);
 
-	UserInfo findByUserNameAndStatus(String userName, Status status);
+	SystemUser findByUserNameAndStatus(String userName, Status status);
 
-	UserInfo findByUserNameAndPassword(String userName, String password);
+	SystemUser findByUserNameAndPassword(String userName, String password);
 
 	void deleteByUserName(String userName);
 
-	UserInfo findByUserNameAndOtpAndStatus(String userName, String otp, Status status);
+	SystemUser findByUserNameAndOtpAndStatus(String userName, String otp, Status status);
 
 	@Query("SELECT a FROM UserInfo a WHERE a.otpTimeStamp < :otpTimeStamp")
-	List<UserInfo> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
+	List<SystemUser> findByOtpDateTime(@Param("otpTimeStamp") LocalDateTime otpTimeStamp);
 
-	List<UserInfo> findByRoles(List<Role> list);
+	List<SystemUser> findByRoles(List<Role> list);
 
-	List<UserInfo> findByRolesAndStatus(List<Role> list, Status status);
+	List<SystemUser> findByRolesAndStatus(List<Role> list, Status status);
 
-	UserInfo findByUserNameAndRolesAndStatus(String username, List<Role> list, Status status);
+	SystemUser findByUserNameAndRolesAndStatus(String username, List<Role> list, Status status);
 
 }

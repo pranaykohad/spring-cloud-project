@@ -1,4 +1,4 @@
-package com.urbanShows.userService.controller;
+package com.urbanShows.userService.controller.systemUser;
 
 import java.security.Principal;
 
@@ -14,37 +14,37 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.urbanShows.userService.dto.UserInternalInfo;
-import com.urbanShows.userService.dto.UserLoginDto;
+import com.urbanShows.userService.dto.SystemUserLoginDto;
 import com.urbanShows.userService.dto.UserResponseDto;
-import com.urbanShows.userService.dto.UserSigninDto;
-import com.urbanShows.userService.entity.UserInfo;
+import com.urbanShows.userService.dto.SystemUserRegisterDto;
+import com.urbanShows.userService.entity.SystemUser;
 import com.urbanShows.userService.exception.AccessDeniedException;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
-import com.urbanShows.userService.service.UserService;
+import com.urbanShows.userService.service.SystemUserService;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("api/user/system/auth")
+@RequestMapping("api/user-auth/system")
 @AllArgsConstructor
-public class UserAuthController {
+public class SystemAuthController {
 
+	private final SystemUserService systemUserService;
 	private final JwtService jwtService;
 	private final AuthenticationManager authenticationManager;
-	private final UserService systemUserService;
 	private final ModelMapper modelMapper;
 
-	@PostMapping("signup")
-	public ResponseEntity<Boolean> signup(@Valid @RequestBody UserSigninDto systemUserSigninDto) {
-		return ResponseEntity.ok(systemUserService.addSystemUser(systemUserSigninDto));
+	@PostMapping("register")
+	public ResponseEntity<Boolean> register(@Valid @RequestBody SystemUserRegisterDto systemUserSigninDto) {
+		return ResponseEntity.ok(systemUserService.registerSystemUser(systemUserSigninDto));
 	}
 
 	@PostMapping("login")
-	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody UserLoginDto systemUserLoginDto) {
-		final UserInfo existingSystemUser = systemUserService.getExistingSystemUser(systemUserLoginDto.getUserName());
+	public ResponseEntity<UserResponseDto> login(@Valid @RequestBody SystemUserLoginDto systemUserLoginDto) {
+		final SystemUser existingSystemUser = systemUserService.getExistingSystemUser(systemUserLoginDto.getUserName());
 		try {
 			// Extract spring authentication object
 			final Authentication authentication = authenticationManager
@@ -54,8 +54,8 @@ public class UserAuthController {
 				
 				// Create, save and add JWT token in response
 				final String jwtToken = jwtService.saveAndSendJwtTokenForSystemUser(systemUserLoginDto.getUserName(), authentication.getAuthorities());
-				final GenericMapper<UserResponseDto, UserInfo> mapper = new GenericMapper<>(modelMapper,
-						UserResponseDto.class, UserInfo.class);
+				final GenericMapper<UserResponseDto, SystemUser> mapper = new GenericMapper<>(modelMapper,
+						UserResponseDto.class, SystemUser.class);
 				final UserResponseDto systemUserResponseDto = mapper.entityToDto(existingSystemUser);
 				systemUserResponseDto.setJwt(jwtToken);
 				return ResponseEntity.ok(systemUserResponseDto);
@@ -67,12 +67,12 @@ public class UserAuthController {
 		}
 	}
 
-	@GetMapping("loggedin-system-user-info")
+	@GetMapping("loggedin-user-info")
 	public ResponseEntity<UserInternalInfo> getLoggedinSystemUserInfo(Principal principal) {
 		if (principal != null) {
-			final GenericMapper<UserInternalInfo, UserInfo> mapper = new GenericMapper<>(modelMapper,
-					UserInternalInfo.class, UserInfo.class);
-			final UserInfo userActive = systemUserService.getActiveExistingSystemUser(principal.getName());
+			final GenericMapper<UserInternalInfo, SystemUser> mapper = new GenericMapper<>(modelMapper,
+					UserInternalInfo.class, SystemUser.class);
+			final SystemUser userActive = systemUserService.getActiveExistingSystemUser(principal.getName());
 			return ResponseEntity.ok(mapper.entityToDto(userActive));
 		}
 		throw new UnauthorizedException("Unauthorized access");

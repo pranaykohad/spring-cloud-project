@@ -5,10 +5,10 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class UserInfoRespone {
+public class SystemUserInfoRespone {
 
 	private ColumnConfigDto columnConfig;
-	private List<UserInfoDto> userInfoList;
+	private List<SystemUserInfoDto> userInfoList;
 	private UserPage userPage;
 
 }

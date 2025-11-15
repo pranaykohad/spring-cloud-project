@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoggedinUserDetails {
+public class SystemUserDto {
 
 	private String displayName;
 
