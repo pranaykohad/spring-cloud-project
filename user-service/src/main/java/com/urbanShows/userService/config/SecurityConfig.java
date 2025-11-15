@@ -37,10 +37,10 @@ public class SecurityConfig {
 //		.csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
 //				.ignoringRequestMatchers("api/user/system/auth/**", "api/user/app/auth/**")
 //				)
-				.authorizeRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-						.requestMatchers("/actuator/**", "user/swagger-ui/**", "user/api-docs/**",
-								"api/user-auth/app/**", "api/user-auth/system/**", "api/user/kafka/**",
-								"api/user/app-info/**", "api/user/common/**")
+				.authorizeHttpRequests(auth -> auth.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.requestMatchers("/actuator/**", "/user/swagger-ui/**", "/user/api-docs/**",
+							"/api/user-auth/app/**", "/api/user-auth/system/**", "/api/user/kafka/**",
+							"/api/user/app-info/**", "/api/user/verification/**")
 						.permitAll().anyRequest().authenticated())
 				.exceptionHandling(exception -> exception.authenticationEntryPoint(authenticationEntryPoint))
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

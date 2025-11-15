@@ -97,7 +97,7 @@ public class SystemUserController {
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
-	@PatchMapping("update-secured-details")
+	@PatchMapping("secured-details")
 	public ResponseEntity<Boolean> udpateSecuredUserDetails(@Valid @RequestBody UserSecuredDetailsReq securedDetails,
 			Principal principal, HttpServletRequest request) {
 		final SystemUser currentUser = systemUserService.validateActiveSystemUserByOtp(principal.getName(),
