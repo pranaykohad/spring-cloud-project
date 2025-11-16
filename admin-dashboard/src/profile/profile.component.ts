@@ -1,3 +1,4 @@
+import { APP_ROUTES } from './../models/Enums';
 import { LocalstorageService } from './../services/localstorage.service';
 import {
   ChangeDetectorRef,
@@ -346,12 +347,18 @@ export class ProfileComponent implements OnInit {
           : '';
       this.userService.updateSecuredDetails(finalObject).subscribe({
         next: (res: Boolean) => {
+          this.otpComponent.instance.visible = false;
           if (res) {
+            // If Self user updated secured details, redirect to login page
+            this.toastService.showSuccessToast(
+              'Secured details are updated successfully. Please login again.'
+            );
+            this.router.navigate([APP_ROUTES.LOGIN]);
+          } else {
             this.toastService.showSuccessToast(
               'Secured details are updated successfully'
             );
             this.getUserSecuredDetails();
-            this.otpComponent.instance.visible = false;
           }
         },
         error: (err: string) => {

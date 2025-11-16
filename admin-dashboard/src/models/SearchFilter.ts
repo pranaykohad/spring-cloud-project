@@ -1,8 +1,8 @@
-import { SearchOperator } from "./Enums";
+import { SearchOperator } from './Enums';
 
 export interface SearchFilter {
   key: string;
   value: any;
-  valueTo: any;
+  valueTo?: any;
   operator: SearchOperator;
 }

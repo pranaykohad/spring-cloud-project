@@ -30,21 +30,21 @@ export class UserAuthService {
     systemUserLoginDto: SystemUserLoginRequest
   ): Observable<LoggedInUserDetails> {
     return this.http.post<LoggedInUserDetails>(
-      `${this.baseUrl}api/user/system/auth/login`,
+      `${this.baseUrl}api/user-auth/system/login`,
       systemUserLoginDto
     );
   }
 
-  userSignin(systemUserSigninDto: SystemUserSigninRequest) {
+  userRegistration(systemUserSigninDto: SystemUserSigninRequest) {
     return this.http.post<string>(
-      `${this.baseUrl}api/user/system/auth/signup`,
+      `${this.baseUrl}api/user-auth/system/register`,
       systemUserSigninDto
     );
   }
 
   userLogout(): Observable<boolean> {
     return this.http.get<boolean>(
-      `${this.baseUrl}api/user/common/logout`
+      `${this.baseUrl}api/user/verification/logout`
     );
   }
 }

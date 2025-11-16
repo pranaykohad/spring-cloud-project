@@ -1,3 +1,4 @@
+@defer {
 @if(eventListDto && eventListDto.eventList.length){
 <p-table id="event-datatable" [resizableColumns]="true" [rows]="eventListDto.eventPage.recordsPerPage"
   [showCurrentPageReport]="true" styleClass="p-datatable-gridlines position-static d-flex flex-column"
@@ -33,4 +34,9 @@
 <app-paginator [page]="eventListDto.eventPage" (pageEmitter)="pageEmitter.emit($event)"></app-paginator>
 } @else {
 <div class="d-flex justify-content-center">No data found</div>
+}
+} @placeholder {
+  <div>place holder</div>
+} @loading {
+  <div>place holder</div>
 }

@@ -15,11 +15,7 @@ export const routes: Routes = [
           ),
         canActivate: [AuthGuard],
         data: {
-          roles: [
-            'ADMIN_USER',
-            'SUPER_ADMIN_USER',
-            'ORGANIZER_USER',
-          ],
+          roles: ['SYSTEM_USER', 'SUPER_ADMIN_USER', 'ORGANIZER_USER'],
         },
         children: [
           {
@@ -28,11 +24,7 @@ export const routes: Routes = [
               import('../user/user.component').then((m) => m.UserComponent),
             canActivate: [AuthGuard],
             data: {
-              roles: [
-                'ADMIN_USER',
-                'SUPER_ADMIN_USER',
-                'ORGANIZER_USER',
-              ],
+              roles: ['SYSTEM_USER', 'SUPER_ADMIN_USER', 'ORGANIZER_USER'],
             },
           },
           {

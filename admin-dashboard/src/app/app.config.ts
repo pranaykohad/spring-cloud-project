@@ -3,7 +3,11 @@ import {
   importProvidersFrom,
   provideZoneChangeDetection,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import {
+  PreloadAllModules,
+  PreloadingStrategy,
+  provideRouter,
+} from '@angular/router';
 
 import {
   HTTP_INTERCEPTORS,

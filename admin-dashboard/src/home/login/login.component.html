@@ -1,20 +1,24 @@
-<div id="login" class="d-flex justify-content-center align-items-center" style="height: 100vh">
-  <p-card [style]="{minWidth: '25vw'}">
+<div id="login" class="d-flex justify-content-center align-items-center">
+  <p-card
+    [style]="{minWidth: '25vw', minHeight: '80vh', display: 'flex', flexDirection: 'column', justifyContent: 'center'}">
     <ng-template pTemplate="header">
-      <div class="container-fluid pt-5" style="text-align: center; font-size: 30px; font-family: Quicksand-Bold;">Log in
+      <div class="container-fluid pt-5 header-contr">
+        <div class="main-title">Urban
+          Shows Admin</div>
+        <div class="sub-title">Welcome back</div>
       </div>
     </ng-template>
     <div class="container-fluid justify-content-center align-items-center">
-      <div class="d-flex flex-column mb-3 align-items-center">
+      <div class="d-flex flex-column mb-5 align-items-center">
         <p-iconField iconPosition="left" class="mb-3">
           <p-inputIcon styleClass="pi pi-user" />
           <input type="text" #username pInputText placeholder="Username" [(ngModel)]="systemUserLoginRequest.userName"
-            [style]="{minWidth: '20vw'}" (input)="validate()"/>
+            [style]="{minWidth: '20vw'}" (input)="validate()" />
         </p-iconField>
         <p-iconField iconPosition="left">
           <p-inputIcon styleClass="pi pi-lock" />
-          <input type="password" #password pInputText placeholder="password" [(ngModel)]="systemUserLoginRequest.password"
-            [style]="{minWidth: '20vw'}" (input)="validate()"/>
+          <input type="password" #password pInputText placeholder="password"
+            [(ngModel)]="systemUserLoginRequest.password" [style]="{minWidth: '20vw'}" (input)="validate()" />
         </p-iconField>
       </div>
       <div class="d-flex justify-content-between align-items-center m-3">
@@ -27,11 +31,13 @@
         </div>
       </div>
       <div class="d-flex justify-content-center">
-        <p-button label="Log In" [raised]="true" [style]="{borderRadius: '7px', minWidth: '20vw'}" [disabled]="!enableLoginButton" (click)="login()"/>
+        <p-button label="Log In" [raised]="true" [style]="{borderRadius: '7px', minWidth: '20vw'}"
+          [disabled]="!enableLoginButton" (click)="login()" />
       </div>
       <div class="d-flex justify-content-start m-3">
         <div [style]="{marginRight: '10px'}">Don't have an account?</div>
-        <p-button label="Signin" [link]="true" [style]="{padding: 0, fontFamily: 'Quicksand-light'}" (click)="nagivateToSignin()"/>
+        <p-button label="Signin" [link]="true" [style]="{padding: 0, fontFamily: 'Quicksand-light'}"
+          (click)="nagivateToSignin()" />
       </div>
     </div>
   </p-card>

@@ -5,8 +5,14 @@
   position: sticky;
   z-index: 999;
   top: 0;
+  .logo-cntr {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    align-items: baseline;
+  }
   .home-logo {
-    font-size: 25px;
+    font-size: 20px;
     color: black;
     margin-left: 20px;
   }

@@ -1,4 +1,18 @@
 #login {
   height: 100vh;
-  background: linear-gradient(to top, orange, rgb(251, 78, 78) 80%);
+  background-color: #1594fc;
+
+  .header-contr {
+    text-align: center;
+    font-family: Quicksand-Bold;
+
+    .main-title {
+      font-size: 30px;
+    }
+
+    .sub-title {
+      font-size: 24px;
+      margin-top: 10px;
+    }
+  }
 }

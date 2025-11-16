@@ -70,6 +70,7 @@ export class LoginComponent implements OnInit {
             LocalStorageKeys.INMEMORY_USERNAME
           );
         }
+        console.log('Login successful', [APP_ROUTES.BASE]);
         this.router.navigate([APP_ROUTES.BASE]);
         this.toastService.showSuccessToast(
           `${this.loggedinUserDetails.displayName} logged in`

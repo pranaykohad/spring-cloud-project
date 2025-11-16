@@ -21,11 +21,11 @@ import { APP_ROUTES } from '../../models/Enums';
 export class SigninComponent implements OnInit {
   roleList: Role[] = [
     {
-      name: 'ADMIN_USER',
-      value: 'ADMIN_USER',
+      name: 'System User',
+      value: 'SYSTEM_USER',
     },
     {
-      name: 'ORGANIZER_USER',
+      name: 'Oraganizer',
       value: 'ORGANIZER_USER',
     },
   ];
@@ -69,14 +69,16 @@ export class SigninComponent implements OnInit {
 
   signin() {
     if (this.validateUser()) {
-      this.systemUserAuthService.userSignin(this.signinReq).subscribe((res) => {
-        if (res) {
-          this.toastService.showSuccessToast(
-            'Sign in request submitted successfully'
-          );
-          this.nagivateToLogin();
-        }
-      });
+      this.systemUserAuthService
+        .userRegistration(this.signinReq)
+        .subscribe((res) => {
+          if (res) {
+            this.toastService.showSuccessToast(
+              'Sign in request submitted successfully'
+            );
+            this.nagivateToLogin();
+          }
+        });
     }
   }
 
