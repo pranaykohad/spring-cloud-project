@@ -108,12 +108,12 @@ public class SystemUserController {
 			throw new UnauthorizedException("You cannot perform this operation");
 		}
 		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
-		final boolean udpateSecuredUserDetails = systemUserService.udpateSecuredUserDetails(securedDetails, targetUser,
+		final boolean isSelfUpdate = systemUserService.udpateSecuredUserDetails(securedDetails, targetUser,
 				currentUser);
-		if (udpateSecuredUserDetails) {
+		if (isSelfUpdate) {
 			jwtService.invalidateToken(JwtHelper.extractUserNameAndToken(request).getRight());
 		}
-		return ResponseEntity.ok(true);
+		return ResponseEntity.ok(isSelfUpdate);
 	}
 
 	@PostMapping("user-list")
@@ -126,7 +126,7 @@ public class SystemUserController {
 	@GetMapping("activate-user")
 	public ResponseEntity<Boolean> activateUser(@RequestParam String userName, @RequestParam String otp,
 			Principal principal) {
-		systemUserService.getExistingSystemUser(principal.getName());
+		systemUserService.getActiveExistingSystemUser(principal.getName());
 		return ResponseEntity.ok(systemUserService.activateUser(userName, otp));
 	}
 

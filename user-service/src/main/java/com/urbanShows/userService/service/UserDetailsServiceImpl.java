@@ -2,10 +2,8 @@ package com.urbanShows.userService.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +18,10 @@ import com.urbanShows.userService.repository.AppUserRepository;
 import com.urbanShows.userService.repository.UserInfoRepository;
 import com.urbanShows.userService.util.Helper;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Autowired
@@ -36,13 +37,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			if (user != null) {
 				return buildUser(user.getPhone(), user.getInternalPassword(), user.getRoles());
 			}
-			throw new UsernameNotFoundException("User not found with phone: " + id);
+			log.error("Bad credentials or account is not active (App User): {}", id);
+			throw new UsernameNotFoundException("Bad Credintials or account is not active (App User): " + id);
 		} else {
 			final SystemUser user = systemUserInfoRepo.findByUserNameAndStatus(id, Status.ACTIVE);
 			if (user != null) {
 				return buildUser(user.getUserName(), user.getPassword(), user.getRoles());
 			}
-			throw new UsernameNotFoundException("User not found with username: " + id);
+			log.error("Bad credentials or account is not active (System User): {}", id);
+			throw new UsernameNotFoundException("Bad Credintials or account is not active (System User): " + id);
 		}
 	}
 

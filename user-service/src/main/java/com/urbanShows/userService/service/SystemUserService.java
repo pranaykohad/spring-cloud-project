@@ -226,21 +226,23 @@ public class SystemUserService {
 			existingUser.setPhone(newUser.getPhone());
 			existingUser.setPhoneValidated(false);
 			existingUser.setStatus(Status.INACTIVE);
+			shouldLoggedOut = isSelfChange(existingUser.getUserName(), loggedInUser.getUserName());
 			log.info("User {} phone number changed, validation reset", existingUser.getUserName());
 		}
 		if (StringUtils.hasText(newUser.getEmail()) && !existingUser.getEmail().equals(newUser.getEmail())) {
 			existingUser.setEmail(newUser.getEmail());
 			existingUser.setEmailValidated(false);
 			existingUser.setStatus(Status.INACTIVE);
+			shouldLoggedOut = isSelfChange(existingUser.getUserName(), loggedInUser.getUserName());
 			log.info("User {} email changed, validation reset", existingUser.getUserName());
 		}
 
 		// for super admin all validations are true
-		if (existingUser.getRoles().contains(Role.SUPER_ADMIN_USER)
-				&& loggedInUser.getRoles().contains(Role.SUPER_ADMIN_USER)) {
+		if (loggedInUser.getRoles().contains(Role.SUPER_ADMIN_USER)) {
 			existingUser.setStatus(Status.ACTIVE);
 			existingUser.setPhoneValidated(true);
 			existingUser.setEmailValidated(true);
+			shouldLoggedOut = false;
 			log.info("Super admin user {} validations set to true", existingUser.getUserName());
 		}
 		userInfoRepository.save(existingUser);

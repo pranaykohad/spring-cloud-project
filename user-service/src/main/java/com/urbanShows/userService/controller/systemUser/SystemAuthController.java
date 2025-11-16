@@ -60,10 +60,10 @@ public class SystemAuthController {
 				systemUserResponseDto.setJwt(jwtToken);
 				return ResponseEntity.ok(systemUserResponseDto);
 			} else {
-				throw new AccessDeniedException("User name or password is not correct");
+				throw new AccessDeniedException("Bad credentials or account is not active");
 			}
 		} catch (Exception e) {
-			throw new AccessDeniedException("User name or password is not correct");
+			throw new AccessDeniedException("Bad credentials or account is not active");
 		}
 	}
 
