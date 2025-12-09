@@ -17,7 +17,8 @@
       <div #test class="font-Quicksand-SemiBold d-flex justify-content-center align-items-center user-name"
         style="margin-right: 15px;">
         <span class="d-flex flex-column align-items-start pointer-cursor">
-          <p-megaMenu [model]="userModel" id="user-bar-menu" (mouseleave)="onMouseLeave(usermodel)" #usermodel />
+          <p-megaMenu [model]="userModel" id="user-bar-menu" (mouseleave)="onMouseLeave(usermodel)" #usermodel
+            [style]="{'background-color': '#ff9980'}" />
         </span>
       </div>
     </div>

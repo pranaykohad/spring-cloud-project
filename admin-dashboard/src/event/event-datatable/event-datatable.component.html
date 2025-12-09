@@ -1,9 +1,9 @@
-@defer {
-@if(eventListDto && eventListDto.eventList.length){
+@if(eventListDto && eventListDto.eventList.length) {
 <p-table id="event-datatable" [resizableColumns]="true" [rows]="eventListDto.eventPage.recordsPerPage"
   [showCurrentPageReport]="true" styleClass="p-datatable-gridlines position-static d-flex flex-column"
   [columns]="eventListDto.columnConfig.columns" [value]="eventListDto.eventList" selectionMode="single"
-  (onRowSelect)="onRowSelect($event)" (sortFunction)="customSort($event)" [customSort]="true">
+  (onRowSelect)="onRowSelect($event)" (sortFunction)="customSort($event)" [customSort]="true" [scrollable]="true"
+  scrollHeight="70vh">
   <ng-template pTemplate="header" let-columns>
     <tr class="border-grey">
       @for (column of columns; track $index) {
@@ -34,9 +34,4 @@
 <app-paginator [page]="eventListDto.eventPage" (pageEmitter)="pageEmitter.emit($event)"></app-paginator>
 } @else {
 <div class="d-flex justify-content-center">No data found</div>
-}
-} @placeholder {
-  <div>place holder</div>
-} @loading {
-  <div>place holder</div>
 }

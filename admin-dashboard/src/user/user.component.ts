@@ -22,7 +22,7 @@ export class UserComponent implements OnInit {
   ngOnInit(): void {
     this.searchRequest = {
       currentPage: 0,
-      sortColumn: 'userName',
+      sortColumn: 'status',
       sortOrder: SortOrder.ASC,
       searchFilters: [
         // {
@@ -59,6 +59,11 @@ export class UserComponent implements OnInit {
   private getUserInfoList() {
     this.userService.getUserInfoList(this.searchRequest).subscribe((res) => {
       this.userInfoListObject = res;
+      this.userInfoListObject.userInfoList.forEach((user) => {
+        if (user.profilePic) {
+          user.profilePicUrl = `data:image/jpeg;base64,${user.profilePic}`;
+        }
+      });
     });
   }
 }

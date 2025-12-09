@@ -64,9 +64,9 @@ export class UserService {
     const formData = new FormData();
     formData.append('profilePicFile', userBasicDetails.profilePicFile);
     formData.append('displayName', userBasicDetails.displayName);
-    formData.append('userName', userBasicDetails.userName);
+    formData.append('targetUserName', userBasicDetails.userName);
     return this.http.patch<Boolean>(
-      `${this.baseUrl}api/user/system/update-basic-details`,
+      `${this.baseUrl}api/user/system/basic-details`,
       formData
     );
   }

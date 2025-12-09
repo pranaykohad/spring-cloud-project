@@ -44,11 +44,12 @@ export class ProfileComponent implements OnInit {
       value: 'INACTIVE',
     },
   ];
-  newUserBasicDetails: UserBasicDetails = {
+  userBasicDetails: UserBasicDetails = {
     userName: '',
-    profilePicUrl: '',
     displayName: '',
     profilePicFile: new File([], ''),
+    profilePicUrl: '',
+    profilePic: null,
     createdAt: '',
   };
   userSecuredDetailsReq: UserSecuredDetailsReq = {
@@ -82,7 +83,6 @@ export class ProfileComponent implements OnInit {
   loggedInUser!: LoggedInUserDetails;
   userSecuredDetails!: UserSecuredDetailsRes;
   editSecuredDetails!: EditableUserSecuredDetailsRes;
-  oldUserBasicDetails!: UserBasicDetails;
   otpComponent!: ComponentRef<OtpComponent>;
 
   @ViewChild('otpContainer', { read: ViewContainerRef, static: true })
@@ -124,7 +124,7 @@ export class ProfileComponent implements OnInit {
   updateBasicDetails() {
     if (this.validateBasicDetails() && this.enableBasicUpdateBtn) {
       this.userService
-        .updateBasicDetails(this.newUserBasicDetails)
+        .updateBasicDetails(this.userBasicDetails)
         .subscribe((res: Boolean) => {
           if (res) {
             this.toastService.showSuccessToast(
@@ -135,12 +135,13 @@ export class ProfileComponent implements OnInit {
               value: null,
             });
             this.enableBasicUpdateBtn = false;
-            this.newUserBasicDetails = {
+            this.userBasicDetails = {
               userName: '',
-              profilePicUrl: '',
               displayName: '',
               profilePicFile: new File([], ''),
               createdAt: '',
+              profilePicUrl: '',
+              profilePic: null,
             };
             this.getUserBasicDetails();
           }
@@ -175,11 +176,9 @@ export class ProfileComponent implements OnInit {
         .replace(/[-:.]/g, '')
         .slice(0, 15);
 
-      this.newUserBasicDetails.profilePicFile = new File(
+      this.userBasicDetails.profilePicFile = new File(
         [file],
-        `${
-          this.oldUserBasicDetails.userName
-        }-profile-pic-${timestamp}.${file.name.split('.').pop()}`,
+        `${this.userName}-profile-pic.${file.name.split('.').pop()}`,
         {
           type: file.type,
         }
@@ -188,7 +187,7 @@ export class ProfileComponent implements OnInit {
 
       const reader = new FileReader();
       reader.onload = () => {
-        this.newUserBasicDetails.profilePicUrl = reader.result as string;
+        this.userBasicDetails.profilePicUrl = reader.result as string;
       };
       reader.readAsDataURL(file);
     }
@@ -226,15 +225,15 @@ export class ProfileComponent implements OnInit {
 
   validateBasicDetails(): boolean {
     let isBasicDetailsValid = true;
-    if (this.newUserBasicDetails.displayName.length <= 3) {
+    if (this.userBasicDetails.displayName.length <= 3) {
       this.userBasicDetailsError.displayName = 'Display name is too short!';
       isBasicDetailsValid = false;
     }
     if (isBasicDetailsValid) {
       this.clearBasicDetailsValidation();
     }
-    this.newUserBasicDetails.displayName =
-      this.newUserBasicDetails.displayName.trim();
+    this.userBasicDetails.displayName =
+      this.userBasicDetails.displayName.trim();
     return isBasicDetailsValid;
   }
 
@@ -371,8 +370,7 @@ export class ProfileComponent implements OnInit {
 
   cancelBasicDetailsUpdate() {
     this.getUserBasicDetails();
-    this.newUserBasicDetails.profilePicUrl = '';
-    this.newUserBasicDetails.profilePicFile = new File([], '');
+    this.userBasicDetails.profilePicFile = new File([], '');
     this.enableBasicUpdateBtn = false;
   }
 
@@ -393,8 +391,10 @@ export class ProfileComponent implements OnInit {
     this.userService
       .getUserBasicDetails(this.userName)
       .subscribe((res: UserBasicDetails) => {
-        this.oldUserBasicDetails = res;
-        this.newUserBasicDetails = this.oldUserBasicDetails;
+        this.userBasicDetails = res;
+        if (this.userBasicDetails.profilePic) {
+          this.userBasicDetails.profilePicUrl = `data:image/jpeg;base64,${this.userBasicDetails.profilePic}`;
+        }
       });
   }
 

@@ -43,6 +43,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.systemUserAuthService.getLoggedinUserDetails().subscribe({
       next: (res: LoggedInUserDetails) => {
         this.loggedInUserDetails = res;
+        if (this.loggedInUserDetails.profilePic) {
+          this.loggedInUserDetails.profilePicUrl = `data:image/jpeg;base64,${this.loggedInUserDetails.profilePic}`;
+        }
       },
     });
   }

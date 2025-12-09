@@ -2,7 +2,8 @@
 <p-table id="user-datatable" [resizableColumns]="true" [rows]="userInfoListObject.userPage.recordsPerPage"
   [showCurrentPageReport]="true" styleClass="p-datatable-gridlines position-static"
   [columns]="userInfoListObject.columnConfig.columns" [value]="userInfoListObject.userInfoList" selectionMode="single"
-  (onRowSelect)="onRowSelect($event)" (sortFunction)="customSort($event)" [customSort]="true">
+  (onRowSelect)="onRowSelect($event)" (sortFunction)="customSort($event)" [customSort]="true" [scrollable]="true"
+  scrollHeight="70vh">
   <ng-template pTemplate="header" let-columns>
     <tr class="border-grey">
       @for (column of columns; track $index) {

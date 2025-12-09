@@ -1,8 +1,9 @@
 export interface UserBasicDetails {
   userName: string;
-  profilePicUrl: string;
   displayName: string;
   profilePicFile: File;
+  profilePic: any;
+  profilePicUrl: string;
   createdAt: string;
 }
 

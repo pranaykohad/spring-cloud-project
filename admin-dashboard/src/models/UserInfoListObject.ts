@@ -5,6 +5,7 @@ export interface UserInfo {
   phone: string;
   displayName: string;
   roles: string[];
+  profilePic: any;
   profilePicUrl: string;
   status: string;
   createdAt: string;
