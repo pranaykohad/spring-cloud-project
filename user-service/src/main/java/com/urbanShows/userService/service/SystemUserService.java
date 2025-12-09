@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -16,7 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.urbanShows.userService.aws.AwsS3Service;
 //import com.urbanShows.userService.azure.AzureBlobStorageService;
 import com.urbanShows.userService.constants.TableConfig;
 import com.urbanShows.userService.dto.ColumnConfigDto;
@@ -41,19 +44,24 @@ import com.urbanShows.userService.kafka.OtpkafkaDto;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.repository.UserInfoRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class SystemUserService {
+
+	@Value("${aws.s3.folder-name.profile}")
+	private String profileFolderName;
 
 	private final UserInfoRepository userInfoRepository;
 	private final ModelMapper modelMapper;
 	private final PasswordEncoder passwordEncoder;
 	private final MessageProducer messageProducer;
 	private final OtpService otpService;
+	private final AwsS3Service awsS3Service;
+	private final ProfileService profileService;
 
 	public List<String> getOrganizerList() {
 		final List<SystemUser> systemUserList = userInfoRepository.findByRolesAndStatus(List.of(Role.ORGANIZER_USER),
@@ -107,6 +115,7 @@ public class SystemUserService {
 
 	public void uploadSystemUserProfilePicUrl(SystemUser systemUser, String profilePicUrl) {
 		systemUser.setProfilePicUrl(profilePicUrl);
+		log.info("Profile picture URL updated for user: {}", systemUser.getUserName());
 		userInfoRepository.save(systemUser);
 	}
 
@@ -149,6 +158,17 @@ public class SystemUserService {
 		Page<SystemUser> list = new PageImpl<>(new ArrayList<>());
 		try {
 			list = userInfoRepository.findAll(spec, pageable);
+			list.forEach(user -> {
+				if (user.getProfilePicUrl() != null) {
+					try {
+						final Object fileObject = awsS3Service.downloadFile(user.getProfilePicUrl());
+						user.setProfilePic(fileObject);
+					} catch (Exception e) {
+						log.error("Error downloading profile picture for user {}: {}", user.getUserName(),
+								e.getMessage());
+					}
+				}
+			});
 			log.info("User list fetched successfully");
 		} catch (Exception e) {
 			log.error("Error in fetching user list: {}", e.getMessage());
@@ -174,20 +194,18 @@ public class SystemUserService {
 		return updateSecuredDetails(dtoToEntity, targetUser, currentUser);
 	}
 
-//	public boolean udpateBasicUserDetails(UserBasicDetails basicDetails, UserInfo targetUser) {
-//		targetUser.setDisplayName(StringUtils.hasText(basicDetails.getDisplayName())
-//				&& !targetUser.getDisplayName().equals(basicDetails.getDisplayName())
-//						? basicDetails.getDisplayName().trim()
-//						: targetUser.getDisplayName());
-//
-//		if (basicDetails.getProfilePicFile() != null) {
-//			final String fileUrl = azureBlobStorageService.uploadFile(basicDetails.getProfilePicFile());
-//			uploadSystemUserProfilePicUrl(targetUser, fileUrl);
-//		}
-//
-//		userInfoRepository.save(targetUser);
-//		return true;
-//	}
+	public boolean udpateBasicUserDetails(String displayName, MultipartFile file, SystemUser targetUser) {
+		if (StringUtils.hasText(displayName)) {
+			targetUser.setDisplayName(displayName.trim());
+		}
+		if (file != null) {
+			final String fileKey = profileService.updateProfilePic(file, null, targetUser.getUserName());
+			targetUser.setProfilePicUrl(fileKey);
+		}
+		userInfoRepository.save(targetUser);
+		log.info("Basic details updated for user: {}", targetUser.getUserName());
+		return true;
+	}
 
 	public void generateOtpForSystemUser(String userName, String device) {
 		final SystemUser systemUser = getActiveExistingSystemUser(userName);
@@ -260,6 +278,14 @@ public class SystemUserService {
 			log.error("User not found: {}", userName);
 			throw new UserNotFoundException("User doesnot exists in the system");
 		}
+		if (existingUser.getProfilePicUrl() != null) {
+			try {
+				final Object fileObject = awsS3Service.downloadFile(existingUser.getProfilePicUrl());
+				existingUser.setProfilePic(fileObject);
+			} catch (Exception e) {
+				log.error("Error downloading profile picture for user {}: {}", userName, e.getMessage());
+			}
+		}
 		return existingUser;
 	}
 
@@ -268,6 +294,14 @@ public class SystemUserService {
 		if (existingUser == null) {
 			log.error("Active user not found: {}", userName);
 			throw new UserNotFoundException("User inctive/doesnot exists in the system");
+		}
+		if (existingUser.getProfilePicUrl() != null) {
+			try {
+				final Object fileObject = awsS3Service.downloadFile(existingUser.getProfilePicUrl());
+				existingUser.setProfilePic(fileObject);
+			} catch (Exception e) {
+				log.error("Error downloading profile picture for user {}: {}", userName, e.getMessage());
+			}
 		}
 		return existingUser;
 	}

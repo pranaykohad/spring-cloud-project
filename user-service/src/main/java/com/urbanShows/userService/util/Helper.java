@@ -30,6 +30,12 @@ public class Helper {
 			throw new FileSizeExceedsException("File size exceeds: " + fileSize);
 		}
 	}
+	
+	public static String getFileExtension(String fileName) {
+		final int lastDotIndex = fileName.lastIndexOf('.');
+		return (lastDotIndex != -1 && lastDotIndex < fileName.length() - 1) ? fileName.substring(lastDotIndex + 1)
+				: null;
+	}
 
 	private static boolean isFileSizeExceeds(long size) {
 		return size < ComonConstants.MAX_IMAGE_SIZE;
@@ -40,10 +46,6 @@ public class Helper {
 		return fileExtension != null && ComonConstants.VALID_IMAGE_FORMAT.contains(fileExtension.toLowerCase());
 	}
 
-	private static String getFileExtension(String fileName) {
-		final int lastDotIndex = fileName.lastIndexOf('.');
-		return (lastDotIndex != -1 && lastDotIndex < fileName.length() - 1) ? fileName.substring(lastDotIndex + 1)
-				: null;
-	}
+	
 
 }

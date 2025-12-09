@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.urbanShows.userService.dto.SearchRequest;
 import com.urbanShows.userService.dto.SystemUserBasicDto;
@@ -28,6 +29,7 @@ import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.exception.UnauthorizedException;
 import com.urbanShows.userService.mapper.GenericMapper;
 import com.urbanShows.userService.service.JwtService;
+import com.urbanShows.userService.service.ProfileService;
 import com.urbanShows.userService.service.SystemUserService;
 import com.urbanShows.userService.util.JwtHelper;
 import com.urbanShows.userService.util.RolesUtil;
@@ -43,6 +45,7 @@ import lombok.AllArgsConstructor;
 public class SystemUserController {
 
 	private final SystemUserService systemUserService;
+	private final ProfileService profileService;
 	private final JwtService jwtService;
 	private final ModelMapper modelMapper;
 
@@ -75,18 +78,15 @@ public class SystemUserController {
 		return ResponseEntity.ok(mapper.entityToDto(existingUser));
 	}
 
-//	@PatchMapping("update-basic-details")
-//	public ResponseEntity<Boolean> udpateBacisUserDetails(@RequestParam String userName,
-//			@RequestParam(required = false) MultipartFile profilePicFile,
-//			@RequestParam(required = false) String displayName, Principal principal) {
-//		final UserInfo currentUser = systemUserService.getActiveExistingSystemUser(principal.getName());
-//		final UserInfo targetUser = systemUserService.getExistingSystemUser(userName);
-//		RolesUtil.isHigherPriority(currentUser.getRoles().get(0), targetUser.getRoles().get(0));
-//		final UserBasicDetails userBasicDetails = new UserBasicDetails();
-//		userBasicDetails.setDisplayName(displayName);
-//		userBasicDetails.setProfilePicFile(profilePicFile);
-//		return ResponseEntity.ok(systemUserService.udpateBasicUserDetails(userBasicDetails, targetUser));
-//	}
+	@PatchMapping("basic-details")
+	public ResponseEntity<Boolean> udpateBacisUserDetails(@RequestParam String targetUserName,
+			@RequestParam(required = false) String displayName,
+			@RequestParam(required = false) MultipartFile profilePicFile, Principal principal) {
+		final SystemUser loggedInUser = systemUserService.getActiveExistingSystemUser(principal.getName());
+		final SystemUser targetUser = systemUserService.getExistingSystemUser(targetUserName);
+		RolesUtil.isHigherPriority(loggedInUser.getRoles().get(0), targetUser.getRoles().get(0));
+		return ResponseEntity.ok(systemUserService.udpateBasicUserDetails(displayName, profilePicFile, targetUser));
+	}
 
 	@GetMapping("secured-details")
 	public ResponseEntity<UserSecuredDetailsRes> getUserSecuredDetailsByUsername(@RequestParam String userName,

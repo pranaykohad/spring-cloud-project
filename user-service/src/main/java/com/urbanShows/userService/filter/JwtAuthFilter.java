@@ -65,8 +65,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 		boolean skip = path.startsWith("/api/user-auth/system/") || path.startsWith("/api/user-auth/app/")
 				|| path.startsWith("/api/user/kafka/") || path.startsWith("/api/user/app-info/")
 				|| path.startsWith("/api/user/verification/") || path.startsWith("/actuator");
-		log.info("JwtAuthFilter.shouldNotFilter: requestURI='{}' context='{}' normalizedPath='{}' skip={}",
-				request.getRequestURI(), context, path, skip);
 		return skip;
 	}
 }

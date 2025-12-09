@@ -17,7 +17,7 @@ public class SystemUserBasicDto {
 
 	private String displayName;
 	
-	private String profilePicUrl;
+	private Object profilePic;
 
 	private MultipartFile profilePicFile;
 	

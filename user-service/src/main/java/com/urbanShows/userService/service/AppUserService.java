@@ -3,9 +3,12 @@ package com.urbanShows.userService.service;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.urbanShows.userService.aws.AwsS3Service;
 import com.urbanShows.userService.dto.AppUserDto;
 import com.urbanShows.userService.dto.AppUserRegisterDto;
 import com.urbanShows.userService.entity.AppUser;
@@ -19,16 +22,21 @@ import com.urbanShows.userService.repository.AppUserRepository;
 import com.urbanShows.userService.util.AuthTokenAndPasswordUtil;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class AppUserService {
+	
+	@Value("${aws.s3.folder-name.profile}")
+	private String profileFolderName;
 
 	private final ModelMapper modelMapper;
 	private final AppUserRepository appUserInfoRepo;
 	private final OtpService otpService;
+	private final AwsS3Service awsS3Service;
 
 	public Boolean registerAppUser(AppUserRegisterDto appUserDto) {
 		if (appUserInfoRepo.existsById(appUserDto.getPhone())) {
@@ -48,8 +56,9 @@ public class AppUserService {
 		return true;
 	}
 
-	public void uploadAppUserProfile(AppUser appUser, String profilePicUrl) {
-		appUser.setProfilePicUrl(profilePicUrl);
+	public void uploadAppUserProfile(AppUser appUser, MultipartFile file) {
+//		String url = awsS3Service.uploadFile(file, profileFolderName);
+//		appUser.setProfilePicUrl(url);
 		appUserInfoRepo.save(appUser);
 	}
 

@@ -1,6 +1,7 @@
 package com.urbanShows.userService.controller.appUser;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,9 +28,9 @@ import lombok.AllArgsConstructor;
 @RequestMapping("api/user/app")
 @AllArgsConstructor
 public class AppUserController {
-
+	
 	private final AppUserService appUserService;
-	private final AwsS3Service awsS3Service;
+	
 	private final ModelMapper modelMapper;
 
 	@GetMapping
@@ -66,8 +67,7 @@ public class AppUserController {
 	public ResponseEntity<Boolean> uploadAppUserProfilePic(@RequestParam MultipartFile file,
 			@RequestPart String phone, @RequestPart String otp) {
 		final AppUser appUser = appUserService.authenticateAppUserByOtp(phone, otp);
-		String url = awsS3Service.uploadFile(file);
-		appUserService.uploadAppUserProfile(appUser, url);
+		appUserService.uploadAppUserProfile(appUser, file);
 		return ResponseEntity.ok(true);
 	}
 

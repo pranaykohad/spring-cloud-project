@@ -36,7 +36,7 @@ public class SystemUserInfoDto {
 
 	private List<Role> roles;
 	
-	private String profilePicUrl;
+	private Object profilePic;
 	
 	private LocalDateTime createdAt;
 	

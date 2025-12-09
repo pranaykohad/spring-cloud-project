@@ -19,7 +19,7 @@ public class SystemUserDto {
 
 	private String jwt;
 	
-	private String profilePicUrl;
+	private Object profilePic;
 	
 	private String userName;
 

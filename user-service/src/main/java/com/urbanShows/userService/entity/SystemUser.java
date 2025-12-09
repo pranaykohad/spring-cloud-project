@@ -3,6 +3,7 @@ package com.urbanShows.userService.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.urbanShows.userService.enums.Role;
 import com.urbanShows.userService.enums.Status;
 
@@ -10,6 +11,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,7 +37,11 @@ public class SystemUser {
 
 	private String phone;
 
+	@JsonIgnore
 	private String profilePicUrl;
+	
+	@Transient
+	private Object profilePic;
 
 	private String otp;
 
