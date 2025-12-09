@@ -30,7 +30,7 @@
         </layout>
     </appender> -->
     
-    <!-- LOKI Appender -->
+    <!-- LOKI Appender 
     <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
         <http>
             <url>${lokiUrl}</url>
@@ -49,7 +49,7 @@
 
     <root level="info">
         <appender-ref ref="LOKI"/>
-    </root>
+    </root>-->
     
     <logger name="org.hibernate.SQL" level="DEBUG"/>
 
