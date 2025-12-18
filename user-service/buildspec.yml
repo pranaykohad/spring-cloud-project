@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: ap-south-1
+    ECR_REPO: user-service
+    IMAGE_TAG: 0.0.2-SNAPSHOT
+
+phases:
+  pre_build:
+    commands:
+      - mvn clean install -DskipTests	
+      - echo "Logging in to Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 978364619388.dkr.ecr.$AWS_REGION.amazonaws.com
+
+  build:
+    commands:
+      - echo "Building Docker image..."
+      - docker build -t $ECR_REPO:$IMAGE_TAG .
+
+      - echo "Tagging image with version..."
+      - docker tag $ECR_REPO:$IMAGE_TAG 978364619388.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+
+      - echo "Tagging image as latest..."
+      - docker tag $ECR_REPO:$IMAGE_TAG 978364619388.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest
+
+  post_build:
+    commands:
+      - echo "Pushing versioned image..."
+      - docker push 978364619388.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
+
+      - echo "Pushing latest image..."
+      - docker push 978364619388.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest
+
+      - echo "Build completed successfully"
