@@ -1,13 +1,12 @@
 version: 0.2
 
 env:
-  secrets-manager:
-    GITHUB_TOKEN: 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
   variables:
     AWS_REGION: ap-south-1
     ACCOUNT_ID: 978364619388
     ECR_REPO: user-service
     IMAGE_TAG: 0.0.2-SNAPSHOT
+    GITHUB_TOKEN: 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
 
 phases:
   install:
