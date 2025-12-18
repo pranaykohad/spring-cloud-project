@@ -6,7 +6,6 @@ env:
     ACCOUNT_ID: 978364619388
     ECR_REPO: user-service
     IMAGE_TAG: 0.0.2-SNAPSHOT
-    GITHUB_TOKEN: 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
 
 phases:
   install:
@@ -15,13 +14,6 @@ phases:
 
   pre_build:
     commands:
-      - echo "Starting pre-build phase..."
-
-      # Clone private GitHub repo using PAT from Secrets Manager
-      - echo "Cloning private GitHub repository..."
-      - git clone https://$GITHUB_TOKEN@github.com/username/private-repo.git
-      - cd $PROJECT_DIR
-
       - echo "Moving to user-service directory"
       - cd user-service
       - mvn -v
