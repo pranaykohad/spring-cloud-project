@@ -11,7 +11,7 @@ import org.springframework.web.filter.CorsFilter;
 // @Bean uncomment -> Work direct swagger, API Gateway swagger, angular calls direct, not angular calls via API Gateway
 // @Bean comment -> Work only direct swagger, angular calls via API Gateway
 
-@Configuration
+//@Configuration
 public class CorsConfig {
 
 	@Bean
