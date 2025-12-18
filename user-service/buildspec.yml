@@ -14,6 +14,10 @@ phases:
 
   pre_build:
     commands:
+      - echo "Moving to user-service directory"
+      - cd user-service
+      - mvn -v
+
       - echo "Building Spring Boot JAR"
       - mvn clean package -DskipTests
 
