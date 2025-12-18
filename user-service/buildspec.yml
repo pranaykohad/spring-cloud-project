@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   secrets-manager:
-    GITHUB_TOKEN: "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"
+    GITHUB_TOKEN: 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
   variables:
     AWS_REGION: ap-south-1
     ACCOUNT_ID: 978364619388
@@ -16,6 +16,13 @@ phases:
 
   pre_build:
     commands:
+      - echo "Starting pre-build phase..."
+
+      # Clone private GitHub repo using PAT from Secrets Manager
+      - echo "Cloning private GitHub repository..."
+      - git clone https://$GITHUB_TOKEN@github.com/username/private-repo.git
+      - cd $PROJECT_DIR
+
       - echo "Moving to user-service directory"
       - cd user-service
       - mvn -v
