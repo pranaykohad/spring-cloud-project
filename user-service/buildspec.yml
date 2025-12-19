@@ -15,7 +15,7 @@ phases:
   pre_build:
     commands:
       - pwd		
-      - echo "Moving to "$ECR_REPO" directory"
+      - echo "Moving to directory" $ECR_REPO
       - cd $ECR_REPO
       - mvn -v
 
