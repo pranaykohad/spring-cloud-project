@@ -15,8 +15,8 @@ phases:
   pre_build:
     commands:
       - pwd		
-      - echo "Moving to user-service directory"
-      - cd user-service
+      - echo "Moving to "$ECR_REPO" directory"
+      - cd $ECR_REPO
       - mvn -v
 
       - echo "Building Spring Boot JAR"
