@@ -1,7 +1,5 @@
 package com.urbanShows.userService;
 
-import java.util.Comparator;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,11 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceApplication {
 
 	private final Environment environment;
-	private final TestDataUtil testDataUtil;
 
 	UserServiceApplication(Environment environment, TestDataUtil testDataUtil) {
 		this.environment = environment;
-		this.testDataUtil = testDataUtil;
 	}
 
 	@Value("${server.port}")
@@ -59,12 +55,6 @@ public class UserServiceApplication {
 				log.info(profile);
 			}
 		}
-		addInitialData();
-	}
-
-	private void addInitialData() {
-//		insertEventDataSample.insertSystemUserTestData();
-//		insertEventDataSample.insertSuperAdminData();
 	}
 
 }

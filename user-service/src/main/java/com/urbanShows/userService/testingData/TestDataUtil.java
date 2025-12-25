@@ -40,8 +40,7 @@ public class TestDataUtil {
 
 	private UserInfoRepository userInfoRepository;
 
-	public void insertSystemUserTestData() {
-
+	public String insertSystemUserTestData() {
 		IntStream.range(1, 105).forEach(i -> {
 			final SystemUser userInfo = new SystemUser();
 			final Random random = new Random();
@@ -61,10 +60,10 @@ public class TestDataUtil {
 			userInfo.setOtpTimeStamp(LocalDateTime.now());
 			userInfoRepository.save(userInfo);
 		});
-
+		return "105 System User test data inserted successfully.";
 	}
 
-	public void insertSuperAdminData() {
+	public String insertSuperAdminData() {
 		final List<SystemUser> usersByRoles = userInfoRepository.findByRoles(List.of(Role.SUPER_ADMIN_USER));
 		if (usersByRoles.isEmpty()) {
 			final SystemUser userInfo = new SystemUser();
@@ -81,6 +80,9 @@ public class TestDataUtil {
 			userInfo.setEmailValidated(true);
 			userInfo.setOtpTimeStamp(LocalDateTime.now());
 			userInfoRepository.save(userInfo);
+			return "Super Admin User created successfully.";
+		} else {
+			return "Super Admin User already exists.";
 		}
 	}
 
