@@ -42,12 +42,12 @@ public class Routes {
 	@Bean
 	RouterFunction<ServerResponse> userServiceRoute() {
 		return GatewayRouterFunctions.route("USER-SERVICE")
-				.route(RequestPredicates.path("api/user/**"), HandlerFunctions.http(userServiceUrl))
+				.route(RequestPredicates.path("api/user/**").or(RequestPredicates.path("/api/user/auth/**")), HandlerFunctions.http(userServiceUrl))
 				.filter(CircuitBreakerFilterFunctions.circuitBreaker("USER-SERVICE-CIRCUIT-BREAKER",
 						URI.create(USER_FALLBACK_ROUTE)))
 				.build();
 	}
-
+	
 	@Bean
 	RouterFunction<ServerResponse> notificationServiceRoute() {
 		return GatewayRouterFunctions.route("NOTIFICATION-SERVICE")

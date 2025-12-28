@@ -15,7 +15,7 @@ public class CorsConfig {
 	CorsFilter corsFilter() {
 		final CorsConfiguration config = new CorsConfiguration();
 		config.setAllowedOrigins(Arrays.asList("*"));
-		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+		config.setAllowedMethods(Arrays.asList("*"));
 		config.setAllowedHeaders(Arrays.asList("*"));
 		config.setAllowCredentials(false);
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
