@@ -31,7 +31,8 @@ spec:
     spec:
       containers:
         - name: zookeeper
-          image: confluentinc/cp-zookeeper:7.5.0
+          image: confluentinc/cp-zookeeper:7.9.4
+          imagePullPolicy: Always
           ports:
             - containerPort: 2181
           env:
@@ -83,7 +84,8 @@ spec:
       enableServiceLinks: false
       containers:
         - name: broker
-          image: confluentinc/cp-kafka:7.5.0
+          image: confluentinc/cp-kafka:7.9.4
+          imagePullPolicy: Always
           ports:
             - containerPort: 9092
             - containerPort: 29092
@@ -159,7 +161,8 @@ spec:
       enableServiceLinks: false
       containers:
         - name: schema-registry
-          image: confluentinc/cp-schema-registry:7.5.0
+          image: confluentinc/cp-schema-registry:7.9.4
+          imagePullPolicy: Always
           env:
             - name: SCHEMA_REGISTRY_HOST_NAME
               value: schema-registry
@@ -239,7 +242,8 @@ spec:
     spec:
       containers:
         - name: tempo
-          image: grafana/tempo:2.2.2
+          image: grafana/tempo:latest
+          imagePullPolicy: Always
           args: ["-config.file=/etc/tempo.yaml"]
           volumeMounts:
             - name: tempo-config
@@ -337,6 +341,7 @@ spec:
       containers:
         - name: prometheus
           image: prom/prometheus
+          imagePullPolicy: Always
           ports:
             - containerPort: 9090
           args:
@@ -411,7 +416,8 @@ spec:
     spec:
       containers:
         - name: grafana
-          image: grafana/grafana:10.1.0
+          image: grafana/grafana:main
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           env:

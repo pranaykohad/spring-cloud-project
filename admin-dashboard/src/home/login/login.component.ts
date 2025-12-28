@@ -17,12 +17,12 @@ import { LoggedInUserDetails } from '../../models/LoggedinUserDetails';
 })
 export class LoginComponent implements OnInit {
   systemUserLoginRequest: SystemUserLoginRequest = {
-    userName: '',
-    password: '',
+    userName: 'pranay',
+    password: 'pranay',
   };
   rememberMe: boolean = false;
   loggedinUserDetails!: LoggedInUserDetails;
-  enableLoginButton: boolean = false;
+  enableLoginButton: boolean = true;
 
   constructor(
     private systemUserAuthService: UserAuthService,

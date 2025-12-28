@@ -1,12 +1,19 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: admin-dashboard-ingress
+  name: urbanshows-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: / 
+    cert-manager.io/cluster-issuer: letsencrypt  # Use Cert-Manager for HTTPS
 spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - admin-dashboard.urbanshows.in
+    - api-gateway.urbanshows.in
+    secretName: urbanshows-tls  # Secret where Cert-Manager stores the SSL cert
   rules:
-  - host: urbanshows.in
+  - host: admin-dashboard.urbanshows.in
     http:
       paths:
       - path: /

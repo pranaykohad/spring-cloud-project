@@ -23,3 +23,5 @@
 /infra/Local-docker/docker/tempo/tempo-data
 /customer-service/.metadata
 /customer-service/.sonarlint/storage
+/AWS Service in use/*
+

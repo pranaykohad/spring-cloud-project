@@ -4,9 +4,21 @@ kind create cluster --name pranay-local --config kind-cluster.yaml
 delete existing cluster:
 kind delete cluster --name pranay-local
 
+Get current cluster info:
+kubectl config current-context
+
+Get all cluster list:
+kubectl config get-contexts
+
+(change port in kind-cluster.yaml)
+Switch to other cluster:
+kubectl config use-context <cluster-name>
+
 
 build and push angular app:
 docker build -t ang-service:v2 . && docker tag ang-service:v2 prakohad/ang-service:v2 && docker push prakohad/ang-service:v2
+
+docker build -t admin-dashboard:v1 . && docker tag admin-dashboard:v1 prakohad/admin-dashboard:v1 && docker push prakohad/admin-dashboard:v1
 
 docker run angular app locally:
 docker run -d -p 8080:80 --name ang-service prakohad/ang-service:v2
@@ -56,6 +68,13 @@ Password: Pranay93!
 add local pc ip in database server
 
 
+error on 9411:
+docker run -d -p 9411:9411 openzipkin/zipkin
+
+
+minikube issue: open cmd where kind-cluster.yml placeed
+minikube delete
+minikube start
 
 
 
