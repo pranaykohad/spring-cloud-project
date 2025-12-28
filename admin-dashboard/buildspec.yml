@@ -19,12 +19,13 @@ phases:
       - cd $ECR_REPO
       - node -v
       - npm -v
+      - docker -v
 
       - echo "Installing dependencies"
       - npm ci --legacy-peer-deps
 
       - echo "Building Angular app"
-      - npm run build Dockerfile
+      - npm run build
 
       - echo "Logging in to Amazon ECR"
       - aws ecr get-login-password --region $AWS_REGION |
