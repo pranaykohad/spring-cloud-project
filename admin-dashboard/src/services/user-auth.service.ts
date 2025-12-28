@@ -30,14 +30,14 @@ export class UserAuthService {
     systemUserLoginDto: SystemUserLoginRequest
   ): Observable<LoggedInUserDetails> {
     return this.http.post<LoggedInUserDetails>(
-      `${this.baseUrl}api/user-auth/system/login`,
+      `${this.baseUrl}api/user/auth/system/login`,
       systemUserLoginDto
     );
   }
 
   userRegistration(systemUserSigninDto: SystemUserSigninRequest) {
     return this.http.post<string>(
-      `${this.baseUrl}api/user-auth/system/register`,
+      `${this.baseUrl}api/user/auth/system/register`,
       systemUserSigninDto
     );
   }
