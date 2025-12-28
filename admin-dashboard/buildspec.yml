@@ -24,7 +24,7 @@ phases:
       - npm ci --legacy-peer-deps
 
       - echo "Building Angular app"
-      - npm run build -f Docker.prod -t admin-dashboard .
+      - npm run build -f Dockerfile
 
       - echo "Logging in to Amazon ECR"
       - aws ecr get-login-password --region $AWS_REGION |
