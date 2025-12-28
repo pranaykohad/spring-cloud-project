@@ -61,17 +61,16 @@ public class AwsS3Service {
 					PutObjectRequest.builder().bucket(bucketName).key(key).contentType(file.getContentType()).build(),
 					RequestBody.fromBytes(file.getBytes()));
 			log.info("file: {} is uploaded/replaced in AWS S3 bucket", key);
-		} catch(S3Exception e) {
+		} catch (S3Exception e) {
 			log.error("S3 Bucket configuration error: {}", e.getMessage());
 			throw new GenericException("Not able to upload file in System. Please contact system administrator.");
-		} 
-		catch (IOException e) {
+		} catch (IOException e) {
 			log.error("IOException while uploading file to AWS S3: {}", e.getMessage());
 			throw new GenericException("Error while uploading file on AWS s3 for system user");
 		} catch (InvalidFileFormatException ex) {
 			log.error("InvalidFileFormatException while uploading file to AWS S3: {}", ex.getMessage());
 			throw new GenericException("File format is not correct: " + file.getOriginalFilename());
-		} 
+		}
 		return key;
 	}
 
