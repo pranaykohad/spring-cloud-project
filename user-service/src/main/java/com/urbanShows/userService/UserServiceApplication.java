@@ -21,9 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceApplication {
 
 	private final Environment environment;
+	private final TestDataUtil testDataUtil;
 
 	UserServiceApplication(Environment environment, TestDataUtil testDataUtil) {
 		this.environment = environment;
+		this.testDataUtil = testDataUtil;
 	}
 
 	@Value("${server.port}")
@@ -55,6 +57,9 @@ public class UserServiceApplication {
 				log.info(profile);
 			}
 		}
+		String response = testDataUtil.insertSuperAdminData();
+		log.info(response);
+		
 	}
 
 }

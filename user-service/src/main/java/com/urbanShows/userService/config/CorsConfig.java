@@ -8,8 +8,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-// @Bean uncomment -> Work direct swagger, API Gateway swagger, angular calls direct, not angular calls via API Gateway
-// @Bean comment -> Work only direct swagger, angular calls via API Gateway
+// Enable @Configuration to work with API Gateway swagger and directly in Angular app
+// Disable @Configuration to Work with Angular calls via API Gateway
 
 //@Configuration
 public class CorsConfig {
@@ -17,10 +17,10 @@ public class CorsConfig {
 	@Bean
 	CorsFilter corsFilter() {
 		final CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Arrays.asList("http://localhost:8083", "http://localhost:4200"));
+		config.setAllowedOrigins(Arrays.asList("*"));
 		config.setAllowedMethods(Arrays.asList("*"));
 		config.setAllowedHeaders(Arrays.asList("*"));
-		config.setAllowCredentials(true);
+		config.setAllowCredentials(false);
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);

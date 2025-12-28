@@ -80,9 +80,9 @@ public class TestDataUtil {
 			userInfo.setEmailValidated(true);
 			userInfo.setOtpTimeStamp(LocalDateTime.now());
 			userInfoRepository.save(userInfo);
-			return "Super Admin User created successfully.";
+			return "Super Admin User created successfully";
 		} else {
-			return "Super Admin User already exists.";
+			return "Super Admin User already exists";
 		}
 	}
 

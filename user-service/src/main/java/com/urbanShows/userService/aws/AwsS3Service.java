@@ -22,6 +22,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Service
 @RequiredArgsConstructor
@@ -60,7 +61,11 @@ public class AwsS3Service {
 					PutObjectRequest.builder().bucket(bucketName).key(key).contentType(file.getContentType()).build(),
 					RequestBody.fromBytes(file.getBytes()));
 			log.info("file: {} is uploaded/replaced in AWS S3 bucket", key);
-		} catch (IOException e) {
+		} catch(S3Exception e) {
+			log.error("S3 Bucket configuration error: {}", e.getMessage());
+			throw new GenericException("Not able to upload file in System. Please contact system administrator.");
+		} 
+		catch (IOException e) {
 			log.error("IOException while uploading file to AWS S3: {}", e.getMessage());
 			throw new GenericException("Error while uploading file on AWS s3 for system user");
 		} catch (InvalidFileFormatException ex) {

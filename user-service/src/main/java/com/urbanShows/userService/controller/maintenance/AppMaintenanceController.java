@@ -18,18 +18,12 @@ import com.urbanShows.userService.testingData.TestDataUtil;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("api/maintainance")
+@RequestMapping("api/user/maintainance")
 @AllArgsConstructor
 public class AppMaintenanceController {
 
 	private final TestDataUtil testDataUtil;
 	private final SystemUserService systemUserService;
-
-	@GetMapping("add-admin-details")
-	public ResponseEntity<String> addAdminDetails() {
-		final String response = testDataUtil.insertSuperAdminData();
-		return ResponseEntity.ok(response);
-	}
 
 	@GetMapping("add-system-user-data")
 	@PreAuthorize("hasAnyAuthority('ROLE_SUPER_ADMIN_USER')")
