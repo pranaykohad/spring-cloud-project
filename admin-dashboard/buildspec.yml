@@ -8,42 +8,46 @@ env:
     IMAGE_TAG: 0.0.1-SNAPSHOT
 
 phases:
-  install:
-    runtime-versions:
-      nodejs: 18
-
   pre_build:
     commands:
-      - pwd
-      - echo "Moving to directory" $ECR_REPO
-      - cd $ECR_REPO
-      - node -v
-      - npm -v
-      - docker -v
-
-      - echo "Installing dependencies"
-      - npm ci --legacy-peer-deps
-
-      - echo "Building Angular app"
-      - npm run build
+      - echo "CodeBuild environment setup"
+      - echo "AWS Region - $AWS_REGION"
+      - echo "AWS Account ID - $ACCOUNT_ID"
+      - echo "ECR Repository - $ECR_REPO"
+      - echo "Image Tag - $IMAGE_TAG"
 
       - echo "Logging in to Amazon ECR"
-      - aws ecr get-login-password --region $AWS_REGION |
-        docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+
+      - echo "Verifying environment"
+      - node --version
+      - npm --version
+      - docker --version
 
   build:
     commands:
-      - echo "Building Docker image"
+      - echo "Building Docker image on `date`"
       - docker build -t $ECR_REPO:$IMAGE_TAG .
-
-      - echo "Tagging image"
       - docker tag $ECR_REPO:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
       - docker tag $ECR_REPO:$IMAGE_TAG $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest
 
   post_build:
     commands:
-      - echo "Pushing images to ECR"
+      - echo "Pushing Docker images to ECR on `date`"
       - docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
       - docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:latest
 
-      - echo "Build completed successfully"
+      - echo "Writing image definitions file"
+      - printf '[{"name":"admin-dashboard","imageUri":"%s"}]' $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG > imagedefinitions.json
+      - cat imagedefinitions.json
+
+      - echo "Build completed successfully on `date`"
+
+artifacts:
+  files:
+    - imagedefinitions.json
+  name: admin-dashboard-build-artifact
+
+cache:
+  paths:
+    - "/root/.npm/**/*"
