@@ -5,9 +5,15 @@ env:
     AWS_REGION: ap-south-1
     ACCOUNT_ID: 978364619388
     ECR_REPO: admin-dashboard
-    IMAGE_TAG: latest
+    IMAGE_TAG: 0.0.1-SNAPSHOT
 
 phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo "Installing dependencies"
+
   pre_build:
     commands:
       - echo "AWS Region - $AWS_REGION"
@@ -22,6 +28,7 @@ phases:
       - node --version
       - npm --version
       - docker --version
+      - pwd
 
   build:
     commands:
