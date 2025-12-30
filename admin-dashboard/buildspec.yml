@@ -10,7 +10,6 @@ env:
 phases:
   pre_build:
     commands:
-      - echo "CodeBuild environment setup"
       - echo "AWS Region - $AWS_REGION"
       - echo "AWS Account ID - $ACCOUNT_ID"
       - echo "ECR Repository - $ECR_REPO"
