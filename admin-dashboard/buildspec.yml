@@ -28,6 +28,7 @@ phases:
       - node --version
       - npm --version
       - docker --version
+      - cd admin-dashboard
       - pwd
 
   build:
