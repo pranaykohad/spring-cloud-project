@@ -1,30 +1,19 @@
 # Build stage
 FROM node:22-alpine AS builder
-
 WORKDIR /app
 
-# Install dependencies
 COPY package*.json ./
-
 RUN npm install
 
-# Copy source code and build
 COPY . .
 RUN npm run build
 
 # Production stage
 FROM nginx:alpine
 
-WORKDIR /usr/share/nginx/html
+COPY --from=builder /app/dist/admin-dashboard/browser /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy built application from builder stage
-COPY --from=builder /app/dist/admin-dashboard/browser .
-
-# Copy nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Expose port
 EXPOSE 80
 
-# Start nginx
 CMD ["nginx", "-g", "daemon off;"]
